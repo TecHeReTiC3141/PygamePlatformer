@@ -1,5 +1,4 @@
 from scripts.Drawing import *
-from classes.surroundings import *
 from scripts.map_generation import *
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
@@ -7,9 +6,11 @@ pygame.display.set_caption('Pygame Platformer')
 
 clock = pygame.time.Clock()
 
-player = Player(100, 100)
+player = Player(100, 500)
 
 drawing = Drawing(display)
+
+level = generate_level(level_map)
 
 while True:
 
@@ -19,7 +20,8 @@ while True:
             pygame.quit()
 
         elif event.type == pygame.KEYDOWN:
-            pass
+            if event.key == pygame.K_j:
+                player.jump()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pass
@@ -27,6 +29,10 @@ while True:
     drawing.background()
     player.draw(display)
     player.move()
+    player.update()
+
+    level.draw(display)
+    level.physics([player])
 
     pygame.display.update()
 
