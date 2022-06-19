@@ -4,9 +4,28 @@ from scripts.map_generation import *
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
 pygame.display.set_caption('Pygame Platformer')
 
+level_map = [
+    '......................',
+    '......................',
+    '......................',
+    '......................',
+    '......................',
+    '..............##......',
+    '.............#........',
+    '..##..................',
+    '.......####...........',
+    '.......#.....#...###..',
+    '.....##...####...##...',
+    '...###.##........#..#.',
+    '.................#.#..',
+    '......#.....#....#....',
+    '######################',
+    '######################',
+]
 clock = pygame.time.Clock()
+tick = 0
 
-player = Player(100, 500)
+player = Player(100, 0)
 
 drawing = Drawing(display)
 
@@ -15,25 +34,27 @@ level = generate_level(level_map)
 while True:
 
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             pygame.quit()
 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_j:
+            if event.key == pygame.K_SPACE:
                 player.jump()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pass
 
     drawing.background()
-    player.draw(display)
+    level.draw(display, player)
+
     player.move()
     player.update()
 
-    level.draw(display)
     level.physics([player])
 
     pygame.display.update()
 
     clock.tick(FPS)
+    tick += 1
+    if not tick % FPS:
+        print(player.cur_rect, level.camera.scroll(player))

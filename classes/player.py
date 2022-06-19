@@ -8,7 +8,7 @@ class Player:
                for i in directions}
     size = (75, 100)
 
-    jump_strength = 15
+    jump_strength = 8
     max_jump_cooldown = 30
 
     def __init__(self, x, y, ):
@@ -17,7 +17,7 @@ class Player:
         self.prev_rect = self.cur_rect.copy()
         self.movement = pygame.math.Vector2(0, 0)
         self.direction = 'left'
-        self.speed = 8
+        self.speed = 5
         self.jump_cooldown = 0
 
         self.collided_sides = {i: False for i in directions}
@@ -33,18 +33,18 @@ class Player:
 
         self.prev_rect = self.cur_rect.copy()
         self.move()
-        if self.movement.length():
-            norm_move = self.movement.normalize()
-            self.cur_rect.move_ip(norm_move * self.speed)
+        # if self.movement.length():
+        #     norm_move = self.movement.normalize()
+        self.cur_rect.move_ip(self.movement * self.speed)
         if self.movement.x > 0:
             self.direction = 'right'
         elif self.movement.x < 0:
             self.direction = 'left'
 
         self.movement.x = 0
-        self.movement.y = min(self.movement.y + .8, .8 if not self.collided_sides['down'] else 0)
-        for dir in self.collided_sides:
-            self.collided_sides[dir] = False
+        self.movement.y = min(self.movement.y + 1, 1 if not self.collided_sides['down'] else 0)
+        for direct in self.collided_sides:
+            self.collided_sides[direct] = False
 
         self.jump_cooldown -= 1
 
