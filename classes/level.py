@@ -19,4 +19,4 @@ class Level:
     def physics(self, entities: list[Player]):
         for entity in entities:
             for wall in self.walls:
-                wall.collide(entity, self.camera.scroll(entity)[:2])
+                wall.collide(entity)
