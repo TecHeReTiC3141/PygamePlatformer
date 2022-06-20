@@ -54,6 +54,7 @@ class MovableBlock(Block):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.weight = randint(1, 5)
+        self.collided_size = {i: None for i in directions}
         self.surface.fill('green')
 
     def collide(self, entity: Player):
