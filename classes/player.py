@@ -16,6 +16,7 @@ class Player:
         self.cur_rect = self.surface.get_rect(topleft=(x, y))
         self.prev_rect = self.cur_rect.copy()
         self.movement = pygame.math.Vector2(0, 0)
+        self.angle = 0
         self.direction = 'left'
         self.speed = 5
         self.jump_cooldown = 0
@@ -29,8 +30,19 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.movement.x -= 1
+            if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
+                self.angle = pi - self.angle
         if keys[pygame.K_d]:
             self.movement.x += 1
+            if pi / 2 <= self.angle <= 3 * pi / 2:
+                self.angle = (3 * pi - self.angle) % 360
+
+        if keys[pygame.K_UP]:
+            self.angle += 0.03
+        if keys[pygame.K_DOWN]:
+            self.angle -= 0.03
+
+        self.angle %= pi * 2
 
     def update(self):
 
@@ -80,6 +92,10 @@ class Player:
     def draw(self, surface: pygame.Surface):
 
         self.surface.blit(self.sprites[self.direction], (0, 0))
+        pygame.draw.rect(self.surface, 'red',
+                         (20 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
+        pygame.draw.rect(self.surface, 'red',
+                         (40 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
         if self.collided_sides['down']:
             pygame.draw.line(self.surface, 'red', (0, self.cur_rect.height - 5),
                              (self.cur_rect.right, self.cur_rect.height - 5), 5)

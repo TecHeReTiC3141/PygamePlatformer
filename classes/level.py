@@ -29,6 +29,9 @@ class Level:
 
     def game_cycle(self, surface: pygame.Surface):
         self.draw(surface)
+        surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
+                     (30, 30))
+
         self.player.move()
         self.player.update()
         self.physics([self.player])

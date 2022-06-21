@@ -10,3 +10,7 @@ FPS = 60
 BLOCK_SIZE = 60
 
 directions = ['up', 'down', 'left', 'right']
+
+mock_display = pygame.display.set_mode((40, 40))
+
+info_font = pygame.font.Font(None, 40)

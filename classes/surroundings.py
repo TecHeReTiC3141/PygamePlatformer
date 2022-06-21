@@ -116,7 +116,6 @@ class MovingPlatform(Block):
         for block in self.blocks:
             block.cur_rect.move_ip(self.movement)
             block.outer_rect.move_ip(self.movement)
-            print(block.cur_rect)
 
         if self.typ == 'hor' and self.blocks[0].cur_rect.left <= self.init_point.x \
                 or self.blocks[1].cur_rect.right >= self.init_point.x + self.dist:
