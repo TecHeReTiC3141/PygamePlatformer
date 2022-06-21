@@ -91,6 +91,39 @@ class MovableBlock(Block):
     def check_walls(self, walls: list[Block]):
         pass
 
+
+class MovingPlatform(Block):
+
+    def __init__(self, x, y, num_blocks, typ: str, dist, speed=5):
+        super(Block, self).__init__(x, y)
+        self.init_point = pygame.math.Vector2(x, y)
+        self.blocks: list[Block] = [Block(x + i, y) for i in range(num_blocks)]
+        self.dist = dist
+        self.typ = typ
+        self.movement = pygame.math.Vector2(0 if typ == 'vert' else speed,
+                                            0 if typ == 'hor' else speed)
+
+    def collide(self, entity: Player):
+        for block in self.blocks:
+            block.collide(entity)
+
+    def draw(self, surface: pygame.Surface):
+        for block in self.blocks:
+            block.draw(surface)
+
+    def move(self):
+        for block in self.blocks:
+            block.cur_rect.move_ip(self.movement)
+            block.outer_rect.move_ip(self.movement)
+
+        if self.typ == 'hor' and self.blocks[0].cur_rect.left <= self.init_point.x \
+                or self.blocks[1].cur_rect.right >= self.init_point.x + self.dist:
+            self.movement.x *= -1
+        elif self.typ == 'vert' and self.blocks[0].cur_rect.top <= self.init_point.y \
+                    or self.blocks[-1].cur_rect.bottom >= self.init_point.y + self.dist:
+            self.movement.x *= -1
+
+
 class Camera:
 
     def __init__(self, surf: pygame.Surface):

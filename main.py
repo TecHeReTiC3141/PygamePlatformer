@@ -4,7 +4,6 @@ from scripts.map_generation import *
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
 pygame.display.set_caption('Pygame Platformer')
 
-
 clock = pygame.time.Clock()
 tick = 0
 
@@ -41,4 +40,4 @@ while True:
     tick += 1
     if not tick % FPS:
         pass
-        #print(player.collided_sides)
+        # print(player.collided_sides)
