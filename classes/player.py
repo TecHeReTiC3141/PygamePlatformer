@@ -48,7 +48,6 @@ class Player:
                 self.collided_sides['left'], self.collided_sides['right']]):
             self.is_jump = False
 
-
         self.movement.x = 0
         sliding_down = 1.5
         if self.collided_sides['down']:
@@ -81,4 +80,13 @@ class Player:
     def draw(self, surface: pygame.Surface):
 
         self.surface.blit(self.sprites[self.direction], (0, 0))
+        if self.collided_sides['down']:
+            pygame.draw.line(self.surface, 'red', (0, self.cur_rect.height - 5),
+                             (self.cur_rect.right, self.cur_rect.height - 5), 5)
+        if self.collided_sides['left']:
+            pygame.draw.line(self.surface, 'red', (0, 0),
+                             (0, self.cur_rect.height), 5)
+        if self.collided_sides['right']:
+            pygame.draw.line(self.surface, 'red', (self.cur_rect.width, 0),
+                             (self.cur_rect.width, self.cur_rect.height), 5)
         surface.blit(self.surface, self.cur_rect)

@@ -7,8 +7,6 @@ pygame.display.set_caption('Pygame Platformer')
 clock = pygame.time.Clock()
 tick = 0
 
-player = Player(100, 0)
-
 drawing = Drawing(display)
 
 level = generate_level('level1')
@@ -21,18 +19,15 @@ while True:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.jump()
+                level.player.jump()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pass
 
+
     drawing.background()
-    level.draw(display, player)
 
-    player.move()
-    player.update()
-
-    level.physics([player])
+    level.game_cycle(display)
 
     pygame.display.update()
 
