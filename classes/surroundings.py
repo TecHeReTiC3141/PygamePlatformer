@@ -57,6 +57,7 @@ class MovableBlock(Block):
         self.collided_size = {i: None for i in directions}
         self.surface.fill('green')
 
+
     def collide(self, entity: Player):
         if entity.cur_rect.colliderect(self.cur_rect):
             movable = pygame.math.Vector2(0, 0)
@@ -95,9 +96,9 @@ class MovableBlock(Block):
 class MovingPlatform(Block):
 
     def __init__(self, x, y, num_blocks, typ: str, dist, speed=5):
-        super(Block, self).__init__(x, y)
+        super().__init__(x, y)
         self.init_point = pygame.math.Vector2(x, y)
-        self.blocks: list[Block] = [Block(x + i, y) for i in range(num_blocks)]
+        self.blocks: list[MovableBlock] = [MovableBlock(x + i, y) for i in range(num_blocks)]
         self.dist = dist
         self.typ = typ
         self.movement = pygame.math.Vector2(0 if typ == 'vert' else speed,
@@ -115,6 +116,7 @@ class MovingPlatform(Block):
         for block in self.blocks:
             block.cur_rect.move_ip(self.movement)
             block.outer_rect.move_ip(self.movement)
+            print(block.cur_rect)
 
         if self.typ == 'hor' and self.blocks[0].cur_rect.left <= self.init_point.x \
                 or self.blocks[1].cur_rect.right >= self.init_point.x + self.dist:

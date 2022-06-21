@@ -15,7 +15,7 @@ class Level:
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
         self.player.draw(self.surf)
-        for wall in self.walls + self.moving_obj :
+        for wall in self.walls + self.moving_obj:
             wall.draw(self.surf)
         surface.blit(self.surf, (0, 0), self.camera.scroll(self.player))
 
