@@ -10,6 +10,7 @@ class Level:
         self.surf = surface
         self.surf.set_colorkey('yellow')
         self.camera = Camera(surface)
+
         self.player = Player(*start_pos)
 
     def draw(self, surface: pygame.Surface):
