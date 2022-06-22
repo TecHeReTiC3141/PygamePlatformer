@@ -96,6 +96,7 @@ class Player:
                          (20 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
         pygame.draw.rect(self.surface, 'red',
                          (40 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
+
         if self.collided_sides['down']:
             pygame.draw.line(self.surface, 'red', (0, self.cur_rect.height - 5),
                              (self.cur_rect.right, self.cur_rect.height - 5), 5)
@@ -106,3 +107,7 @@ class Player:
             pygame.draw.line(self.surface, 'red', (self.cur_rect.width, 0),
                              (self.cur_rect.width, self.cur_rect.height), 5)
         surface.blit(self.surface, self.cur_rect)
+        pygame.draw.line(surface, 'red',
+                         (self.cur_rect.center),
+                         (self.cur_rect.centerx + 50 * cos(self.angle),
+                          self.cur_rect.centery - 50 * sin(self.angle)), 10)
