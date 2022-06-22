@@ -33,5 +33,6 @@ class Level:
                      (30, 30))
 
         self.player.move()
+        self.player.get_angle(self.camera.offset)
         self.player.update()
         self.physics([self.player])

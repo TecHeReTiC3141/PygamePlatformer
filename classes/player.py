@@ -8,7 +8,7 @@ class Player:
                for i in directions}
     size = (75, 100)
 
-    jump_strength = 8
+    jump_strength = 10
     max_jump_cooldown = 30
 
     def __init__(self, x, y, ):
@@ -43,6 +43,17 @@ class Player:
             self.angle -= 0.03
 
         self.angle %= pi * 2
+
+    def get_angle(self, offset: pygame.math.Vector2):
+        m_x, m_y = pygame.mouse.get_pos()
+        m_x += offset.x
+        m_y += offset.y
+        c_x, c_y = self.cur_rect.center
+        dist = sqrt((c_x - m_x) ** 2 + (c_y - m_y) ** 2)
+        self.angle = acos((m_x - c_x) / dist)
+        if m_y >= c_y:
+            self.angle = 2 * pi - self.angle
+
 
     def update(self):
 

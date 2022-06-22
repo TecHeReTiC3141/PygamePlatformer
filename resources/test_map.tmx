@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="35" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="30">
  <editorsettings>
-  <export target="map/test_map.tmx" format="tmx"/>
+  <export target="map/test_map.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" source="tilesets/test_tileset.tsx"/>
  <tileset firstgid="300" source="tilesets/Test_objects.tsx"/>
  <tileset firstgid="303" source="tilesets/terrain_edges.tsx"/>
  <tileset firstgid="323" source="tilesets/terrain_corner.tsx"/>
- <layer id="6" name="Ground" width="35" height="32">
+ <layer id="6" name="Ground" width="35" height="32" visible="0">
   <data encoding="csv">
 350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,
 350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,
