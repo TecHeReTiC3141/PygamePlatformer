@@ -3,7 +3,7 @@ import pygame.sprite
 from scripts.const import *
 
 
-class Player(pygame.sprite.Sprite):
+class Player:
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/heretic/heretic_sprite_{i}.png')
            for i in directions}
@@ -12,8 +12,7 @@ class Player(pygame.sprite.Sprite):
     jump_strength = 10
     max_jump_cooldown = 30
 
-    def __init__(self, x, y, groups):
-        super().__init__(groups)
+    def __init__(self, x, y):
         self.image = pygame.Surface(self.size)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.prev_rect = self.rect.copy()

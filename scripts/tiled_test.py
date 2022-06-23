@@ -1,5 +1,6 @@
 from scripts.const import *
 from pytmx.util_pygame import load_pygame
+
 from pprint import pprint
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
@@ -7,7 +8,7 @@ pygame.display.set_caption('Tiled test')
 
 clock = pygame.time.Clock()
 
-tiled_map = load_pygame('../resources/map/level1.tmx')
+tiled_map = load_pygame('../levels/level1.tmx')
 
 
 ground_layer = tiled_map.get_layer_by_name('BlocksLayer')
