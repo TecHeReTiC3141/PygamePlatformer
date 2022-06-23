@@ -9,7 +9,7 @@ tick = 0
 
 drawing = Drawing(display)
 
-level = generate_level('level1')
+level = gen_level('level1')
 level.moving_obj.append(MovingPlatform(1, 5, 4, 'hor', 450))
 
 while True:
