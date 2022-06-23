@@ -7,17 +7,18 @@ pygame.display.set_caption('Tiled test')
 
 clock = pygame.time.Clock()
 
-tiled_map = load_pygame('../resources/map/test_map.tmx')
-TILE_SIZE = 128
+tiled_map = load_pygame('../resources/map/level1.tmx')
 
-ground_layer = tiled_map.get_layer_by_name('Ground_layer')
+
+ground_layer = tiled_map.get_layer_by_name('BlocksLayer')
 print(ground_layer.width, ground_layer.height)
 offset = [0, 0]
 
-main_surf = pygame.Surface((TILE_SIZE * ground_layer.width,
-                            TILE_SIZE * ground_layer.height))
+main_surf = pygame.Surface((BLOCK_SIZE * ground_layer.width,
+                            BLOCK_SIZE * ground_layer.height))
 for x, y, surf in ground_layer.tiles():
-    main_surf.blit(surf, (x * 128, y * 128))
+    main_surf.blit(pygame.transform.scale(surf, (BLOCK_SIZE, BLOCK_SIZE)),
+                   (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
 pprint(ground_layer.data)
 

@@ -10,7 +10,9 @@
    <wangcolor name="Grass" color="#00ff00" tile="-1" probability="1"/>
    <wangcolor name="Sand" color="#0000ff" tile="-1" probability="1"/>
    <wangcolor name="Stone" color="#ff7700" tile="-1" probability="1"/>
+   <wangtile tileid="0" wangid="0,1,0,2,0,1,0,1"/>
    <wangtile tileid="1" wangid="0,1,0,2,0,2,0,1"/>
+   <wangtile tileid="2" wangid="0,1,0,1,0,2,0,1"/>
    <wangtile tileid="3" wangid="0,2,0,1,0,2,0,2"/>
    <wangtile tileid="4" wangid="0,2,0,2,0,1,0,2"/>
    <wangtile tileid="10" wangid="0,1,0,4,0,1,0,1"/>
@@ -28,7 +30,9 @@
    <wangtile tileid="35" wangid="0,1,0,1,0,4,0,4"/>
    <wangtile tileid="36" wangid="0,1,0,4,0,4,0,4"/>
    <wangtile tileid="37" wangid="0,4,0,4,0,4,0,1"/>
+   <wangtile tileid="46" wangid="0,2,0,1,0,1,0,1"/>
    <wangtile tileid="47" wangid="0,2,0,1,0,1,0,2"/>
+   <wangtile tileid="48" wangid="0,1,0,1,0,1,0,2"/>
    <wangtile tileid="50" wangid="0,1,0,1,0,1,0,1"/>
    <wangtile tileid="56" wangid="0,4,0,1,0,1,0,1"/>
    <wangtile tileid="57" wangid="0,4,0,1,0,1,0,4"/>

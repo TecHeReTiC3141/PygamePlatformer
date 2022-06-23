@@ -2,15 +2,15 @@ from classes.player import *
 
 
 class Block:
-    surface = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
+
     movable = False
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, surface: pygame.Surface):
+        self.surface = pygame.transform.scale(surface, (BLOCK_SIZE, BLOCK_SIZE))
 
         self.cur_rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
         self.outer_rect = pygame.Rect(self.cur_rect.left - 3, self.cur_rect.top,
                                       self.cur_rect.width + 6, self.cur_rect.height)
-        self.surface.fill('blue')
 
     def collide(self, entity: Player):
 
@@ -45,7 +45,6 @@ class Block:
                 entity.collided_sides['left'] = True
 
     def draw(self, surface: pygame.Surface):
-        self.surface.fill('blue')
         surface.blit(self.surface, self.cur_rect)
 
 class MovableBlock(Block):
