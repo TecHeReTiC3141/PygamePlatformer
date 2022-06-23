@@ -52,7 +52,8 @@ class MovableBlock(Block):
     movable = True
 
     def __init__(self, x, y):
-        super().__init__(x, y)
+        surf = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
+        super().__init__(x, y, surf)
         self.weight = randint(1, 5)
         self.collided_size = {i: None for i in directions}
         self.surface.fill('green')
@@ -68,10 +69,9 @@ class MovableBlock(Block):
         pass
 
 
-class MovingPlatform(Block):
+class MovingPlatform:
 
     def __init__(self, x, y, num_blocks, typ: str, dist, speed=5):
-        super().__init__(x, y)
         self.init_point = pygame.math.Vector2(x, y)
         self.blocks: list[MovableBlock] = [MovableBlock(x + i, y) for i in range(num_blocks)]
         self.dist = dist
