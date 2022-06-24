@@ -1,6 +1,7 @@
 import pygame.sprite
 
 from scripts.const import *
+from classes.weapons import *
 
 
 class Player:
@@ -27,8 +28,6 @@ class Player:
         self.collided_sides = {i: False for i in directions}
 
     def move(self):
-        # if self.jump_cooldown >= self.max_jump_cooldown // 2:
-        #     return
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.movement.x -= 1
@@ -93,6 +92,10 @@ class Player:
             else:
                 self.movement.y = -self.jump_strength
             self.is_jump = True
+
+    def shoot(self) -> Projectile:
+        return Projectile(self.rect.centerx, self.rect.centery,
+                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)))
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')

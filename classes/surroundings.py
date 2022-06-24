@@ -8,32 +8,32 @@ class Block:
     def __init__(self, x, y, surface: pygame.Surface):
         self.surface = pygame.transform.scale(surface, (BLOCK_SIZE, BLOCK_SIZE))
 
-        self.cur_rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
-        self.outer_rect = pygame.Rect(self.cur_rect.left - 3, self.cur_rect.top,
-                                      self.cur_rect.width + 6, self.cur_rect.height)
+        self.rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
+        self.outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
+                                      self.rect.width + 6, self.rect.height)
 
     def collide(self, entity: Player):
 
-        if entity.rect.colliderect(self.cur_rect):
+        if entity.rect.colliderect(self.rect):
 
             # left side
-            if entity.rect.right >= self.cur_rect.left >= entity.prev_rect.right:
-                entity.rect.right = self.cur_rect.left
+            if entity.rect.right >= self.rect.left >= entity.prev_rect.right:
+                entity.rect.right = self.rect.left
                 entity.collided_sides['right'] = True
 
             # right side
-            elif entity.rect.left <= self.cur_rect.right <= entity.prev_rect.left:
-                entity.rect.left = self.cur_rect.right
+            elif entity.rect.left <= self.rect.right <= entity.prev_rect.left:
+                entity.rect.left = self.rect.right
                 entity.collided_sides['left'] = True
 
             # top side
-            if entity.rect.bottom >= self.cur_rect.top >= entity.prev_rect.bottom:
-                entity.rect.bottom = self.cur_rect.top
+            if entity.rect.bottom >= self.rect.top >= entity.prev_rect.bottom:
+                entity.rect.bottom = self.rect.top
                 entity.collided_sides['down'] = True
 
             # bottom side
-            elif entity.rect.top <= self.cur_rect.bottom <= entity.prev_rect.top:
-                entity.rect.top = self.cur_rect.bottom
+            elif entity.rect.top <= self.rect.bottom <= entity.prev_rect.top:
+                entity.rect.top = self.rect.bottom
                 entity.collided_sides['top'] = True
 
         elif entity.rect.colliderect(self.outer_rect):
@@ -45,7 +45,7 @@ class Block:
                 entity.collided_sides['left'] = True
 
     def draw(self, surface: pygame.Surface):
-        surface.blit(self.surface, self.cur_rect)
+        surface.blit(self.surface, self.rect)
 
 class MovableBlock(Block):
 
@@ -60,7 +60,7 @@ class MovableBlock(Block):
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('green')
-        surface.blit(self.surface, self.cur_rect)
+        surface.blit(self.surface, self.rect)
 
     def collide(self, entity: Player):
         super().collide(entity)
@@ -89,14 +89,14 @@ class MovingPlatform:
 
     def move(self):
         for block in self.blocks:
-            block.cur_rect.move_ip(self.movement)
+            block.rect.move_ip(self.movement)
             block.outer_rect.move_ip(self.movement)
 
-        if self.typ == 'hor' and self.blocks[0].cur_rect.left <= self.init_point.x \
-                or self.blocks[1].cur_rect.right >= self.init_point.x + self.dist:
+        if self.typ == 'hor' and self.blocks[0].rect.left <= self.init_point.x \
+                or self.blocks[1].rect.right >= self.init_point.x + self.dist:
             self.movement.x *= -1
-        elif self.typ == 'vert' and self.blocks[0].cur_rect.top <= self.init_point.y \
-                    or self.blocks[-1].cur_rect.bottom >= self.init_point.y + self.dist:
+        elif self.typ == 'vert' and self.blocks[0].rect.top <= self.init_point.y \
+                    or self.blocks[-1].rect.bottom >= self.init_point.y + self.dist:
             self.movement.x *= -1
 
 

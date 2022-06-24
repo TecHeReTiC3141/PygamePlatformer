@@ -22,6 +22,9 @@ while True:
             if event.key == pygame.K_SPACE:
                 level.player.jump()
 
+            elif event.key == pygame.K_e:
+                level.projectiles.append(level.player.shoot())
+
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pass
 
