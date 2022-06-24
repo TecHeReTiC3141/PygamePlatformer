@@ -5,15 +5,16 @@ from scripts.const import *
 
 class Player:
     sprites: dict[str, pygame.Surface] \
-        = {i: pygame.image.load(f'resources/images/entities/heretic/heretic_sprite_{i}.png')
-           for i in directions}
-    size = (75, 100)
+        = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png')
+           for i in ['left', 'right']}
+    size = (90, 110)
 
     jump_strength = 10
     max_jump_cooldown = 30
 
     def __init__(self, x, y):
         self.image = pygame.Surface(self.size)
+        self.image.set_colorkey('yellow')
         self.rect = self.image.get_rect(topleft=(x, y))
         self.prev_rect = self.rect.copy()
         self.movement = pygame.math.Vector2(0, 0)
@@ -38,11 +39,6 @@ class Player:
             if pi / 2 <= self.angle <= 3 * pi / 2:
                 self.angle = (3 * pi - self.angle) % 360
 
-        if keys[pygame.K_UP]:
-            self.angle += 0.03
-        if keys[pygame.K_DOWN]:
-            self.angle -= 0.03
-
         self.angle %= pi * 2
 
     def get_angle(self, offset: pygame.math.Vector2):
@@ -62,9 +58,9 @@ class Player:
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
         self.rect.move_ip(self.movement * self.speed)
-        if self.movement.x > 0:
+        if self.movement.x > 0 or pi / 2 >= self.angle or self.angle >= 3 * pi / 2:
             self.direction = 'right'
-        elif self.movement.x < 0:
+        elif self.movement.x < 0 or pi / 2 <= self.angle <= 3 * pi / 2:
             self.direction = 'left'
 
         if any([self.collided_sides['down'],
@@ -99,12 +95,14 @@ class Player:
             self.is_jump = True
 
     def draw(self, surface: pygame.Surface):
-
+        self.image.fill('yellow')
         self.image.blit(self.sprites[self.direction], (0, 0))
-        pygame.draw.rect(self.image, 'red',
-                         (20 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
-        pygame.draw.rect(self.image, 'red',
-                         (40 + cos(self.angle) * 5, 20 - sin(self.angle) * 5, 5, 5))
+
+        eye_x = 23 if self.direction == 'left' else 30
+        pygame.draw.rect(self.image, 'blue',
+                         (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
+        pygame.draw.rect(self.image, 'blue',
+                         (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
 
         if self.collided_sides['down']:
             pygame.draw.line(self.image, 'red', (0, self.rect.height - 5),
@@ -116,7 +114,3 @@ class Player:
             pygame.draw.line(self.image, 'red', (self.rect.width, 0),
                              (self.rect.width, self.rect.height), 5)
         surface.blit(self.image, self.rect)
-        pygame.draw.line(surface, 'red',
-                         self.rect.center,
-                         (self.rect.centerx + 50 * cos(self.angle),
-                          self.rect.centery - 50 * sin(self.angle)), 10)

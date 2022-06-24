@@ -1,7 +1,7 @@
 from scripts.Drawing import *
 from scripts.map_generation import *
 
-display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
+display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
 pygame.display.set_caption('Pygame Platformer')
 
 clock = pygame.time.Clock()
