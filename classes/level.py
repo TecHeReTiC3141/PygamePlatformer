@@ -32,18 +32,24 @@ class Level:
                 proj.collide(block)
 
         for entity in entities:
-            for wall in self.blocks + self.moving_obj:
-                wall.collide(entity)
+            entity.rect.y += entity.movement.y * entity.speed
+            for wall in self.blocks:
+                wall.collide(entity, 'h')
+            entity.rect.x += entity.movement.x * entity.speed
+            for wall in self.blocks:
+                wall.collide(entity, 'v')
 
     def game_cycle(self, surface: pygame.Surface):
         self.draw(surface)
         surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
                      (30, 30))
 
-        self.player.move()
         self.player.get_angle(self.camera.offset)
-        self.player.update()
+        self.player.move()
         self.physics([self.player])
+        print(self.player.movement, self.player.collided_sides)
+        self.player.update()
+
         self.clear()
 
     def clear(self):
