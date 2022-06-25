@@ -12,7 +12,7 @@ class Player:
 
     jump_strength = 5
     max_jump_cooldown = 30
-    falling_momentum = 0.2
+    falling_momentum = 0.25
 
     def __init__(self, x, y):
         self.image = pygame.Surface(self.size)
@@ -25,6 +25,7 @@ class Player:
         self.speed = 5
         self.jump_cooldown = 0
         self.is_jump = False
+        self.air_time = 0
 
         self.collided_sides = {i: False for i in directions}
 
@@ -64,11 +65,19 @@ class Player:
         if any([self.collided_sides['down'],
                 self.collided_sides['left'], self.collided_sides['right']]):
             self.is_jump = False
+            self.air_time = 0
+
+        if self.is_jump:
+            self.air_time += 1
 
         self.movement.x = 0
+        if self.collided_sides['up']:
+            self.movement.y = 0
+
         max_sliding_down = 3
         if self.collided_sides['down']:
             max_sliding_down = 0
+
 
         elif self.collided_sides['left'] or self.collided_sides['right']:
             max_sliding_down = .4
@@ -80,7 +89,7 @@ class Player:
         self.jump_cooldown -= 1
 
     def jump(self):
-        if self.jump_cooldown <= 0 and not self.is_jump:
+        if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
             self.jump_cooldown = self.max_jump_cooldown
             if self.collided_sides['left']:
                 self.movement.y = -self.jump_strength // 2
