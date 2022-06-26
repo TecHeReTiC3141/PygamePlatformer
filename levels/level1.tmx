@@ -36,6 +36,6 @@
   <object id="6" name="MushRoom" type="Decor" gid="302" x="1624" y="1812" width="64" height="64"/>
   <object id="7" name="MushRoom" type="Decor" gid="302" x="2338.83" y="1812.33" width="64" height="64"/>
   <object id="8" name="MushRoom" type="Decor" gid="302" x="4389" y="1683.67" width="64" height="64"/>
-  <object id="9" name="MushRoom" type="Decor" gid="302" x="1701.5" y="661" width="64" height="64"/>
+  <object id="9" name="MushRoom" type="Decor" gid="2147483950" x="1701.5" y="661" width="64" height="64"/>
  </objectgroup>
 </map>

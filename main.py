@@ -13,7 +13,7 @@ level = gen_level('level1')
 level.moving_obj.append(MovingPlatform(1, 5, 4, 'hor', 450))
 
 while True:
-    delta = clock.tick(120) * .001 * FPS
+    delta = clock.tick(FPS) * .001 * FPS
     print(delta)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -21,7 +21,7 @@ while True:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                level.player.jump(delta)
+                level.player.jump()
 
             elif event.key == pygame.K_e:
                 level.projectiles.append(level.player.shoot())

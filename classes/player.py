@@ -10,16 +10,19 @@ class Player:
            for i in ['left', 'right']}
     size = (90, 110)
 
-    jump_strength = 5
+    jump_strength = 40
     max_jump_cooldown = 30
-    falling_momentum = 0.25
+    falling_momentum = 1.7
+    friction = -.25
+    max_vel = 5
 
     def __init__(self, x, y):
         self.image = pygame.Surface(self.size)
         self.image.set_colorkey('yellow')
         self.rect = self.image.get_rect(topleft=(x, y))
         self.prev_rect = self.rect.copy()
-        self.movement = pygame.math.Vector2(0, 0)
+        self.velocity = pygame.math.Vector2(0, 0)
+        self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         self.angle = 0
         self.direction = 'left'
         self.speed = 5
@@ -29,18 +32,33 @@ class Player:
 
         self.collided_sides = {i: False for i in directions}
 
-    def move(self):
+    def hor_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.movement.x -= 1
+            self.acceleration.x -= .3
             if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
                 self.angle = pi - self.angle
         if keys[pygame.K_d]:
-            self.movement.x += 1
+            self.acceleration.x += .3
             if pi / 2 <= self.angle <= 3 * pi / 2:
                 self.angle = (3 * pi - self.angle) % 360
 
+        self.acceleration.x += self.velocity.x * self.friction
+        self.velocity.x += self.acceleration.x * dt
+        self.cap_hor_speed()
+        self.rect.x += int(self.velocity.x * dt + .5 * self.acceleration.x * dt ** 2)
+
         self.angle %= pi * 2
+
+    def vert_move(self, dt):
+        self.velocity.y += self.acceleration.y * dt
+        self.velocity.y = min(self.velocity.y, 7)
+        self.rect.y += int(self.velocity.y * dt + .5 * self.acceleration.y * dt ** 2)
+
+    def cap_hor_speed(self):
+        if abs(self.velocity.x) < .01:
+            self.velocity.x = 0
+        self.velocity.x = max(-self.max_vel, min(self.velocity.x, self.max_vel))
 
     def get_angle(self, offset: pygame.math.Vector2):
         m_x, m_y = pygame.mouse.get_pos()
@@ -53,13 +71,13 @@ class Player:
             self.angle = 2 * pi - self.angle
 
     def update(self, dt):
-
+        print(self.velocity, self.acceleration)
         self.prev_rect = self.rect.copy()
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
-        if self.movement.x > 0 or pi / 2 >= self.angle or self.angle >= 3 * pi / 2:
+        if self.velocity.x > 0 or pi / 2 >= self.angle or self.angle >= 3 * pi / 2:
             self.direction = 'right'
-        elif self.movement.x < 0 or pi / 2 <= self.angle <= 3 * pi / 2:
+        elif self.velocity.x < 0 or pi / 2 <= self.angle <= 3 * pi / 2:
             self.direction = 'left'
 
         if any([self.collided_sides['down'],
@@ -70,35 +88,47 @@ class Player:
         if self.is_jump:
             self.air_time += 1
 
-        self.movement.x = 0
+        self.velocity.x = 0
+        if self.acceleration.x > 0:
+            self.acceleration.x = max(self.acceleration.x - .15, 0)
+        else:
+            self.acceleration.x = min(self.acceleration.x + .15, 0)
         if self.collided_sides['up']:
-            self.movement.y = 0
+            self.velocity.y = 0
 
         max_sliding_down = 3
         if self.collided_sides['down']:
             max_sliding_down = 0
 
-
-        elif self.collided_sides['left'] or self.collided_sides['right']:
+        if self.collided_sides['left']:
             max_sliding_down = .4
-        self.movement.y = min(self.movement.y + self.falling_momentum * dt, max_sliding_down)
+            self.velocity.x = max(0, self.velocity.x)
+            self.acceleration.x = max(0, self.acceleration.x)
+
+
+        if self.collided_sides['right']:
+            max_sliding_down = .4
+            self.velocity.x = min(0, self.velocity.x)
+            self.acceleration.x = min(0, self.acceleration.x)
+
+        self.velocity.y = min(self.velocity.y + self.falling_momentum * dt, max_sliding_down)
 
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
         self.jump_cooldown -= 1
 
-    def jump(self, dt):
+    def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
             self.jump_cooldown = self.max_jump_cooldown
             if self.collided_sides['left']:
-                self.movement.y = -self.jump_strength // 2
-                self.movement.x = -self.jump_strength
+                self.velocity.y = -self.jump_strength // 2
+                self.velocity.x = -self.jump_strength
             elif self.collided_sides['right']:
-                self.movement.y = -self.jump_strength // 2
-                self.movement.x = -self.jump_strength
+                self.velocity.y = -self.jump_strength // 2
+                self.velocity.x = -self.jump_strength
             else:
-                self.movement.y = -self.jump_strength
+                self.velocity.y = -self.jump_strength
             self.is_jump = True
 
     def shoot(self) -> Projectile:

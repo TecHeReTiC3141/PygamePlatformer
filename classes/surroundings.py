@@ -17,22 +17,22 @@ class Block:
         if entity.rect.colliderect(self.rect):
             if mode == 'v':
             # left side
-                if entity.movement.x > 0:
+                if entity.velocity.x > 0:
                     entity.rect.right = self.rect.left
                     entity.collided_sides['right'] = True
 
                 # right side
-                elif entity.movement.x < 0:
+                elif entity.velocity.x < 0:
                     entity.rect.left = self.rect.right
                     entity.collided_sides['left'] = True
             elif mode == 'h':
             # top side
-                if entity.movement.y > 0:
+                if entity.velocity.y > 0:
                     entity.rect.bottom = self.rect.top
                     entity.collided_sides['down'] = True
 
                 # bottom side
-                elif entity.movement.y < 0:
+                elif entity.velocity.y < 0:
                     entity.rect.top = self.rect.bottom
                     entity.collided_sides['top'] = True
 

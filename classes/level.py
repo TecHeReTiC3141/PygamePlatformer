@@ -47,10 +47,10 @@ class Level:
 
         if dt <= 3:
             for entity in entities:
-                entity.rect.y += min((entity.movement.y * dt + .5 * entity.falling_momentum * dt ** 2) * entity.speed, BLOCK_SIZE // 2)
+                entity.vert_move(dt)
                 for wall in self.blocks:
                     wall.collide(entity, 'h')
-                entity.rect.x += entity.movement.x * entity.speed * dt
+                entity.hor_move(dt)
                 for wall in self.blocks:
                     wall.collide(entity, 'v')
 
@@ -60,9 +60,7 @@ class Level:
                      (30, 30))
 
         self.player.get_angle(self.camera.offset)
-        self.player.move()
         self.physics([self.player], dt)
-        print(self.player.movement, self.player.collided_sides)
         self.player.update(dt)
 
         self.clear()
