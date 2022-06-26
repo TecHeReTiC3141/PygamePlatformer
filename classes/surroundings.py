@@ -96,17 +96,14 @@ class MovingPlatform:
                     or self.blocks[-1].rect.bottom >= self.init_point.y + self.dist:
             self.movement.x *= -1
 
+class Decor:
 
-class Camera:
+    def __init__(self, x, y, surface: pygame.Surface):
+        self.surface = surface.convert_alpha()
+        self.rect = surface.get_rect(top_left=(x, y))
 
-    def __init__(self, surf: pygame.Surface):
-        self.surf = surf
-        self.offset = pygame.math.Vector2(0, 0)
-        self.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.surface, self.rect)
 
-    def scroll(self, player: Player) -> tuple:
-        self.offset.x = min(max(0, player.rect.centerx - self.display_size.x // 2),
-                            self.surf.get_width() - self.display_size.x)
-        self.offset.y = min(max(0, player.rect.centery - self.display_size.y // 2),
-                            self.surf.get_height() - self.display_size.y)
-        return self.offset.x, self.offset.y, self.display_size.x, self.display_size.y
+
+

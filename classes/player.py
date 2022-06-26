@@ -6,7 +6,7 @@ from classes.weapons import *
 
 class Player:
     sprites: dict[str, pygame.Surface] \
-        = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png')
+        = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
            for i in ['left', 'right']}
     size = (90, 110)
 
@@ -52,7 +52,7 @@ class Player:
         if m_y >= c_y:
             self.angle = 2 * pi - self.angle
 
-    def update(self):
+    def update(self, dt):
 
         self.prev_rect = self.rect.copy()
         # if self.movement.length():
@@ -81,14 +81,14 @@ class Player:
 
         elif self.collided_sides['left'] or self.collided_sides['right']:
             max_sliding_down = .4
-        self.movement.y = min(self.movement.y + self.falling_momentum, max_sliding_down)
+        self.movement.y = min(self.movement.y + self.falling_momentum * dt, max_sliding_down)
 
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
         self.jump_cooldown -= 1
 
-    def jump(self):
+    def jump(self, dt):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
             self.jump_cooldown = self.max_jump_cooldown
             if self.collided_sides['left']:
