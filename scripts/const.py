@@ -8,6 +8,8 @@ DISP_WIDTH, DISP_HEIGHT = 1080, 720
 FPS = 60
 
 BLOCK_SIZE = 60
+TILED_SIZE = 128
+SCALE = BLOCK_SIZE / TILED_SIZE
 
 directions = ['up', 'down', 'left', 'right']
 

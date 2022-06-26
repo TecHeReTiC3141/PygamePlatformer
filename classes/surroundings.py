@@ -99,8 +99,10 @@ class MovingPlatform:
 class Decor:
 
     def __init__(self, x, y, surface: pygame.Surface):
-        self.surface = surface.convert_alpha()
-        self.rect = surface.get_rect(top_left=(x, y))
+        width, height = surface.get_size()
+        self.surface = pygame.transform.scale(surface.convert_alpha(),
+                                              (width * SCALE, height * SCALE))
+        self.rect = surface.get_rect(topleft=(x, y))
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)

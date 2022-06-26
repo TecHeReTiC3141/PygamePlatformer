@@ -10,9 +10,9 @@ class Player:
            for i in ['left', 'right']}
     size = (90, 110)
 
-    jump_strength = 40
+    jump_strength = 60
     max_jump_cooldown = 30
-    falling_momentum = 1.7
+    falling_momentum = 2.5
     friction = -.25
     max_vel = 5
 
@@ -104,7 +104,6 @@ class Player:
             max_sliding_down = .4
             self.velocity.x = max(0, self.velocity.x)
             self.acceleration.x = max(0, self.acceleration.x)
-
 
         if self.collided_sides['right']:
             max_sliding_down = .4

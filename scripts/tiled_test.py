@@ -12,7 +12,8 @@ tiled_map = load_pygame('../levels/level1.tmx')
 
 
 ground_layer = tiled_map.get_layer_by_name('BlocksLayer')
-print(ground_layer.width, ground_layer.height)
+obj_layer = tiled_map.get_layer_by_name('GameObjects')
+pprint(dir(obj_layer[0]))
 offset = [0, 0]
 
 main_surf = pygame.Surface((BLOCK_SIZE * ground_layer.width,
@@ -21,7 +22,14 @@ for x, y, surf in ground_layer.tiles():
     main_surf.blit(pygame.transform.scale(surf, (BLOCK_SIZE, BLOCK_SIZE)),
                    (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
-pprint(ground_layer.data)
+for obj in obj_layer:
+    if obj.type == 'Decor':
+        width, height = obj.image.get_size()
+        main_surf.blit(pygame.transform.scale(obj.image,
+                                              (width * BLOCK_SIZE // 128, height * BLOCK_SIZE // 128)),
+                   (obj.x * BLOCK_SIZE // 128, obj.y * BLOCK_SIZE // 128))
+
+
 
 while True:
 

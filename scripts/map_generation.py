@@ -13,11 +13,11 @@ def gen_level(path: str) -> Level:
     for obj in obj_layer:
         if obj.type == 'Marker':
             if obj.name == 'Player':
-                start_pos = (obj.x * BLOCK_SIZE // 128, obj.y * BLOCK_SIZE // 128)
-    #     elif obj.type == 'Decor':
-    #         print(obj.name, obj.image)
-    #         decor.append(Decor(obj.x * BLOCK_SIZE // 128, obj.y * BLOCK_SIZE // 128, obj.image))
-    # print(start_pos)
+                start_pos = (round(obj.x * SCALE), round(obj.y * SCALE))
+        elif obj.type == 'Decor':
+            print(obj.name, obj.image)
+            decor.append(Decor(round(obj.x * SCALE), round(obj.y * SCALE), obj.image))
+    print(start_pos)
 
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
                               level_map.height * BLOCK_SIZE))
