@@ -9,12 +9,12 @@ tick = 0
 
 drawing = Drawing(display)
 
-level = gen_level('level1')
-level.moving_obj.append(MovingPlatform(1, 5, 4, 'hor', 450))
+level = gen_level('level2')
+
 
 while True:
     delta = clock.tick(FPS) * .001 * FPS
-    print(delta)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -34,7 +34,6 @@ while True:
     level.game_cycle(display, delta)
 
     pygame.display.update()
-
 
     tick += 1
     if not tick % FPS:

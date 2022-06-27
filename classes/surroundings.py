@@ -36,14 +36,6 @@ class Block:
                     entity.rect.top = self.rect.bottom
                     entity.collided_sides['top'] = True
 
-        elif entity.rect.colliderect(self.outer_rect):
-            if entity.rect.right >= self.outer_rect.left >= entity.prev_rect.right:
-                entity.collided_sides['right'] = True
-
-            # right side
-            elif entity.rect.left <= self.outer_rect.right <= entity.prev_rect.left:
-                entity.collided_sides['left'] = True
-
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
 
@@ -66,34 +58,26 @@ class MovableBlock(Block):
         pass
 
 
-class MovingPlatform:
+class MovingPlatform(Block):
 
-    def __init__(self, x, y, num_blocks, typ: str, dist, speed=5):
+    def __init__(self, x, y, width, height, typ: str, dist, speed=5):
         self.init_point = pygame.math.Vector2(x, y)
-        self.blocks: list[MovableBlock] = [MovableBlock(x + i, y) for i in range(num_blocks)]
-        self.dist = dist
+        self.surface = pygame.Surface((width, height))
+        self.surface.fill('blue')
+        self.rect = self.surface.get_rect(topleft=(x, y))
+        self.dist = dist * BLOCK_SIZE
         self.typ = typ
         self.movement = pygame.math.Vector2(0 if typ == 'vert' else speed,
                                             0 if typ == 'hor' else speed)
 
-    def collide(self, entity: Player):
-        for block in self.blocks:
-            block.collide(entity)
-
-    def draw(self, surface: pygame.Surface):
-        for block in self.blocks:
-            block.draw(surface)
-
     def move(self):
-        for block in self.blocks:
-            block.rect.move_ip(self.movement)
-            block.outer_rect.move_ip(self.movement)
 
-        if self.typ == 'hor' and self.blocks[0].rect.left <= self.init_point.x \
-                or self.blocks[1].rect.right >= self.init_point.x + self.dist:
+        self.rect.move_ip(self.movement)
+        if self.typ == 'hor' and (self.rect.left < self.init_point.x
+                or self.rect.left > self.init_point.x + self.dist):
             self.movement.x *= -1
-        elif self.typ == 'vert' and self.blocks[0].rect.top <= self.init_point.y \
-                    or self.blocks[-1].rect.bottom >= self.init_point.y + self.dist:
+        elif self.typ == 'vert' and (self.rect.top <= self.init_point.y
+                    or self.rect.bottom >= self.init_point.y + self.dist):
             self.movement.x *= -1
 
 class Decor:

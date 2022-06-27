@@ -8,9 +8,9 @@ pygame.display.set_caption('Tiled test')
 
 clock = pygame.time.Clock()
 
-tiled_map = load_pygame('../levels/level1.tmx')
+tiled_map = load_pygame('../levels/level2.tmx')
 
-
+print(tiled_map.layernames)
 ground_layer = tiled_map.get_layer_by_name('BlocksLayer')
 obj_layer = tiled_map.get_layer_by_name('GameObjects')
 pprint(dir(obj_layer[0]))

@@ -10,7 +10,7 @@ class Player:
            for i in ['left', 'right']}
     size = (90, 110)
 
-    jump_strength = 60
+    jump_strength = 50
     max_jump_cooldown = 30
     falling_momentum = 2.5
     friction = -.25
@@ -25,7 +25,7 @@ class Player:
         self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         self.angle = 0
         self.direction = 'left'
-        self.speed = 5
+        self.speed = 2
         self.jump_cooldown = 0
         self.is_jump = False
         self.air_time = 0
@@ -35,11 +35,11 @@ class Player:
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.acceleration.x -= .3
+            self.acceleration.x -= .25
             if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
                 self.angle = pi - self.angle
         if keys[pygame.K_d]:
-            self.acceleration.x += .3
+            self.acceleration.x += .25
             if pi / 2 <= self.angle <= 3 * pi / 2:
                 self.angle = (3 * pi - self.angle) % 360
 
@@ -96,11 +96,12 @@ class Player:
         if self.collided_sides['up']:
             self.velocity.y = 0
 
-        max_sliding_down = 3
+        max_sliding_down = 5
         if self.collided_sides['down']:
             max_sliding_down = 0
 
         if self.collided_sides['left']:
+
             max_sliding_down = .4
             self.velocity.x = max(0, self.velocity.x)
             self.acceleration.x = max(0, self.acceleration.x)
@@ -110,8 +111,9 @@ class Player:
             self.velocity.x = min(0, self.velocity.x)
             self.acceleration.x = min(0, self.acceleration.x)
 
-        self.velocity.y = min(self.velocity.y + self.falling_momentum * dt, max_sliding_down)
-
+        self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
+                                                    max_sliding_down), max_sliding_down)
+        print(self.collided_sides)
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 

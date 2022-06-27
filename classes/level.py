@@ -14,12 +14,13 @@ class Camera:
                             self.surf.get_height() - self.display_size.y)
         return self.offset.x, self.offset.y, self.display_size.x, self.display_size.y
 
+
 class Level:
 
     def __init__(self, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
                  surface: pygame.Surface, start_pos: tuple[int, int]):
         self.blocks = walls
-        self.moving_obj: list[MovingPlatform] = moving_obj
+        self.moving_obj = moving_obj
         self.decor = decor
         self.surf = surface
         self.surf.set_colorkey('yellow')
@@ -30,6 +31,7 @@ class Level:
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
         self.player.draw(self.surf)
+
         for obj in self.blocks + self.moving_obj + self.projectiles + self.decor:
             obj.draw(self.surf)
 
@@ -48,10 +50,10 @@ class Level:
         if dt <= 3:
             for entity in entities:
                 entity.vert_move(dt)
-                for wall in self.blocks:
+                for wall in self.blocks + self.moving_obj:
                     wall.collide(entity, 'h')
                 entity.hor_move(dt)
-                for wall in self.blocks:
+                for wall in self.blocks + self.moving_obj:
                     wall.collide(entity, 'v')
 
     def game_cycle(self, surface: pygame.Surface, dt):
