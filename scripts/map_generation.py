@@ -1,7 +1,7 @@
 from classes.level import *
 from pytmx.util_pygame import load_pygame
 
-# TODO create level borders to prevent player from falling
+
 def gen_level(path: str) -> Level:
     level_map = load_pygame(f'levels/{path}.tmx')
 

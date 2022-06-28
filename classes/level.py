@@ -55,8 +55,8 @@ class Level:
                 entity.hor_move(dt)
                 for wall in self.blocks + self.moving_obj:
                     wall.collide(entity, 'v')
-                entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width())
-                entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height())
+                entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
+                entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height()- self.player.rect.height)
 
     def game_cycle(self, surface: pygame.Surface, dt):
         self.draw(surface)
