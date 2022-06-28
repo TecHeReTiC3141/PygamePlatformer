@@ -10,7 +10,7 @@ class Player:
            for i in ['left', 'right']}
     size = (90, 110)
 
-    jump_strength = 50
+    jump_strength = 55
     max_jump_cooldown = 30
     falling_momentum = 2.5
     friction = -.25

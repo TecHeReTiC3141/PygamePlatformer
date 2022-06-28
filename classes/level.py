@@ -1,7 +1,7 @@
 from classes.surroundings import *
 
 class Camera:
-
+    # TODO implement changing of display_size with working resizing of surface
     def __init__(self, surf: pygame.Surface):
         self.surf = surf
         self.offset = pygame.math.Vector2(0, 0)
@@ -16,7 +16,7 @@ class Camera:
 
 
 class Level:
-
+    # TODO implement camera scrolling from top to bottom of the level at the beginning
     def __init__(self, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
                  surface: pygame.Surface, start_pos: tuple[int, int]):
         self.blocks = walls

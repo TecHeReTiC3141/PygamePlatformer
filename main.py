@@ -9,7 +9,7 @@ tick = 0
 
 drawing = Drawing(display)
 
-level = gen_level('level2')
+level = gen_level('level3')
 
 
 while True:

@@ -2,7 +2,6 @@ from classes.player import *
 
 
 class Block:
-
     movable = False
 
     def __init__(self, x, y, surface: pygame.Surface):
@@ -16,7 +15,7 @@ class Block:
 
         if entity.rect.colliderect(self.rect):
             if mode == 'v':
-            # left side
+                # left side
                 if entity.velocity.x > 0:
                     entity.rect.right = self.rect.left
                     entity.collided_sides['right'] = True
@@ -26,7 +25,7 @@ class Block:
                     entity.rect.left = self.rect.right
                     entity.collided_sides['left'] = True
             elif mode == 'h':
-            # top side
+                # top side
                 if entity.velocity.y > 0:
                     entity.rect.bottom = self.rect.top
                     entity.collided_sides['down'] = True
@@ -38,24 +37,6 @@ class Block:
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
-
-class MovableBlock(Block):
-
-    movable = True
-
-    def __init__(self, x, y):
-        surf = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
-        super().__init__(x, y, surf)
-        self.weight = randint(1, 5)
-        self.collided_size = {i: None for i in directions}
-        self.surface.fill('green')
-
-    def draw(self, surface: pygame.Surface):
-        self.surface.fill('green')
-        surface.blit(self.surface, self.rect)
-
-    def check_walls(self, walls: list[Block]):
-        pass
 
 
 class MovingPlatform(Block):
@@ -74,11 +55,30 @@ class MovingPlatform(Block):
 
         self.rect.move_ip(self.movement)
         if self.typ == 'hor' and (self.rect.left < self.init_point.x
-                or self.rect.left > self.init_point.x + self.dist):
-            self.movement.x *= -1
-        elif self.typ == 'vert' and (self.rect.top <= self.init_point.y
-                    or self.rect.bottom >= self.init_point.y + self.dist):
-            self.movement.x *= -1
+                                  or self.rect.left > self.init_point.x + self.dist):
+            self.movement *= -1
+        elif self.typ == 'vert' and (self.rect.top < self.init_point.y
+                                     or self.rect.top > self.init_point.y + self.dist):
+            self.movement *= -1
+
+
+class MovableBlock(Block):
+    movable = True
+
+    def __init__(self, x, y):
+        surf = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
+        super().__init__(x, y, surf)
+        self.weight = randint(1, 5)
+        self.collided_size = {i: None for i in directions}
+        self.surface.fill('green')
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('green')
+        surface.blit(self.surface, self.rect)
+
+    def check_walls(self, walls: list[Block]):
+        pass
+
 
 class Decor:
 
@@ -90,6 +90,3 @@ class Decor:
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
-
-
-
