@@ -19,11 +19,12 @@ def gen_level(path: str) -> Level:
                 start_pos = (round(obj.x * SCALE), round(obj.y * SCALE))
 
         elif obj.type == 'Decor':
-            decor.append(Decor(round(obj.x * SCALE), round(obj.y * SCALE), obj.image))
+            decor.append(Decor(round(obj.x * SCALE), round(obj.y * SCALE),
+                               pygame.transform.scale(obj.image, (obj.width, obj.height))))
 
         elif obj.type == 'MovingPlatform':
-            moving_objs.append(MovingPlatform(obj.x * SCALE, obj.y * SCALE, obj.width * SCALE, obj.height * SCALE,
-                                              obj.typ, obj.dist, obj.speed))
+            moving_objs.append(MovingPlatform(obj.x * SCALE, obj.y * SCALE, obj.width * SCALE,
+                                              obj.height * SCALE, obj.typ, obj.dist, obj.speed))
 
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
                               level_map.height * BLOCK_SIZE))

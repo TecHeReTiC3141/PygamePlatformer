@@ -84,8 +84,8 @@ class Decor:
 
     def __init__(self, x, y, surface: pygame.Surface):
         width, height = surface.get_size()
-        self.surface = pygame.transform.scale(surface.convert_alpha(),
-                                              (width * SCALE, height * SCALE))
+        self.surface = pygame.transform.scale(surface,
+                                              (width * SCALE, height * SCALE)).convert_alpha()
         self.rect = surface.get_rect(topleft=(x, y))
 
     def draw(self, surface: pygame.Surface):

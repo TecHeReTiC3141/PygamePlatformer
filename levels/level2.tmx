@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="55" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="9">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="55" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="13">
+ <properties>
+  <property name="num" type="int" value="2"/>
+ </properties>
  <tileset firstgid="1" source="tilesets/test_tileset.tsx"/>
  <tileset firstgid="300" source="tilesets/gameObjs.tsx"/>
  <layer id="1" name="BlocksLayer" width="55" height="25">
@@ -42,6 +45,9 @@
     <property name="typ" value="hor"/>
    </properties>
   </object>
-  <object id="5" gid="300" x="6560" y="2432" width="70" height="110"/>
+  <object id="9" gid="300" x="6631" y="2433.67" width="202" height="324.667"/>
+  <object id="10" name="MushRoom" type="Decor" gid="302" x="1597.61" y="2598.79" width="126" height="160"/>
+  <object id="11" name="MushRoom" type="Decor" gid="302" x="1349" y="1332" width="160" height="140"/>
+  <object id="12" name="MushRoom" type="Decor" gid="302" x="2766" y="820" width="163" height="165.5"/>
  </objectgroup>
 </map>

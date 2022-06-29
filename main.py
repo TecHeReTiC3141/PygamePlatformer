@@ -9,25 +9,11 @@ tick = 0
 
 drawing = Drawing(display)
 
-level = gen_level('level3')
+level = gen_level('level2')
 
 
 while True:
     delta = clock.tick(FPS) * .001 * FPS
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                level.player.jump()
-
-            elif event.key == pygame.K_e:
-                level.projectiles.append(level.player.shoot())
-
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            pass
 
     drawing.background()
 

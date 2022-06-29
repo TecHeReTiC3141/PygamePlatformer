@@ -16,7 +16,7 @@ class Camera:
 
 
 class Level:
-    # TODO implement camera scrolling from top to bottom of the level at the beginning
+    # TODO implement camera scrolling from top to bottom of the self at the beginning
     def __init__(self, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
                  surface: pygame.Surface, start_pos: tuple[int, int]):
         self.blocks = walls
@@ -34,8 +34,10 @@ class Level:
 
         for obj in self.blocks + self.moving_obj + self.projectiles + self.decor:
             obj.draw(self.surf)
-
-        surface.blit(self.surf, (0, 0), self.camera.scroll(self.player))
+        camera_surf = pygame.Surface(self.camera.display_size)
+        camera_surf.set_colorkey('yellow')
+        camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
+        surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
 
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
@@ -59,6 +61,26 @@ class Level:
                 entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height()- self.player.rect.height)
 
     def game_cycle(self, surface: pygame.Surface, dt):
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.player.jump()
+
+                elif event.key == pygame.K_e:
+                    self.projectiles.append(self.player.shoot())
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
+                    self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
+                elif event.button == 5:
+                    self.camera.display_size.x = max(self.camera.display_size.x - 100, DISP_WIDTH - 500)
+                    self.camera.display_size.y = max(self.camera.display_size.y - 100, DISP_HEIGHT - 500)
+
         self.draw(surface)
         surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
                      (30, 30))

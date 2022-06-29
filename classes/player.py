@@ -71,7 +71,7 @@ class Player:
             self.angle = 2 * pi - self.angle
 
     def update(self, dt):
-        print(self.velocity, self.acceleration)
+        # print(self.velocity, self.acceleration)
         self.prev_rect = self.rect.copy()
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
@@ -113,7 +113,7 @@ class Player:
 
         self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
                                                     max_sliding_down), max_sliding_down)
-        print(self.collided_sides)
+        # print(self.collided_sides)
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 

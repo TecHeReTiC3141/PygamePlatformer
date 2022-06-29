@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="30" height="55" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="4">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="30" height="55" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="5">
+ <properties>
+  <property name="num" type="int" value="3"/>
+ </properties>
  <tileset firstgid="1" source="tilesets/test_tileset.tsx"/>
+ <tileset firstgid="300" source="tilesets/gameObjs.tsx"/>
  <layer id="1" name="BlocksLayer" width="30" height="55">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -71,5 +75,6 @@
     <property name="typ" value="vert"/>
    </properties>
   </object>
+  <object id="4" gid="300" x="3485.67" y="769" width="202" height="324.667"/>
  </objectgroup>
 </map>
