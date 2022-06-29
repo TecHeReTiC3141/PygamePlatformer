@@ -111,15 +111,25 @@ class LevelEnd(GameObject):
         self.active_zone = pygame.Rect(self.rect.x - self.rect.width,
                                        self.rect.y - self.rect.height,
                                        self.rect.width * 2, self.rect.height * 2)
-        self.active = False
+        self.active = 0
 
     def update(self, player: Player) -> bool:
-        self.active = 0
+
+
         if player.rect.colliderect(self.active_zone):
             print('active')
+            if not self.active:
+                self.surface = pygame.image.load(self.sprites[1]).convert_alpha()
+                self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
+                                                                     self.surface.get_height() * SCALE))
             self.active = 1
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_o:
                     return True
+        elif self.active:
+            self.active = 0
+            self.surface = pygame.image.load(self.sprites[0]).convert_alpha()
+            self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
+                                                                 self.surface.get_height() * SCALE))
         return False
 
