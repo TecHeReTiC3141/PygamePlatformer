@@ -9,7 +9,7 @@ tick = 0
 
 drawing = Drawing(display)
 
-level = gen_level('level2')
+level = gen_level(1)
 
 
 while True:
@@ -17,7 +17,9 @@ while True:
 
     drawing.background()
 
-    level.game_cycle(display, delta)
+    end_level = level.game_cycle(display, delta)
+    if end_level:
+        level = gen_level(level.num + 1)
 
     pygame.display.update()
 

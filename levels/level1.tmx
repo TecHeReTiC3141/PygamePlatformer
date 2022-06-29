@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="16">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="22">
  <properties>
   <property name="num" type="int" value="1"/>
  </properties>
@@ -35,9 +35,9 @@
   </object>
   <object id="6" name="MushRoom" type="Decor" gid="302" x="1608" y="1848" width="113.333" height="170.667"/>
   <object id="7" name="MushRoom" type="Decor" gid="302" x="2236.83" y="1844.33" width="184" height="152"/>
-  <object id="8" name="MushRoom" type="Decor" gid="302" x="4326" y="1714.67" width="126" height="160"/>
+  <object id="8" template="patterns/MushRoom.tx" x="4326" y="1714.67"/>
   <object id="11" name="MushRoom" type="Decor" gid="302" x="1727.5" y="674.167" width="101" height="112.5"/>
   <object id="13" name="MushRoom" type="Decor" gid="302" x="1426" y="666.25" width="73.25" height="78.5"/>
-  <object id="15" gid="300" x="4671.73" y="1664.94" width="202" height="324.667"/>
+  <object id="20" name="LevelEnd" type="LevelEnd" gid="300" x="4571" y="1665" width="310" height="520"/>
  </objectgroup>
 </map>

@@ -79,14 +79,45 @@ class MovableBlock(Block):
     def check_walls(self, walls: list[Block]):
         pass
 
+class GameObject:
 
-class Decor:
+    sprites: dict[int, pygame.Surface] = {}
 
-    def __init__(self, x, y, surface: pygame.Surface):
-        width, height = surface.get_size()
-        self.surface = pygame.transform.scale(surface,
-                                              (width * SCALE, height * SCALE)).convert_alpha()
-        self.rect = surface.get_rect(topleft=(x, y))
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
+        self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.rect = self.surface.get_rect(topleft=(x, y))
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
+
+class Decor(GameObject):
+    pass
+
+
+class Text(Decor):
+    pass
+
+
+class LevelEnd(GameObject):
+
+    sprites = {0: 'resources/images/surrounding/door_closed.png',
+               1: 'resources/images/surrounding/door_open.png'}
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.active_zone = pygame.Rect(self.rect.x - self.rect.width,
+                                       self.rect.y - self.rect.height,
+                                       self.rect.width * 2, self.rect.height * 2)
+        self.active = False
+
+    def update(self, player: Player) -> bool:
+        self.active = 0
+        if player.rect.colliderect(self.active_zone):
+            print('active')
+            self.active = 1
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_o:
+                    return True
+        return False
+

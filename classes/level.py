@@ -17,8 +17,9 @@ class Camera:
 
 class Level:
     # TODO implement camera scrolling from top to bottom of the self at the beginning
-    def __init__(self, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
-                 surface: pygame.Surface, start_pos: tuple[int, int]):
+    def __init__(self, num, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
+                 surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
+        self.num = num
         self.blocks = walls
         self.moving_obj = moving_obj
         self.decor = decor
@@ -27,14 +28,19 @@ class Level:
         self.camera = Camera(surface)
         self.projectiles: list[Projectile] = []
         self.player = Player(*start_pos)
+        self.level_end = end_level
 
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
-        self.player.draw(self.surf)
+
 
         for obj in self.blocks + self.moving_obj + self.projectiles + self.decor:
             obj.draw(self.surf)
+
+        self.level_end.draw(self.surf)
+        self.player.draw(self.surf)
         camera_surf = pygame.Surface(self.camera.display_size)
+        camera_surf.fill('yellow')
         camera_surf.set_colorkey('yellow')
         camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
@@ -60,7 +66,7 @@ class Level:
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
                 entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height()- self.player.rect.height)
 
-    def game_cycle(self, surface: pygame.Surface, dt):
+    def game_cycle(self, surface: pygame.Surface, dt) -> bool:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,7 +96,12 @@ class Level:
         self.player.update(dt)
 
         self.clear()
+        return self.level_end.update(self.player)
 
     def clear(self):
         self.projectiles = list(filter(lambda i: not i.collided,
                                        self.projectiles))
+
+
+
+

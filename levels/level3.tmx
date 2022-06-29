@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="30" height="55" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="5">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="30" height="55" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="9">
  <properties>
   <property name="num" type="int" value="3"/>
  </properties>
@@ -75,6 +75,9 @@
     <property name="typ" value="vert"/>
    </properties>
   </object>
-  <object id="4" gid="300" x="3485.67" y="769" width="202" height="324.667"/>
+  <object id="7" type="Text" x="829.167" y="5618.83" width="297.667" height="174.333">
+   <text fontfamily="Cambria" pixelsize="35" wrap="1" color="#fffaf6" halign="center" valign="center">Добро пожаловать на уровень 3</text>
+  </object>
+  <object id="8" name="LevelEnd" type="LevelEnd" gid="300" x="3419" y="768" width="310" height="520"/>
  </objectgroup>
 </map>
