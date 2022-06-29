@@ -32,6 +32,7 @@ class Player:
 
         self.collided_sides = {i: False for i in directions}
 
+    # TODO Fix bug connected with hor_moving
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -46,7 +47,7 @@ class Player:
         self.acceleration.x += self.velocity.x * self.friction
         self.velocity.x += self.acceleration.x * dt
         self.cap_hor_speed()
-        self.rect.x += int(self.velocity.x * dt + .5 * self.acceleration.x * dt ** 2)
+        self.rect.x += round(self.velocity.x * dt + .5 * self.acceleration.x * dt ** 2)
 
         self.angle %= pi * 2
 
@@ -85,12 +86,12 @@ class Player:
             self.is_jump = False
             self.air_time = 0
 
-        if self.is_jump:
+        else:
             self.air_time += 1
 
         self.velocity.x = 0
         if self.acceleration.x > 0:
-            self.acceleration.x = max(self.acceleration.x - .15, 0)
+           self.acceleration.x = max(self.acceleration.x - .15, 0)
         else:
             self.acceleration.x = min(self.acceleration.x + .15, 0)
         if self.collided_sides['up']:
@@ -103,17 +104,16 @@ class Player:
         if self.collided_sides['left']:
 
             max_sliding_down = .4
-            self.velocity.x = max(0, self.velocity.x)
             self.acceleration.x = max(0, self.acceleration.x)
 
         if self.collided_sides['right']:
             max_sliding_down = .4
-            self.velocity.x = min(0, self.velocity.x)
             self.acceleration.x = min(0, self.acceleration.x)
 
         self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
                                                     max_sliding_down), max_sliding_down)
-        # print(self.collided_sides)
+
+        print(self.collided_sides)
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
@@ -121,6 +121,7 @@ class Player:
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
+            print(self.air_time)
             self.jump_cooldown = self.max_jump_cooldown
             if self.collided_sides['left']:
                 self.velocity.y = -self.jump_strength // 2

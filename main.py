@@ -11,7 +11,6 @@ drawing = Drawing(display)
 
 level = gen_level(1)
 
-
 while True:
     delta = clock.tick(FPS) * .001 * FPS
 

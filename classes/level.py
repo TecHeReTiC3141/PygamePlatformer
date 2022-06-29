@@ -88,11 +88,20 @@ class Level:
                     self.camera.display_size.y = max(self.camera.display_size.y - 100, DISP_HEIGHT - 500)
 
         self.draw(surface)
-        surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
-                     (30, 30))
+
 
         self.player.get_angle(self.camera.offset)
         self.physics([self.player], dt)
+        surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
+                     (30, 30))
+        surface.blit(info_font.render(f'({round(self.player.velocity.x, 2)}, {round(self.player.velocity.y, 2)})',
+                                      True, 'black'),
+                     (30, 80))
+        surface.blit(info_font.render(f'({round(self.player.acceleration.x, 2)},{round(self.player.acceleration.y, 2)})'
+                                      , True, 'black'),
+                     (30, 130))
+        surface.blit(info_font.render(f'{self.player.air_time}', True, 'black'),
+                     (30, 180))
         self.player.update(dt)
 
         self.clear()
@@ -101,7 +110,3 @@ class Level:
     def clear(self):
         self.projectiles = list(filter(lambda i: not i.collided,
                                        self.projectiles))
-
-
-
-

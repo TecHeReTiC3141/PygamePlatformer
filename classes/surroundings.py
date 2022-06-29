@@ -24,6 +24,7 @@ class Block:
                 elif entity.velocity.x < 0:
                     entity.rect.left = self.rect.right
                     entity.collided_sides['left'] = True
+
             elif mode == 'h':
                 # top side
                 if entity.velocity.y > 0:
@@ -34,6 +35,7 @@ class Block:
                 elif entity.velocity.y < 0:
                     entity.rect.top = self.rect.bottom
                     entity.collided_sides['top'] = True
+
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
@@ -100,7 +102,7 @@ class Text(Decor):
 
 
 class LevelEnd(GameObject):
-
+    # TODO improve appearance
     sprites = {0: 'resources/images/surrounding/door_closed.png',
                1: 'resources/images/surrounding/door_open.png'}
 
