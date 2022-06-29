@@ -102,7 +102,7 @@ class Text(Decor):
 
 
 class LevelEnd(GameObject):
-    # TODO improve appearance
+
     sprites = {0: 'resources/images/surrounding/door_closed.png',
                1: 'resources/images/surrounding/door_open.png'}
 

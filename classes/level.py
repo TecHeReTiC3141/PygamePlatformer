@@ -67,7 +67,7 @@ class Level:
                 entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height()- self.player.rect.height)
 
     def game_cycle(self, surface: pygame.Surface, dt) -> bool:
-
+        self.draw(surface)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -81,14 +81,23 @@ class Level:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:
-                    self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
-                    self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
+                    if self.surf.get_width() <= self.surf.get_height():
+                        self.camera.display_size.x = max(self.camera.display_size.x - 100, DISP_WIDTH - 500)
+                        self.camera.display_size.y = max(self.camera.display_size.x / ASPECT_RATIO,
+                                                         DISP_HEIGHT - 500 / ASPECT_RATIO)
+                    else:
+                        self.camera.display_size.y = max(self.camera.display_size.y - 100,
+                                                         DISP_HEIGHT - 500 / ASPECT_RATIO)
+                        self.camera.display_size.x = max(self.camera.display_size.y * ASPECT_RATIO,
+                                                         DISP_WIDTH - 500)
                 elif event.button == 5:
-                    self.camera.display_size.x = max(self.camera.display_size.x - 100, DISP_WIDTH - 500)
-                    self.camera.display_size.y = max(self.camera.display_size.y - 100, DISP_HEIGHT - 500)
-
-        self.draw(surface)
-
+                    if self.surf.get_width() <= self.surf.get_height():
+                        self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
+                        self.camera.display_size.y = min(self.camera.display_size.x / ASPECT_RATIO, self.surf.get_height())
+                    else:
+                        self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
+                        self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
+                                                         self.surf.get_width())
 
         self.player.get_angle(self.camera.offset)
         self.physics([self.player], dt)
@@ -100,7 +109,7 @@ class Level:
         surface.blit(info_font.render(f'({round(self.player.acceleration.x, 2)},{round(self.player.acceleration.y, 2)})'
                                       , True, 'black'),
                      (30, 130))
-        surface.blit(info_font.render(f'{self.player.air_time}', True, 'black'),
+        surface.blit(info_font.render(f'{self.camera.scroll(self.player)}', True, 'black'),
                      (30, 180))
         self.player.update(dt)
 

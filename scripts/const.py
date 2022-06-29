@@ -5,6 +5,7 @@ from math import *
 pygame.init()
 
 DISP_WIDTH, DISP_HEIGHT = 1080, 720
+ASPECT_RATIO = DISP_WIDTH / DISP_HEIGHT
 FPS = 60
 
 BLOCK_SIZE = 64
