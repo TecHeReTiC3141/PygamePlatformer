@@ -33,7 +33,7 @@ class Camera:
 class Level:
     possible_states = ['scrolling', 'game']
 
-    # TODO implement camera scrolling from top to bottom of the self at the beginning
+    # TODO add dying (falling down out the screen) and checkpoints
     def __init__(self, num, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
                  surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num

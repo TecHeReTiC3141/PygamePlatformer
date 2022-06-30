@@ -130,3 +130,4 @@ class LevelEnd(GameObject):
             self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
                                                                  self.surface.get_height() * SCALE))
 
+# TODO add coins as scores

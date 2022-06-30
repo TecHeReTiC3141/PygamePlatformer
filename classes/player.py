@@ -3,7 +3,7 @@ import pygame.sprite
 from scripts.const import *
 from classes.weapons import *
 
-
+# TODO add player score, lives
 class Player:
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
