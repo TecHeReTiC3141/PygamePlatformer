@@ -91,9 +91,9 @@ class Player:
 
         self.velocity.x = 0
         if self.acceleration.x > 0:
-           self.acceleration.x = max(self.acceleration.x - .15, 0)
+           self.acceleration.x = max(self.acceleration.x - .2, 0)
         else:
-            self.acceleration.x = min(self.acceleration.x + .15, 0)
+            self.acceleration.x = min(self.acceleration.x + .2, 0)
         if self.collided_sides['up']:
             self.velocity.y = 0
 
