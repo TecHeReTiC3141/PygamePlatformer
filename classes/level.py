@@ -44,7 +44,9 @@ class Level:
         self.surf.set_colorkey('yellow')
         self.camera = Camera(surface)
         self.projectiles: list[Projectile] = []
+
         self.player = Player(*start_pos)
+        self.last_checkpoint = start_pos
         self.level_end = end_level
 
         self.state = 'scrolling'
@@ -88,7 +90,6 @@ class Level:
                 for wall in self.blocks + self.moving_obj:
                     wall.collide(entity, 'v')
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
-                entity.rect.y = min(max(entity.rect.y, 0), self.surf.get_height() - self.player.rect.height)
 
     def game_cycle(self, surface: pygame.Surface, dt) -> bool:
         self.draw(surface)
@@ -146,6 +147,9 @@ class Level:
 
         self.player.get_angle(self.camera.offset)
         self.physics([self.player], dt)
+        if self.player.rect.y >= self.surf.get_height():
+            self.player.lives -= 1
+            self.player.rect.center = self.last_checkpoint
         # surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
         #              (30, 30))
         # surface.blit(info_font.render(f'({round(self.player.velocity.x, 2)}, {round(self.player.velocity.y, 2)})',
@@ -159,8 +163,9 @@ class Level:
         self.player.update(dt)
 
         self.clear()
-        self.level_end.update(self.player)
+        self.level_end.interact(self.player)
 
     def clear(self):
         self.projectiles = list(filter(lambda i: not i.collided,
                                        self.projectiles))
+

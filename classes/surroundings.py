@@ -84,6 +84,7 @@ class MovableBlock(Block):
 class GameObject:
 
     sprites: dict[int, pygame.Surface] = {}
+    alive = True
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
@@ -93,12 +94,26 @@ class GameObject:
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
 
+    def interact(self, *args):
+        pass
+
 class Decor(GameObject):
     pass
 
 
-class Text(Decor):
-    pass
+class Animated(GameObject):
+
+    frames_per_sprite = 4
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.frame_count = 0
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
+        self.frame_count += 1
+        self.frame_count %= self.frames_per_sprite * len(self.sprites)
+
 
 
 class LevelEnd(GameObject):
@@ -109,11 +124,11 @@ class LevelEnd(GameObject):
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         super().__init__(x, y, width, height, surface)
         self.active_zone = pygame.Rect(self.rect.x - self.rect.width,
-                                       self.rect.y - self.rect.height,
-                                       self.rect.width * 2, self.rect.height * 2)
+                                       self.rect.y,
+                                       self.rect.width * 3, self.rect.height)
         self.active = 0
 
-    def update(self, player: Player):
+    def interact(self, player: Player):
 
 
         if player.rect.colliderect(self.active_zone):
@@ -131,3 +146,15 @@ class LevelEnd(GameObject):
                                                                  self.surface.get_height() * SCALE))
 
 # TODO add coins as scores
+class Coin(Animated):
+
+    sprites = {i: pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha()
+               for i in range(7)}
+
+    value = 50
+
+    def interact(self, player: Player):
+        if player.rect.colliderect(self.rect):
+            player.score += self.value
+            self.value = 0
+            self.alive = False

@@ -3,7 +3,7 @@ import pygame.sprite
 from scripts.const import *
 from classes.weapons import *
 
-# TODO add player score, lives
+
 class Player:
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
@@ -32,7 +32,9 @@ class Player:
 
         self.collided_sides = {i: False for i in directions}
 
-    # TODO Fix bug connected with hor_moving
+        self.score = 0
+        self.lives = 3
+
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
