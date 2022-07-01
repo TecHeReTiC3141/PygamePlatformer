@@ -38,7 +38,7 @@ class Level:
                  surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
-        self.moving_obj = moving_obj
+        self.game_objects = moving_obj
         self.decor = decor
         self.surf = surface
         self.surf.set_colorkey('yellow')
@@ -54,7 +54,7 @@ class Level:
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
 
-        for obj in self.blocks + self.moving_obj + self.projectiles + self.decor:
+        for obj in self.blocks + self.game_objects + self.projectiles + self.decor:
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -71,7 +71,7 @@ class Level:
 
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
-        for plat in self.moving_obj:
+        for plat in self.game_objects:
             plat.move()
 
         for proj in self.projectiles:
@@ -83,11 +83,11 @@ class Level:
             for entity in entities:
                 if self.state == 'game':
                     entity.vert_move(dt)
-                for wall in self.blocks + self.moving_obj:
+                for wall in self.blocks + self.game_objects:
                     wall.collide(entity, 'h')
                 if self.state == 'game':
                     entity.hor_move(dt)
-                for wall in self.blocks + self.moving_obj:
+                for wall in self.blocks + self.game_objects:
                     wall.collide(entity, 'v')
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
 
@@ -144,8 +144,8 @@ class Level:
                             self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
                             self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                              self.surf.get_width())
-
         self.player.get_angle(self.camera.offset)
+
         self.physics([self.player], dt)
         if self.player.rect.y >= self.surf.get_height():
             self.player.lives -= 1

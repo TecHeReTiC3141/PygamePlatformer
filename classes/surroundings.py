@@ -11,7 +11,7 @@ class Block:
         self.outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
                                       self.rect.width + 6, self.rect.height)
 
-    def collide(self, entity: Player, mode: str):
+    def collide(self, entity: Player, mode: str) -> str:
 
         if entity.rect.colliderect(self.rect):
             if mode == 'v':
@@ -19,29 +19,86 @@ class Block:
                 if entity.velocity.x > 0:
                     entity.rect.right = self.rect.left
                     entity.collided_sides['right'] = True
+                    return 'right'
 
                 # right side
                 elif entity.velocity.x < 0:
                     entity.rect.left = self.rect.right
                     entity.collided_sides['left'] = True
+                    return 'left'
 
             elif mode == 'h':
                 # top side
                 if entity.velocity.y > 0:
                     entity.rect.bottom = self.rect.top
                     entity.collided_sides['down'] = True
+                    return 'down'
 
                 # bottom side
                 elif entity.velocity.y < 0:
                     entity.rect.top = self.rect.bottom
                     entity.collided_sides['top'] = True
-
+                    return 'top'
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
 
 
-class MovingPlatform(Block):
+class MovableBlock(Block):
+    movable = True
+
+    def __init__(self, x, y):
+        surf = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
+        super().__init__(x, y, surf)
+        self.weight = randint(1, 5)
+        self.collided_size = {i: None for i in directions}
+        self.surface.fill('green')
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('green')
+        surface.blit(self.surface, self.rect)
+
+    def check_walls(self, walls: list[Block]):
+        pass
+
+
+class GameObject:
+    sprites: dict[int, pygame.Surface] = {}
+    alive = True
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
+        self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.rect = self.surface.get_rect(topleft=(x, y))
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.surface, self.rect)
+
+    def interact(self, player: Player):
+        pass
+
+    def update(self):
+        pass
+
+
+class Decor(GameObject):
+    pass
+
+
+class Animated(GameObject):
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
+        self.frame_count += 1
+        self.frame_count %= self.frames_per_sprite * len(self.sprites)
+    frames_per_sprite = 4
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.frame_count = 0
+
+# TODO fix moving platforms
+class MovingPlatform(Block, GameObject):
 
     def __init__(self, x, y, width, height, typ: str, dist, speed=5):
         self.init_point = pygame.math.Vector2(x, y)
@@ -63,61 +120,16 @@ class MovingPlatform(Block):
                                      or self.rect.top > self.init_point.y + self.dist):
             self.movement *= -1
 
+    def interact(self, player: Player):
+        side = self.collide(player, 'h')
+        if side == 'down' and self.typ == 'hor':
+            player.rect.x += self.movement.x
 
-class MovableBlock(Block):
-    movable = True
-
-    def __init__(self, x, y):
-        surf = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
-        super().__init__(x, y, surf)
-        self.weight = randint(1, 5)
-        self.collided_size = {i: None for i in directions}
-        self.surface.fill('green')
-
-    def draw(self, surface: pygame.Surface):
-        self.surface.fill('green')
-        surface.blit(self.surface, self.rect)
-
-    def check_walls(self, walls: list[Block]):
-        pass
-
-class GameObject:
-
-    sprites: dict[int, pygame.Surface] = {}
-    alive = True
-
-    def __init__(self, x, y, width, height, surface: pygame.Surface):
-        x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
-        self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
-        self.rect = self.surface.get_rect(topleft=(x, y))
-
-    def draw(self, surface: pygame.Surface):
-        surface.blit(self.surface, self.rect)
-
-    def interact(self, *args):
-        pass
-
-class Decor(GameObject):
-    pass
-
-
-class Animated(GameObject):
-
-    frames_per_sprite = 4
-
-    def __init__(self, x, y, width, height, surface: pygame.Surface):
-        super().__init__(x, y, width, height, surface)
-        self.frame_count = 0
-
-    def draw(self, surface: pygame.Surface):
-        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
-        self.frame_count += 1
-        self.frame_count %= self.frames_per_sprite * len(self.sprites)
-
+    def update(self):
+        self.move()
 
 
 class LevelEnd(GameObject):
-
     sprites = {0: 'resources/images/surrounding/door_closed.png',
                1: 'resources/images/surrounding/door_open.png'}
 
@@ -129,7 +141,6 @@ class LevelEnd(GameObject):
         self.active = 0
 
     def interact(self, player: Player):
-
 
         if player.rect.colliderect(self.active_zone):
             print('active')
@@ -145,9 +156,9 @@ class LevelEnd(GameObject):
             self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
                                                                  self.surface.get_height() * SCALE))
 
+
 # TODO add coins as scores
 class Coin(Animated):
-
     sprites = {i: pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha()
                for i in range(7)}
 
