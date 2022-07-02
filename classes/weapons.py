@@ -10,7 +10,7 @@ class Projectile:
         self.surf.set_colorkey('black')
         self.rect = self.surf.get_rect(topleft=(x, y))
         self.vector = movement_vector
-        self.collided = False
+        self.alive = True
 
     def move(self):
         self.rect.move_ip(self.vector * self.speed)
@@ -20,6 +20,11 @@ class Projectile:
                            (self.rect.width // 2, self.rect.height // 2), self.rect.width // 2)
         surface.blit(self.surf, self.rect)
 
-    def collide(self, entity):
+    def update(self):
+
+        self.move()
+
+    def interact(self, entity):
         if self.rect.colliderect(entity.rect):
-            self.collided = True
+            self.alive = False
+

@@ -11,7 +11,8 @@ def gen_level(num: int) -> Level:
 
     start_pos = (0, 0)
     decor: list[Decor] = []
-    game_objs: list[GameObject] = []
+    obstacles: list[Obstacle] = []
+    collectable: list[Collectable] = []
 
     level_end: LevelEnd = None
     # Loading objects
@@ -25,11 +26,11 @@ def gen_level(num: int) -> Level:
             decor.append(Decor(obj.x, obj.y,obj.width, obj.height, obj.image,))
 
         elif obj.type == 'Money':
-            game_objs.append(Coin(obj.x, obj.y, obj.width, obj.height, obj.image))
+            collectable.append(Coin(obj.x, obj.y, obj.width, obj.height, obj.image))
 
         elif obj.type == 'MovingPlatform':
-            game_objs.append(MovingPlatform(obj.x * SCALE, obj.y * SCALE, obj.width * SCALE,
-                                              obj.height * SCALE, obj.typ, obj.dist, obj.speed))
+            obstacles.append(MovingPlatform(obj.x, obj.y, obj.width,
+                                              obj.height, obj.typ, obj.dist, obj.speed))
 
         elif obj.type == 'LevelEnd':
             level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image)
@@ -44,5 +45,6 @@ def gen_level(num: int) -> Level:
     for x, y, surf in blocks.tiles():
         walls.append(Block(x, y, surf))
 
-    level = Level(num, walls, game_objs, decor, surface, start_pos, level_end)
+    level = Level(num, walls, obstacles, collectable,
+                  decor, surface, start_pos, level_end)
     return level

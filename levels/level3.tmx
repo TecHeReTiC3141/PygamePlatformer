@@ -83,7 +83,7 @@
    <properties>
     <property name="dist" type="int" value="8"/>
     <property name="speed" type="int" value="5"/>
-    <property name="typ" value="hor"/>
+    <property name="typ" value="vert"/>
    </properties>
   </object>
   <object id="16" name="Money" type="Money" gid="303" x="4118" y="5971" width="140" height="138"/>

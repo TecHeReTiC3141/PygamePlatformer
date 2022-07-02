@@ -74,7 +74,7 @@ class GameObject:
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
 
-    def interact(self, player: Player):
+    def interact(self, *args):
         pass
 
     def update(self):
@@ -85,33 +85,43 @@ class Decor(GameObject):
     pass
 
 
-class Animated(GameObject):
+class Obstacle(GameObject, Block):
+    pass
 
-    def draw(self, surface: pygame.Surface):
-        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
-        self.frame_count += 1
-        self.frame_count %= self.frames_per_sprite * len(self.sprites)
+
+class Collectable(GameObject):
+    pass
+
+
+class Animated(GameObject):
     frames_per_sprite = 4
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         super().__init__(x, y, width, height, surface)
         self.frame_count = 0
 
-# TODO fix moving platforms
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
+        self.frame_count += 1
+        self.frame_count %= self.frames_per_sprite * len(self.sprites)
+
+
 class MovingPlatform(Block, GameObject):
 
     def __init__(self, x, y, width, height, typ: str, dist, speed=5):
-        self.init_point = pygame.math.Vector2(x, y)
-        self.surface = pygame.Surface((width, height))
+        self.init_point = pygame.math.Vector2(x * SCALE, y * SCALE)
+
+        surface = pygame.Surface((width, height))
+        GameObject.__init__(self, x, y, width, height, surface)
+
         self.surface.fill('blue')
-        self.rect = self.surface.get_rect(topleft=(x, y))
+
         self.dist = dist * BLOCK_SIZE
         self.typ = typ
         self.movement = pygame.math.Vector2(0 if typ == 'vert' else speed,
                                             0 if typ == 'hor' else speed)
 
     def move(self):
-
         self.rect.move_ip(self.movement)
         if self.typ == 'hor' and (self.rect.left < self.init_point.x
                                   or self.rect.left > self.init_point.x + self.dist):
@@ -157,12 +167,19 @@ class LevelEnd(GameObject):
                                                                  self.surface.get_height() * SCALE))
 
 
-# TODO add coins as scores
-class Coin(Animated):
-    sprites = {i: pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha()
-               for i in range(7)}
+class Coin(Animated, Collectable):
+    sprite_size = (70, 69)
+    sprites: dict[int, pygame.Surface] = {
+        i: pygame.transform.scale(
+            pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha(),
+            sprite_size)
+        for i in range(7)}
 
     value = 50
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.frame_count = 0
 
     def interact(self, player: Player):
         if player.rect.colliderect(self.rect):

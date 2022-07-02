@@ -33,12 +33,12 @@ class Camera:
 class Level:
     possible_states = ['scrolling', 'game']
 
-    # TODO add dying (falling down out the screen) and checkpoints
-    def __init__(self, num, walls: list[Block], moving_obj: list[MovingPlatform], decor: list[Decor],
-                 surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
+    def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
+            decor: list[Decor], surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
-        self.game_objects = moving_obj
+        self.obstacles = obstacles
+        self.collectable = collectable
         self.decor = decor
         self.surf = surface
         self.surf.set_colorkey('yellow')
@@ -54,7 +54,8 @@ class Level:
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
 
-        for obj in self.blocks + self.game_objects + self.projectiles + self.decor:
+        for obj in self.blocks + self.collectable + self.obstacles \
+                   + self.projectiles + self.decor:
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -71,23 +72,24 @@ class Level:
 
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
-        for plat in self.game_objects:
-            plat.move()
+
+        for entity in entities:
+            for obj in self.obstacles + self.collectable:
+                obj.interact(entity)
 
         for proj in self.projectiles:
-            proj.move()
-            for block in self.blocks:
-                proj.collide(block)
+            for block in self.blocks + self.obstacles:
+                proj.interact(block)
 
         if dt <= 3:
             for entity in entities:
                 if self.state == 'game':
                     entity.vert_move(dt)
-                for wall in self.blocks + self.game_objects:
+                for wall in self.blocks + self.obstacles:
                     wall.collide(entity, 'h')
                 if self.state == 'game':
                     entity.hor_move(dt)
-                for wall in self.blocks + self.game_objects:
+                for wall in self.blocks + self.obstacles:
                     wall.collide(entity, 'v')
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
 
@@ -107,8 +109,6 @@ class Level:
                         self.camera.display_size.y >= self.surf.get_height():
                     self.state = 'game'
                     self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
-
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -144,12 +144,45 @@ class Level:
                             self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
                             self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                              self.surf.get_width())
+
         self.player.get_angle(self.camera.offset)
 
         self.physics([self.player], dt)
         if self.player.rect.y >= self.surf.get_height():
             self.player.lives -= 1
             self.player.rect.center = self.last_checkpoint
+
+        self.player.update(dt)
+        self.update()
+        self.clear()
+        self.level_end.interact(self.player)
+
+    # updating of game objects
+    def update(self):
+        for obj in self.obstacles + self.projectiles + self.collectable:
+            obj.update()
+
+    def clear(self):
+        self.projectiles = list(filter(lambda i: i.alive,
+                                       self.projectiles))
+
+        self.collectable = list(filter(lambda i: i.alive, self.collectable))
+
+
+
+class Drawing:
+
+    def __init__(self, surf: pygame.Surface, level: Level):
+        self.surf = surf
+        self.level = level
+        self.background_surf = pygame.Surface(self.surf.get_size())
+        self.background_surf.fill('grey')
+
+    def background(self):
+        self.surf.blit(self.background_surf, (0, 0))
+
+    def draw_level(self):
+        pass
         # surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
         #              (30, 30))
         # surface.blit(info_font.render(f'({round(self.player.velocity.x, 2)}, {round(self.player.velocity.y, 2)})',
@@ -160,12 +193,3 @@ class Level:
         #              (30, 130))
         # surface.blit(info_font.render(f'{self.camera.scroll(self.player)}', True, 'black'),
         #              (30, 180))
-        self.player.update(dt)
-
-        self.clear()
-        self.level_end.interact(self.player)
-
-    def clear(self):
-        self.projectiles = list(filter(lambda i: not i.collided,
-                                       self.projectiles))
-

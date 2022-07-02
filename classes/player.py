@@ -93,7 +93,7 @@ class Player:
 
         self.velocity.x = 0
         if self.acceleration.x > 0:
-           self.acceleration.x = max(self.acceleration.x - .2, 0)
+            self.acceleration.x = max(self.acceleration.x - .2, 0)
         else:
             self.acceleration.x = min(self.acceleration.x + .2, 0)
         if self.collided_sides['up']:
@@ -115,7 +115,6 @@ class Player:
         self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
                                                     max_sliding_down), max_sliding_down)
 
-        print(self.collided_sides)
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
