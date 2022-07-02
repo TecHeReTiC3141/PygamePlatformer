@@ -2,53 +2,49 @@ from classes.player import *
 
 
 class Block:
-
     movable = False
 
     def __init__(self, x, y, surface: pygame.Surface):
         self.surface = pygame.transform.scale(surface, (BLOCK_SIZE, BLOCK_SIZE))
 
-        self.cur_rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
-        self.outer_rect = pygame.Rect(self.cur_rect.left - 3, self.cur_rect.top,
-                                      self.cur_rect.width + 6, self.cur_rect.height)
+        self.rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
+        self.outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
+                                      self.rect.width + 6, self.rect.height)
 
-    def collide(self, entity: Player):
+    def collide(self, entity: Player, mode: str) -> str:
 
-        if entity.rect.colliderect(self.cur_rect):
+        if entity.rect.colliderect(self.rect):
+            if mode == 'v':
+                # left side
+                if entity.velocity.x > 0:
+                    entity.rect.right = self.rect.left
+                    entity.collided_sides['right'] = True
+                    return 'right'
 
-            # left side
-            if entity.rect.right >= self.cur_rect.left >= entity.prev_rect.right:
-                entity.rect.right = self.cur_rect.left
-                entity.collided_sides['right'] = True
+                # right side
+                elif entity.velocity.x < 0:
+                    entity.rect.left = self.rect.right
+                    entity.collided_sides['left'] = True
+                    return 'left'
 
-            # right side
-            elif entity.rect.left <= self.cur_rect.right <= entity.prev_rect.left:
-                entity.rect.left = self.cur_rect.right
-                entity.collided_sides['left'] = True
+            elif mode == 'h':
+                # top side
+                if entity.velocity.y > 0:
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    return 'down'
 
-            # top side
-            if entity.rect.bottom >= self.cur_rect.top >= entity.prev_rect.bottom:
-                entity.rect.bottom = self.cur_rect.top
-                entity.collided_sides['down'] = True
-
-            # bottom side
-            elif entity.rect.top <= self.cur_rect.bottom <= entity.prev_rect.top:
-                entity.rect.top = self.cur_rect.bottom
-                entity.collided_sides['top'] = True
-
-        elif entity.rect.colliderect(self.outer_rect):
-            if entity.rect.right >= self.outer_rect.left >= entity.prev_rect.right:
-                entity.collided_sides['right'] = True
-
-            # right side
-            elif entity.rect.left <= self.outer_rect.right <= entity.prev_rect.left:
-                entity.collided_sides['left'] = True
+                # bottom side
+                elif entity.velocity.y < 0:
+                    entity.rect.top = self.rect.bottom
+                    entity.collided_sides['top'] = True
+                    return 'top'
 
     def draw(self, surface: pygame.Surface):
-        surface.blit(self.surface, self.cur_rect)
+        surface.blit(self.surface, self.rect)
+
 
 class MovableBlock(Block):
-
     movable = True
 
     def __init__(self, x, y):
@@ -60,56 +56,133 @@ class MovableBlock(Block):
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('green')
-        surface.blit(self.surface, self.cur_rect)
-
-    def collide(self, entity: Player):
-        super().collide(entity)
+        surface.blit(self.surface, self.rect)
 
     def check_walls(self, walls: list[Block]):
         pass
 
 
-class MovingPlatform:
+class GameObject:
+    sprites: dict[int, pygame.Surface] = {}
+    alive = True
 
-    def __init__(self, x, y, num_blocks, typ: str, dist, speed=5):
-        self.init_point = pygame.math.Vector2(x, y)
-        self.blocks: list[MovableBlock] = [MovableBlock(x + i, y) for i in range(num_blocks)]
-        self.dist = dist
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
+        self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.rect = self.surface.get_rect(topleft=(x, y))
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.surface, self.rect)
+
+    def interact(self, *args):
+        pass
+
+    def update(self):
+        pass
+
+
+class Decor(GameObject):
+    pass
+
+
+class Obstacle(GameObject, Block):
+    pass
+
+
+class Collectable(GameObject):
+    pass
+
+
+class Animated(GameObject):
+    frames_per_sprite = 4
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.frame_count = 0
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.sprites[self.frame_count // self.frames_per_sprite], self.rect)
+        self.frame_count += 1
+        self.frame_count %= self.frames_per_sprite * len(self.sprites)
+
+
+class MovingPlatform(Block, GameObject):
+
+    def __init__(self, x, y, width, height, typ: str, dist, speed=5):
+        self.init_point = pygame.math.Vector2(x * SCALE, y * SCALE)
+
+        surface = pygame.Surface((width, height))
+        GameObject.__init__(self, x, y, width, height, surface)
+
+        self.surface.fill('blue')
+
+        self.dist = dist * BLOCK_SIZE
         self.typ = typ
         self.movement = pygame.math.Vector2(0 if typ == 'vert' else speed,
                                             0 if typ == 'hor' else speed)
 
-    def collide(self, entity: Player):
-        for block in self.blocks:
-            block.collide(entity)
-
-    def draw(self, surface: pygame.Surface):
-        for block in self.blocks:
-            block.draw(surface)
-
     def move(self):
-        for block in self.blocks:
-            block.cur_rect.move_ip(self.movement)
-            block.outer_rect.move_ip(self.movement)
+        self.rect.move_ip(self.movement)
+        if self.typ == 'hor' and (self.rect.left < self.init_point.x
+                                  or self.rect.left > self.init_point.x + self.dist):
+            self.movement *= -1
+        elif self.typ == 'vert' and (self.rect.top < self.init_point.y
+                                     or self.rect.top > self.init_point.y + self.dist):
+            self.movement *= -1
 
-        if self.typ == 'hor' and self.blocks[0].cur_rect.left <= self.init_point.x \
-                or self.blocks[1].cur_rect.right >= self.init_point.x + self.dist:
-            self.movement.x *= -1
-        elif self.typ == 'vert' and self.blocks[0].cur_rect.top <= self.init_point.y \
-                    or self.blocks[-1].cur_rect.bottom >= self.init_point.y + self.dist:
-            self.movement.x *= -1
+    def interact(self, player: Player):
+        side = self.collide(player, 'h')
+        if side == 'down' and self.typ == 'hor':
+            player.rect.x += self.movement.x
+
+    def update(self):
+        self.move()
 
 
-class Camera:
+class LevelEnd(GameObject):
+    sprites = {0: 'resources/images/surrounding/door_closed.png',
+               1: 'resources/images/surrounding/door_open.png'}
 
-    def __init__(self, surf: pygame.Surface):
-        self.surf = surf
-        self.offset = pygame.math.Vector2(0, 0)
-        self.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.active_zone = pygame.Rect(self.rect.x - self.rect.width,
+                                       self.rect.y,
+                                       self.rect.width * 3, self.rect.height)
+        self.active = 0
 
-    def scroll(self, player: Player) -> tuple:
-        self.offset.x = min(max(0, player.rect.centerx - self.display_size.x // 2),
-                            self.surf.get_width() - self.display_size.x)
-        self.offset.y = min(max(0, player.rect.centery - self.display_size.y // 2),
-                            self.surf.get_height() - self.display_size.y)
-        return self.offset.x, self.offset.y, self.display_size.x, self.display_size.y
+    def interact(self, player: Player):
+
+        if player.rect.colliderect(self.active_zone):
+            print('active')
+            if not self.active:
+                self.surface = pygame.image.load(self.sprites[1]).convert_alpha()
+                self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
+                                                                     self.surface.get_height() * SCALE))
+            self.active = 1
+
+        elif self.active:
+            self.active = 0
+            self.surface = pygame.image.load(self.sprites[0]).convert_alpha()
+            self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
+                                                                 self.surface.get_height() * SCALE))
+
+
+class Coin(Animated, Collectable):
+    sprite_size = (70, 69)
+    sprites: dict[int, pygame.Surface] = {
+        i: pygame.transform.scale(
+            pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha(),
+            sprite_size)
+        for i in range(7)}
+
+    value = 50
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.frame_count = 0
+
+    def interact(self, player: Player):
+        if player.rect.colliderect(self.rect):
+            player.score += self.value
+            self.value = 0
+            self.alive = False
