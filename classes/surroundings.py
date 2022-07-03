@@ -145,6 +145,9 @@ class MovingPlatform(Block, GameObject):
 
     def move(self):
         self.rect.move_ip(self.movement)
+        self.left_outer_rect.move_ip(self.movement)
+        self.right_outer_rect.move_ip(self.movement)
+        self.up_outer_rect.move_ip(self.movement)
         if self.typ == 'hor' and (self.rect.left < self.init_point.x
                                   or self.rect.left > self.init_point.x + self.dist):
             self.movement *= -1
@@ -163,27 +166,45 @@ class MovingPlatform(Block, GameObject):
         self.move()
 
     # TODO fix collisions
-    # def collide(self, entity: Player, mode: str) -> str:
-    #     if entity.rect.colliderect(self.rect):
-    #         if mode == 'v':
-    #             # right side
-    #             if entity.prev_rect.right <= self.rect.left <= entity.rect.right:
-    #                 entity.rect.right = self.rect.left
-    #                 entity.collided_sides['right'] = True
-    #                 return 'right'
-    #
-    #             # left side
-    #             elif entity.prev_rect.left >= self.rect.right >= entity.rect.left:
-    #                 entity.rect.left = self.rect.right
-    #                 entity.collided_sides['left'] = True
-    #                 return 'left'
-    #
-    #         elif mode == 'h':
-    #             # top side
-    #             if entity.prev_rect.bottom <= self.rect.top <= entity.rect.bottom:
-    #                 entity.rect.bottom = self.rect.top
-    #                 entity.collided_sides['down'] = True
-    #                 return 'down'
+    def collide(self, entity: Player, mode: str) -> str:
+        if entity.rect.colliderect(self.rect):
+            if mode == 'v':
+                # left side
+                if entity.prev_rect.right <= self.rect.left <= entity.rect.right:
+                    entity.rect.right = self.rect.left
+                    entity.collided_sides['right'] = True
+                    return 'right'
+
+                # right side
+                if entity.prev_rect.left >= self.rect.right >= entity.rect.left:
+                    entity.rect.left = self.rect.right
+                    entity.collided_sides['left'] = True
+                    return 'left'
+
+            elif mode == 'h':
+                # top side
+                if entity.prev_rect.bottom <= self.rect.top <= entity.rect.bottom:
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    return 'down'
+
+                # bottom side
+                # elif entity.velocity.y < 0:
+                #     entity.rect.top = self.rect.bottom
+                #     entity.collided_sides['top'] = True
+                #     return 'top'
+
+        elif mode == 'h' and entity.rect.colliderect(self.up_outer_rect):
+            entity.collided_sides['down'] = True
+            return 'down'
+
+        elif mode == 'v' and entity.rect.colliderect(self.left_outer_rect):
+            entity.collided_sides['right'] = True
+            return 'right'
+
+        elif mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
+            entity.collided_sides['right'] = True
+            return 'right'
 
 
 class LevelEnd(GameObject):
