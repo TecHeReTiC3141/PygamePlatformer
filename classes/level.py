@@ -94,7 +94,6 @@ class Level:
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
 
     def game_cycle(self, surface: pygame.Surface, dt) -> bool:
-        self.draw(surface)
 
         if self.state == 'scrolling':
             if self.surf.get_width() >= self.surf.get_height():
@@ -177,12 +176,13 @@ class Drawing:
         self.level = level
         self.background_surf = pygame.Surface(self.surf.get_size())
         self.background_surf.fill('grey')
+        self.player_score = 0
 
     def background(self):
         self.surf.blit(self.background_surf, (0, 0))
 
     def draw_level(self):
-        pass
+        self.level.draw(self.surf)
         # surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
         #              (30, 30))
         # surface.blit(info_font.render(f'({round(self.player.velocity.x, 2)}, {round(self.player.velocity.y, 2)})',
@@ -193,3 +193,19 @@ class Drawing:
         #              (30, 130))
         # surface.blit(info_font.render(f'{self.camera.scroll(self.player)}', True, 'black'),
         #              (30, 180))
+
+    def draw_player_stats(self):
+        pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
+        pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
+        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (30, 65))
+
+    def update(self):
+        if self.player_score < self.level.player.score:
+            self.player_score += 1
+
+    def draw(self):
+        self.background()
+        self.draw_level()
+        self.draw_player_stats()
+        self.update()
+

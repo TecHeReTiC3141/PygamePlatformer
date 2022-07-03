@@ -131,12 +131,38 @@ class MovingPlatform(Block, GameObject):
             self.movement *= -1
 
     def interact(self, player: Player):
-        side = self.collide(player, 'h')
-        if side == 'down' and self.typ == 'hor':
-            player.rect.x += self.movement.x
+        side = self.rect.colliderect(player.rect)
+        print(side)
+        print(self.rect, player.rect)
+        if side and player.collided_sides['down']:
+            print(player.velocity, player.collided_sides)
+
+            player.rect.move_ip(self.movement)
 
     def update(self):
         self.move()
+    # TODO fix collisions
+    def collide(self, entity: Player, mode: str) -> str:
+        if entity.rect.colliderect(self.rect):
+            if mode == 'v':
+                # right side
+                if entity.prev_rect.right <= self.rect.left <= entity.rect.right :
+                    entity.rect.right = self.rect.left
+                    entity.collided_sides['right'] = True
+                    return 'right'
+
+                # left side
+                elif entity.prev_rect.left >= self.rect.right >= entity.rect.left:
+                    entity.rect.left = self.rect.right
+                    entity.collided_sides['left'] = True
+                    return 'left'
+
+            elif mode == 'h':
+                # top side
+                if entity.prev_rect.bottom <= self.rect.top <= entity.rect.bottom:
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    return 'down'
 
 
 class LevelEnd(GameObject):
@@ -172,7 +198,7 @@ class Coin(Animated, Collectable):
     sprites: dict[int, pygame.Surface] = {
         i: pygame.transform.scale(
             pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha(),
-            sprite_size)
+            (70, 69))
         for i in range(7)}
 
     value = 50

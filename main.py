@@ -1,4 +1,3 @@
-from scripts.Drawing import *
 from scripts.map_generation import *
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
@@ -13,7 +12,7 @@ drawing = Drawing(display, level)
 while True:
     delta = clock.tick(FPS) * .001 * FPS
 
-    drawing.background()
+    drawing.draw()
 
     end_level = level.game_cycle(display, delta)
     if end_level:

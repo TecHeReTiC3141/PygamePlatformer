@@ -17,3 +17,6 @@ directions = ['up', 'down', 'left', 'right']
 mock_display = pygame.display.set_mode((40, 40))
 
 info_font = pygame.font.Font(None, 40)
+stats_font = pygame.font.SysFont('Cambria', 50)
+
+heart = pygame.image.load('resources/images/interface/heart.png').convert_alpha()

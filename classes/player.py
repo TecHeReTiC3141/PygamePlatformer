@@ -10,7 +10,7 @@ class Player:
            for i in ['left', 'right']}
     size = (90, 110)
 
-    jump_strength = 55
+    jump_strength = 60
     max_jump_cooldown = 30
     falling_momentum = 2.5
     friction = -.25
@@ -100,8 +100,7 @@ class Player:
             self.velocity.y = 0
 
         max_sliding_down = 5
-        if self.collided_sides['down']:
-            max_sliding_down = 0
+
 
         if self.collided_sides['left']:
 
@@ -114,7 +113,7 @@ class Player:
 
         self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
                                                     max_sliding_down), max_sliding_down)
-
+        # print(self.collided_sides)
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
