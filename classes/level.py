@@ -83,6 +83,7 @@ class Level:
 
         if dt <= 3:
             for entity in entities:
+                entity.prev_rect = entity.rect.copy()
                 if self.state == 'game':
                     entity.vert_move(dt)
                 for wall in self.blocks + self.obstacles:
@@ -147,6 +148,7 @@ class Level:
         self.player.get_angle(self.camera.offset)
 
         self.physics([self.player], dt)
+
         if self.player.rect.y >= self.surf.get_height():
             self.player.lives -= 1
             self.player.rect.center = self.last_checkpoint

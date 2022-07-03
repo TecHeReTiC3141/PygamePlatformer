@@ -75,7 +75,6 @@ class Player:
 
     def update(self, dt):
         # print(self.velocity, self.acceleration)
-        self.prev_rect = self.rect.copy()
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
         if self.velocity.x > 0 or pi / 2 >= self.angle or self.angle >= 3 * pi / 2:
@@ -101,6 +100,8 @@ class Player:
 
         max_sliding_down = 5
 
+        if self.collided_sides['down']:
+            max_sliding_down = 0
 
         if self.collided_sides['left']:
 

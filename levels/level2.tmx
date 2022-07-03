@@ -38,7 +38,7 @@
   <object id="2" name="Player" type="Marker" x="754" y="2238">
    <point/>
   </object>
-  <object id="3" type="MovingPlatform" x="3468" y="508" width="896" height="124">
+  <object id="3" type="MovingPlatform" x="3398.3" y="559.515" width="896" height="124">
    <properties>
     <property name="dist" type="int" value="7"/>
     <property name="speed" type="int" value="5"/>

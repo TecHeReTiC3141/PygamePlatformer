@@ -17,6 +17,7 @@ while True:
     end_level = level.game_cycle(display, delta)
     if end_level:
         level = gen_level(level.num + 1)
+        drawing.level = level
 
     pygame.display.update()
 
