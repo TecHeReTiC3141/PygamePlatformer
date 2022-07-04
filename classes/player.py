@@ -106,11 +106,13 @@ class Player:
         if self.collided_sides['left']:
 
             max_sliding_down = .4
-            self.acceleration.x = max(0, self.acceleration.x)
+            if not self.collided_sides['down']:
+                self.acceleration.x = max(0, self.acceleration.x)
 
         if self.collided_sides['right']:
             max_sliding_down = .4
-            self.acceleration.x = min(0, self.acceleration.x)
+            if not self.collided_sides['down']:
+                self.acceleration.x = min(0, self.acceleration.x)
 
         self.velocity.y = min(self.velocity.y + min(self.acceleration.y * dt,
                                                     max_sliding_down), max_sliding_down)
@@ -126,7 +128,7 @@ class Player:
             self.jump_cooldown = self.max_jump_cooldown
             if self.collided_sides['left']:
                 self.velocity.y = -self.jump_strength // 2
-                self.velocity.x = -self.jump_strength
+                self.velocity.x = self.jump_strength
             elif self.collided_sides['right']:
                 self.velocity.y = -self.jump_strength // 2
                 self.velocity.x = -self.jump_strength
@@ -149,12 +151,12 @@ class Player:
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
 
         if self.collided_sides['down']:
-            pygame.draw.line(self.image, 'red', (0, self.rect.height - 5),
-                             (self.rect.right, self.rect.height - 5), 5)
+            pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
+                             (self.rect.right, self.rect.height - 5), 15)
         if self.collided_sides['left']:
-            pygame.draw.line(self.image, 'red', (0, 0),
-                             (0, self.rect.height), 5)
+            pygame.draw.line(self.image, 'green', (0, 0),
+                             (0, self.rect.height), 15)
         if self.collided_sides['right']:
-            pygame.draw.line(self.image, 'red', (self.rect.width, 0),
-                             (self.rect.width, self.rect.height), 5)
+            pygame.draw.line(self.image, 'green', (self.rect.width, 0),
+                             (self.rect.width, self.rect.height), 15)
         surface.blit(self.image, self.rect)

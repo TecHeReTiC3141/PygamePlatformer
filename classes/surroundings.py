@@ -53,8 +53,8 @@ class Block:
             return 'right'
 
         elif mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
-            entity.collided_sides['right'] = True
-            return 'right'
+            entity.collided_sides['left'] = True
+            return 'left'
 
 
     def draw(self, surface: pygame.Surface):
@@ -156,7 +156,7 @@ class MovingPlatform(Block, GameObject):
             self.movement *= -1
 
     def interact(self, player: Player):
-        side = self.collide(player, 'h')
+        side = self.collide(player, 'h') or self.collide(player, 'v')
         if side:
             print(player.velocity, player.collided_sides)
 
@@ -203,8 +203,8 @@ class MovingPlatform(Block, GameObject):
             return 'right'
 
         elif mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
-            entity.collided_sides['right'] = True
-            return 'right'
+            entity.collided_sides['left'] = True
+            return 'left'
 
 
 class LevelEnd(GameObject):

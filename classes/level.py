@@ -94,9 +94,10 @@ class Level:
                     wall.collide(entity, 'v')
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
 
-    def game_cycle(self, surface: pygame.Surface, dt) -> bool:
+    def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
+            print(self.state)
             if self.surf.get_width() >= self.surf.get_height():
                 self.camera.move('h')
                 if self.camera.offset.x + \
@@ -147,7 +148,7 @@ class Level:
 
         self.player.get_angle(self.camera.offset)
 
-        self.physics([self.player], dt)
+
 
         if self.player.rect.y >= self.surf.get_height():
             self.player.lives -= 1
@@ -155,6 +156,7 @@ class Level:
 
         self.player.update(dt)
         self.update()
+        self.physics([self.player], dt)
         self.clear()
         self.level_end.interact(self.player)
 
@@ -199,7 +201,7 @@ class Drawing:
     def draw_player_stats(self):
         pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
         pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
-        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (30, 65))
+        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (15, 65))
 
     def update(self):
         if self.player_score < self.level.player.score:
