@@ -148,15 +148,14 @@ class Level:
 
         self.player.get_angle(self.camera.offset)
 
-
-
         if self.player.rect.y >= self.surf.get_height():
             self.player.lives -= 1
             self.player.rect.center = self.last_checkpoint
 
         self.player.update(dt)
-        self.update()
         self.physics([self.player], dt)
+        self.update()
+
         self.clear()
         self.level_end.interact(self.player)
 

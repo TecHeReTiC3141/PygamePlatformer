@@ -12,7 +12,7 @@ class Player:
 
     jump_strength = 60
     max_jump_cooldown = 30
-    falling_momentum = 2.5
+    falling_momentum = 3
     friction = -.25
     max_vel = 5
 
@@ -39,10 +39,13 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.acceleration.x -= .25
+            self.direction = 'left'
             if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
                 self.angle = pi - self.angle
+
         if keys[pygame.K_d]:
             self.acceleration.x += .25
+            self.direction = 'right'
             if pi / 2 <= self.angle <= 3 * pi / 2:
                 self.angle = (3 * pi - self.angle) % 360
 
@@ -69,7 +72,7 @@ class Player:
         m_y += offset.y
         c_x, c_y = self.rect.center
         dist = sqrt((c_x - m_x) ** 2 + (c_y - m_y) ** 2)
-        self.angle = acos((m_x - c_x) / dist)
+        self.angle = acos((m_x - c_x) / max(dist, .01))
         if m_y >= c_y:
             self.angle = 2 * pi - self.angle
 
@@ -98,19 +101,19 @@ class Player:
         if self.collided_sides['up']:
             self.velocity.y = 0
 
-        max_sliding_down = 5
+        max_sliding_down = 10
 
         if self.collided_sides['down']:
             max_sliding_down = 0
 
         if self.collided_sides['left']:
 
-            max_sliding_down = .4
+            max_sliding_down = .6
             if not self.collided_sides['down']:
                 self.acceleration.x = max(0, self.acceleration.x)
 
         if self.collided_sides['right']:
-            max_sliding_down = .4
+            max_sliding_down = .6
             if not self.collided_sides['down']:
                 self.acceleration.x = min(0, self.acceleration.x)
 
@@ -126,10 +129,10 @@ class Player:
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
             print(self.air_time)
             self.jump_cooldown = self.max_jump_cooldown
-            if self.collided_sides['left']:
+            if self.collided_sides['left'] and self.collided_sides['down']:
                 self.velocity.y = -self.jump_strength // 2
                 self.velocity.x = self.jump_strength
-            elif self.collided_sides['right']:
+            elif self.collided_sides['right'] and self.collided_sides['down']:
                 self.velocity.y = -self.jump_strength // 2
                 self.velocity.x = -self.jump_strength
             else:
@@ -152,11 +155,11 @@ class Player:
 
         if self.collided_sides['down']:
             pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
-                             (self.rect.right, self.rect.height - 5), 15)
+                             (self.rect.right, self.rect.height - 5), 5)
         if self.collided_sides['left']:
             pygame.draw.line(self.image, 'green', (0, 0),
-                             (0, self.rect.height), 15)
+                             (0, self.rect.height), 5)
         if self.collided_sides['right']:
             pygame.draw.line(self.image, 'green', (self.rect.width, 0),
-                             (self.rect.width, self.rect.height), 15)
+                             (self.rect.width, self.rect.height), 5)
         surface.blit(self.image, self.rect)

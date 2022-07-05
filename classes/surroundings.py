@@ -9,11 +9,11 @@ class Block:
 
         self.rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
         self.left_outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
-                                      3, self.rect.height)
-        self.right_outer_rect = pygame.Rect(self.rect.right, self.rect.top,
                                            3, self.rect.height)
+        self.right_outer_rect = pygame.Rect(self.rect.right, self.rect.top,
+                                            3, self.rect.height)
         self.up_outer_rect = pygame.Rect(self.rect.left, self.rect.top - 3,
-                                           self.rect.width, 3)
+                                         self.rect.width, 3)
 
     def collide(self, entity: Player, mode: str) -> str:
 
@@ -55,7 +55,6 @@ class Block:
         elif mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
             entity.collided_sides['left'] = True
             return 'left'
-
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
@@ -123,6 +122,7 @@ class Animated(GameObject):
         self.frame_count %= self.frames_per_sprite * len(self.sprites)
 
 
+# TODO add sprite
 class MovingPlatform(Block, GameObject):
 
     def __init__(self, x, y, width, height, typ: str, dist, speed=5):
@@ -131,11 +131,11 @@ class MovingPlatform(Block, GameObject):
         surface = pygame.Surface((width, height))
         GameObject.__init__(self, x, y, width, height, surface)
         self.left_outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
-                                      3, self.rect.height)
-        self.right_outer_rect = pygame.Rect(self.rect.right, self.rect.top,
                                            3, self.rect.height)
+        self.right_outer_rect = pygame.Rect(self.rect.right, self.rect.top,
+                                            3, self.rect.height)
         self.up_outer_rect = pygame.Rect(self.rect.left, self.rect.top - 3,
-                                           self.rect.width, 3)
+                                         self.rect.width, 3)
         self.surface.fill('blue')
 
         self.dist = dist * BLOCK_SIZE
@@ -165,7 +165,6 @@ class MovingPlatform(Block, GameObject):
     def update(self):
         self.move()
 
-    # TODO fix collisions
     def collide(self, entity: Player, mode: str) -> str:
         if entity.rect.colliderect(self.rect):
             if mode == 'v':
@@ -187,12 +186,6 @@ class MovingPlatform(Block, GameObject):
                     entity.rect.bottom = self.rect.top
                     entity.collided_sides['down'] = True
                     return 'down'
-
-                # bottom side
-                # elif entity.velocity.y < 0:
-                #     entity.rect.top = self.rect.bottom
-                #     entity.collided_sides['top'] = True
-                #     return 'top'
 
         elif mode == 'h' and entity.rect.colliderect(self.up_outer_rect):
             entity.collided_sides['down'] = True
@@ -254,3 +247,5 @@ class Coin(Animated, Collectable):
             player.score += self.value
             self.value = 0
             self.alive = False
+
+# TODO implement keys which player must collect to open LevelEnd.
