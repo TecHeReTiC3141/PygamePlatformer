@@ -11,7 +11,7 @@ class Player:
     size = (90, 110)
 
     jump_strength = 60
-    max_jump_cooldown = 30
+    max_jump_cooldown = 25
     falling_momentum = 3
     friction = -.25
     max_vel = 5
@@ -38,13 +38,13 @@ class Player:
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.acceleration.x -= .25
+            self.acceleration.x -= .3
             self.direction = 'left'
             if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
                 self.angle = pi - self.angle
 
         if keys[pygame.K_d]:
-            self.acceleration.x += .25
+            self.acceleration.x += .3
             self.direction = 'right'
             if pi / 2 <= self.angle <= 3 * pi / 2:
                 self.angle = (3 * pi - self.angle) % 360
@@ -129,14 +129,14 @@ class Player:
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
             print(self.air_time)
             self.jump_cooldown = self.max_jump_cooldown
-            if self.collided_sides['left'] and self.collided_sides['down']:
-                self.velocity.y = -self.jump_strength // 2
-                self.velocity.x = self.jump_strength
-            elif self.collided_sides['right'] and self.collided_sides['down']:
-                self.velocity.y = -self.jump_strength // 2
-                self.velocity.x = -self.jump_strength
-            else:
-                self.velocity.y = -self.jump_strength
+            # if self.collided_sides['left'] and not self.collided_sides['down']:
+            #     self.velocity.y = -self.jump_strength // 2
+            #     self.velocity.x = self.jump_strength
+            # elif self.collided_sides['right'] and not self.collided_sides['down']:
+            #     self.velocity.y = -self.jump_strength // 2
+            #     self.velocity.x = -self.jump_strength
+            # else:
+            self.velocity.y = -self.jump_strength
             self.is_jump = True
 
     def shoot(self) -> Projectile:

@@ -34,7 +34,8 @@ class Level:
     possible_states = ['scrolling', 'game']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
-            decor: list[Decor], surface: pygame.Surface, start_pos: tuple[int, int], end_level: LevelEnd):
+            decor: list[Decor], surface: pygame.Surface, background_surf: pygame.Surface,
+                 start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
         self.obstacles = obstacles
@@ -42,6 +43,9 @@ class Level:
         self.decor = decor
         self.surf = surface
         self.surf.set_colorkey('yellow')
+
+        self.background_surf = background_surf
+        self.background_surf.set_colorkey('black')
         self.camera = Camera(surface)
         self.projectiles: list[Projectile] = []
 
@@ -52,6 +56,7 @@ class Level:
         self.state = 'scrolling'
 
     def draw(self, surface: pygame.Surface):
+
         self.surf.fill('yellow')
 
         for obj in self.blocks + self.collectable + self.obstacles \
@@ -60,15 +65,20 @@ class Level:
 
         self.level_end.draw(self.surf)
         self.player.draw(self.surf)
+
         camera_surf = pygame.Surface(self.camera.display_size)
         camera_surf.fill('yellow')
         camera_surf.set_colorkey('yellow')
         if self.state == 'scrolling':
+            camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
 
         elif self.state == 'game':
+            camera_surf.blit(self.background_surf, (0, 0), self.camera.scroll(self.player))
             camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
+
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
+
 
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
@@ -178,7 +188,7 @@ class Drawing:
         self.surf = surf
         self.level = level
         self.background_surf = pygame.Surface(self.surf.get_size())
-        self.background_surf.fill('grey')
+        self.background_surf.fill('black')
         self.player_score = 0
 
     def background(self):
@@ -211,4 +221,3 @@ class Drawing:
         self.draw_level()
         self.draw_player_stats()
         self.update()
-

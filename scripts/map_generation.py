@@ -9,6 +9,7 @@ def gen_level(num: int) -> Level:
 
     obj_layer = level_map.get_layer_by_name('GameObjects')
     blocks = level_map.get_layer_by_name('BlocksLayer')
+    background = level_map.get_layer_by_name('BackGround')
 
     start_pos = (0, 0)
     decor: list[Decor] = []
@@ -40,12 +41,17 @@ def gen_level(num: int) -> Level:
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
                               level_map.height * BLOCK_SIZE))
 
+    background_surf = pygame.Surface((level_map.width * BLOCK_SIZE,
+                              level_map.height * BLOCK_SIZE))
     assert isinstance(level_end, LevelEnd), "No LevelEnd"
     # Loading blocks
     walls: list[Block] = []
     for x, y, surf in blocks.tiles():
         walls.append(Block(x, y, surf))
 
+    for x, y, surf in background.tiles():
+        background_surf.blit(surf, (x * BLOCK_SIZE, y * BLOCK_SIZE))
+
     level = Level(num, walls, obstacles, collectable,
-                  decor, surface, start_pos, level_end)
+                  decor, surface, background_surf, start_pos, level_end)
     return level

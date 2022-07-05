@@ -128,7 +128,7 @@
   <object id="1" name="Player" type="Marker" x="736" y="6010">
    <point/>
   </object>
-  <object id="3" type="MovingPlatform" x="1620" y="650" width="744" height="124">
+  <object id="3" type="MovingPlatform" x="1620" y="650" width="744" height="92">
    <properties>
     <property name="dist" type="int" value="23"/>
     <property name="speed" type="int" value="6"/>
@@ -139,7 +139,7 @@
    <text fontfamily="Cambria" pixelsize="35" wrap="1" color="#fffaf6" halign="center" valign="center">Добро пожаловать на уровень 3</text>
   </object>
   <object id="8" name="LevelEnd" type="LevelEnd" gid="300" x="3419" y="768" width="310" height="520"/>
-  <object id="9" type="MovingPlatform" x="3556" y="4752" width="456" height="124">
+  <object id="9" type="MovingPlatform" x="3556" y="4752" width="456" height="60">
    <properties>
     <property name="dist" type="int" value="9"/>
     <property name="speed" type="int" value="5"/>
