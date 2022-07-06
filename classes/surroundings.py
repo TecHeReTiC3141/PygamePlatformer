@@ -125,10 +125,9 @@ class Animated(GameObject):
 # TODO add sprite
 class MovingPlatform(Block, GameObject):
 
-    def __init__(self, x, y, width, height, typ: str, dist, speed=5):
+    def __init__(self, x, y, width, height, surface: pygame.Surface, typ: str, dist, speed=5):
         self.init_point = pygame.math.Vector2(x * SCALE, y * SCALE)
 
-        surface = pygame.Surface((width, height))
         GameObject.__init__(self, x, y, width, height, surface)
         self.left_outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
                                            3, self.rect.height)
@@ -136,7 +135,6 @@ class MovingPlatform(Block, GameObject):
                                             3, self.rect.height)
         self.up_outer_rect = pygame.Rect(self.rect.left, self.rect.top - 3,
                                          self.rect.width, 3)
-        self.surface.fill('blue')
 
         self.dist = dist * BLOCK_SIZE
         self.typ = typ

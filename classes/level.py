@@ -206,11 +206,11 @@ class Drawing:
         #              (30, 130))
         # surface.blit(info_font.render(f'{self.camera.scroll(self.player)}', True, 'black'),
         #              (30, 180))
-
+    # TODO draw main menu, pause menu and kinda levels map
     def draw_player_stats(self):
         pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
         pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
-        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (15, 65))
+        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (5, 65))
 
     def update(self):
         if self.player_score < self.level.player.score:
