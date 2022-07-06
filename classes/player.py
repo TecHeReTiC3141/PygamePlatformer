@@ -15,6 +15,8 @@ class Player:
     falling_momentum = 3
     friction = -.25
     max_vel = 5
+    max_health = 12
+    max_hit_cooldown = 90
 
     def __init__(self, x, y):
         self.image = pygame.Surface(self.size)
@@ -27,6 +29,7 @@ class Player:
         self.direction = 'left'
         self.speed = 2
         self.jump_cooldown = 0
+        self.hit_cooldown = 0
         self.is_jump = False
         self.air_time = 0
 
@@ -124,6 +127,7 @@ class Player:
             self.collided_sides[direct] = False
 
         self.jump_cooldown -= 1
+        self.hit_cooldown -= 1
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
@@ -162,4 +166,5 @@ class Player:
         if self.collided_sides['right']:
             pygame.draw.line(self.image, 'green', (self.rect.width, 0),
                              (self.rect.width, self.rect.height), 5)
-        surface.blit(self.image, self.rect)
+        if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
+            surface.blit(self.image, self.rect)

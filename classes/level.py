@@ -102,6 +102,7 @@ class Level:
                 for wall in self.blocks + self.obstacles:
                     wall.collide(entity, 'v')
                 entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
+                entity.rect.y = max(entity.rect.y, 0)
 
     def game_cycle(self, dt) -> bool:
 
@@ -158,7 +159,10 @@ class Level:
         self.player.get_angle(self.camera.offset)
 
         if self.player.rect.y >= self.surf.get_height():
-            self.player.health -= 2
+            self.player.health = 0
+
+        if self.player.health <= 0:
+            self.player.health = self.player.max_health
             self.player.rect.center = self.last_checkpoint
 
         self.player.update(dt)

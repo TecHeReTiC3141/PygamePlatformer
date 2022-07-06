@@ -34,6 +34,11 @@ def gen_level(num: int) -> Level:
             obstacles.append(MovingPlatform(obj.x, obj.y, obj.width,
                                               obj.height, obj.image, obj.typ, obj.dist, obj.speed))
 
+        elif obj.type == 'Spike':
+            obstacles.append(Spike(obj.x, obj.y, obj.width,
+                                              obj.height, obj.image))
+
+
         elif obj.type == 'LevelEnd':
             level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image)
             print(level_end)

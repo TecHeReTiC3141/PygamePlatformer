@@ -198,6 +198,47 @@ class MovingPlatform(Block, GameObject):
             return 'left'
 
 
+class Spike(Obstacle):
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        GameObject.__init__(self, x, y, width, height, surface)
+
+
+    def collide(self, entity: Player, mode: str) -> str:
+        if entity.rect.colliderect(self.rect) and entity.hit_cooldown <= 0:
+            entity.hit_cooldown = entity.max_hit_cooldown
+            if mode == 'v':
+                # left side
+                entity.health -= 1
+                if entity.velocity.x > 0:
+                    entity.rect.right = self.rect.left
+                    entity.collided_sides['right'] = True
+
+                    return 'right'
+
+                # right side
+                elif entity.velocity.x < 0:
+                    entity.rect.left = self.rect.right
+                    entity.collided_sides['left'] = True
+                    return 'left'
+
+            elif mode == 'h':
+                # top side
+
+                if entity.velocity.y > 0:
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    entity.health = 0
+                    return 'down'
+
+                # bottom side
+                elif entity.velocity.y < 0:
+                    entity.rect.top = self.rect.bottom
+                    entity.collided_sides['top'] = True
+                    entity.health -= 2
+                    return 'top'
+
+
 class LevelEnd(GameObject):
     sprites = {0: 'resources/images/surrounding/door_closed.png',
                1: 'resources/images/surrounding/door_open.png'}
