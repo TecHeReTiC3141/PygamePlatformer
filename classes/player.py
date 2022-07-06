@@ -33,7 +33,7 @@ class Player:
         self.collided_sides = {i: False for i in directions}
 
         self.score = 0
-        self.lives = 3
+        self.health = 12
 
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()

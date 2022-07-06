@@ -34,7 +34,7 @@ class Level:
     possible_states = ['scrolling', 'game']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
-            decor: list[Decor], surface: pygame.Surface, background_surf: pygame.Surface,
+                 decor: list[Decor], surface: pygame.Surface, background_surf: pygame.Surface,
                  start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
@@ -78,7 +78,6 @@ class Level:
             camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
 
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
-
 
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
@@ -159,7 +158,7 @@ class Level:
         self.player.get_angle(self.camera.offset)
 
         if self.player.rect.y >= self.surf.get_height():
-            self.player.lives -= 1
+            self.player.health -= 2
             self.player.rect.center = self.last_checkpoint
 
         self.player.update(dt)
@@ -181,8 +180,10 @@ class Level:
         self.collectable = list(filter(lambda i: i.alive, self.collectable))
 
 
-
 class Drawing:
+    hearts_dict = {i: pygame.image.load(f'resources/images/interface/heart{i}.png').convert_alpha()
+                   for i in range(4)}
+    empty_heart = pygame.image.load('resources/images/interface/heart_empty.png').convert_alpha()
 
     def __init__(self, surf: pygame.Surface, level: Level):
         self.surf = surf
@@ -196,21 +197,20 @@ class Drawing:
 
     def draw_level(self):
         self.level.draw(self.surf)
-        # surface.blit(info_font.render(str(round(degrees(self.player.angle))), True, 'black'),
-        #              (30, 30))
-        # surface.blit(info_font.render(f'({round(self.player.velocity.x, 2)}, {round(self.player.velocity.y, 2)})',
-        #                               True, 'black'),
-        #              (30, 80))
-        # surface.blit(info_font.render(f'({round(self.player.acceleration.x, 2)},{round(self.player.acceleration.y, 2)})'
-        #                               , True, 'black'),
-        #              (30, 130))
-        # surface.blit(info_font.render(f'{self.camera.scroll(self.player)}', True, 'black'),
-        #              (30, 180))
+
     # TODO draw main menu, pause menu and kinda levels map
     def draw_player_stats(self):
-        pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
-        pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
-        self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (5, 65))
+        if self.level.state == 'game':
+            pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
+            pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
+            self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (5, 65))
+            for i in range(0, 12, 4):
+                if self.level.player.health >= i + 4:
+                    self.surf.blit(self.hearts_dict[0], (5 + i * 15, 15))
+                elif i < self.level.player.health < i + 4:
+                    self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
+                else:
+                    self.surf.blit(self.empty_heart, (5 + i * 15, 15))
 
     def update(self):
         if self.player_score < self.level.player.score:
