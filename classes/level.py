@@ -159,7 +159,7 @@ class Level:
                             self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                              self.surf.get_width())
 
-        self.player.get_angle(self.camera.offset)
+        self.player.get_angle(self.camera.offset, self.camera.display_size)
 
         if self.player.rect.y >= self.surf.get_height():
             self.player.health = 0
@@ -223,7 +223,10 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 15))
-            self.surf.blit(info_font.render(f'{pygame.mouse.get_pos()}', True, 'black'), (10, 130))
+            self.surf.blit(info_font.render(f'{pygame.mouse.get_pos()}', True, 'black'), (10, 150))
+            self.surf.blit(info_font.render(
+                f'{pygame.mouse.get_pos()[0] + self.level.camera.offset.x, pygame.mouse.get_pos()[1] + self.level.camera.offset.y}',
+                True, 'black'), (10, 200))
 
     def update(self):
         if self.player_score < self.level.player.score:
