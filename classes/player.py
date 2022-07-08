@@ -1,6 +1,6 @@
 from classes.entity import *
 
-class Player:
+class Player(Entity):
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
            for i in ['left', 'right']}
@@ -12,27 +12,21 @@ class Player:
     friction = -.25
     max_vel = 5
     max_health = 12
-    max_hit_cooldown = 90
 
-    def __init__(self, x, y):
-        self.image = pygame.Surface(self.size)
-        self.image.set_colorkey('yellow')
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.prev_rect = self.rect.copy()
+    def __init__(self, x, y, direction='left'):
+        super().__init__(x, y, direction)
+
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         self.angle = 0
-        self.direction = 'left'
         self.speed = 2
         self.jump_cooldown = 0
-        self.hit_cooldown = 0
         self.is_jump = False
         self.air_time = 0
 
         self.collided_sides = {i: False for i in directions}
 
         self.score = 0
-        self.health = 12
 
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
@@ -75,7 +69,7 @@ class Player:
         if m_y >= c_y:
             self.angle = 2 * pi - self.angle
 
-    def update(self, dt):
+    def update(self, dt=1):
         # print(self.velocity, self.acceleration)
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
@@ -127,21 +121,13 @@ class Player:
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
-            print(self.air_time)
             self.jump_cooldown = self.max_jump_cooldown
-            # if self.collided_sides['left'] and not self.collided_sides['down']:
-            #     self.velocity.y = -self.jump_strength // 2
-            #     self.velocity.x = self.jump_strength
-            # elif self.collided_sides['right'] and not self.collided_sides['down']:
-            #     self.velocity.y = -self.jump_strength // 2
-            #     self.velocity.x = -self.jump_strength
-            # else:
             self.velocity.y = -self.jump_strength
             self.is_jump = True
 
     def shoot(self) -> Projectile:
         return Projectile(self.rect.centerx, self.rect.centery,
-                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
+                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)) * 2, self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')

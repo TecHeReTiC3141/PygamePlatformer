@@ -81,8 +81,7 @@ class Level:
 
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
 
-    # TODO try to solve problem connected with collisions and movement
-    def physics(self, entities: list[Player], dt):
+    def physics(self, dt):
 
         for obj in self.obstacles + self.collectable:
             obj.interact(self.player)
@@ -90,8 +89,9 @@ class Level:
         for proj in self.projectiles:
             for obst in self.blocks + self.obstacles + self.entities + [self.player]:
                 coll = proj.interact(obst)
-                if coll and isinstance(obst, Entity):
-                    obst.health -= proj.damage
+                if coll and isinstance(obst, Entity) and \
+                        (not obst.has_hit_cooldown or obst.hit_cooldown <= 0):
+                    obst.hurt(proj.damage)
 
         if dt <= 3:
             self.player.prev_rect = self.player.rect.copy()
@@ -110,7 +110,6 @@ class Level:
     def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
-            print(self.state)
             if self.surf.get_width() >= self.surf.get_height():
                 self.camera.move('h')
                 if self.camera.offset.x + \
@@ -169,7 +168,7 @@ class Level:
             self.player.rect.center = self.last_checkpoint
 
         self.player.update(dt)
-        self.physics([self.player], dt)
+        self.physics(dt)
         self.update()
 
         self.clear()
@@ -223,10 +222,6 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 15))
-            self.surf.blit(info_font.render(f'{pygame.mouse.get_pos()}', True, 'black'), (10, 150))
-            self.surf.blit(info_font.render(
-                f'{pygame.mouse.get_pos()[0] + self.level.camera.offset.x, pygame.mouse.get_pos()[1] + self.level.camera.offset.y}',
-                True, 'black'), (10, 200))
 
     def update(self):
         if self.player_score < self.level.player.score:

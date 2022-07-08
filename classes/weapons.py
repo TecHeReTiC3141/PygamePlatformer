@@ -6,6 +6,7 @@ class Projectile:
     speed = 10
     damage = 1
 
+
     def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
         self.owner = owner
         self.surf = pygame.Surface(self.size)

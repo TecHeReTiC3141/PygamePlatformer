@@ -152,18 +152,18 @@
 </data>
  </layer>
  <objectgroup id="3" name="GameObjects">
-  <object id="1" name="GreenCannon" type="Entity" gid="506" x="4824.03" y="7322.44" width="213.037" height="277.331" rotation="270.885">
+  <object id="1" name="GreenCannon" type="Entity" gid="506" x="4790.4" y="7337.9" width="213.037" height="290.498" rotation="269.615">
    <properties>
     <property name="direction" value="left"/>
    </properties>
   </object>
   <object id="3" name="LevelEnd" type="LevelEnd" gid="556" x="3662.09" y="767.212" width="310" height="520"/>
-  <object id="4" name="GreenCannon" type="Entity" gid="506" x="3517.33" y="1604.76" width="213.037" height="277.331" rotation="179.314">
+  <object id="4" name="GreenCannon" type="Entity" gid="506" x="3512.68" y="1639.16" width="213.037" height="277.331" rotation="179.892">
    <properties>
     <property name="direction" value="down"/>
    </properties>
   </object>
-  <object id="5" name="GreenCannon" type="Entity" gid="506" x="3949.48" y="1587.33" width="213.037" height="277.331" rotation="179.314">
+  <object id="5" name="GreenCannon" type="Entity" gid="506" x="3952.51" y="1608.54" width="213.037" height="277.331" rotation="179.314">
    <properties>
     <property name="direction" value="down"/>
    </properties>
@@ -175,7 +175,7 @@
     <property name="typ" value="vert"/>
    </properties>
   </object>
-  <object id="9" name="GreenCannon" type="Entity" gid="506" x="2729.85" y="1221.94" width="213.037" height="277.331" rotation="270.885">
+  <object id="9" name="GreenCannon" type="Entity" gid="506" x="2711.67" y="1258.3" width="213.037" height="277.331" rotation="270.885">
    <properties>
     <property name="direction" value="left"/>
    </properties>
