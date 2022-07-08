@@ -61,7 +61,7 @@ class Level:
         self.surf.fill('yellow')
 
         for obj in self.blocks + self.collectable + self.obstacles \
-                   + self.projectiles + self.decor:
+                   + self.projectiles + self.decor + self.entities:
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -84,28 +84,29 @@ class Level:
     # TODO try to solve problem connected with collisions and movement
     def physics(self, entities: list[Player], dt):
 
-        for entity in entities:
-            for obj in self.obstacles + self.collectable:
-                obj.interact(entity)
+        for obj in self.obstacles + self.collectable:
+            obj.interact(self.player)
 
         for proj in self.projectiles:
-            for block in self.blocks + self.obstacles:
-                proj.interact(block)
+            for obst in self.blocks + self.obstacles + self.entities + [self.player]:
+                coll = proj.interact(obst)
+                if coll and isinstance(obst, Entity):
+                    obst.health -= proj.damage
 
         if dt <= 3:
-            for entity in entities:
-                entity.prev_rect = entity.rect.copy()
-                if self.state == 'game':
-                    entity.vert_move(dt)
-                for wall in self.blocks + self.obstacles:
-                    wall.collide(entity, 'h')
-                if self.state == 'game':
-                    entity.hor_move(dt)
-                for wall in self.blocks + self.obstacles:
-                    wall.collide(entity, 'v')
-                entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
-                entity.rect.y = max(entity.rect.y, 0)
+            self.player.prev_rect = self.player.rect.copy()
+            if self.state == 'game':
+                self.player.vert_move(dt)
+            for wall in self.blocks + self.obstacles:
+                wall.collide(self.player, 'h')
+            if self.state == 'game':
+                self.player.hor_move(dt)
+            for wall in self.blocks + self.obstacles:
+                wall.collide(self.player, 'v')
+            self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
+            self.player.rect.y = max(self.player.rect.y, 0)
 
+    # TODO introduce entities into game cycle
     def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
@@ -176,8 +177,13 @@ class Level:
 
     # updating of game objects
     def update(self):
-        for obj in self.obstacles + self.projectiles + self.collectable:
-            obj.update()
+        for obj in self.obstacles + self.projectiles + self.collectable + self.entities:
+            if isinstance(obj, Cannon):
+                proj = obj.update()
+                if proj:
+                    self.projectiles.append(proj)
+            else:
+                obj.update()
 
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
@@ -217,6 +223,7 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 15))
+            self.surf.blit(info_font.render(f'{pygame.mouse.get_pos()}', True, 'black'), (10, 130))
 
     def update(self):
         if self.player_score < self.level.player.score:

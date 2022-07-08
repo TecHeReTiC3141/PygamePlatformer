@@ -6,7 +6,7 @@ pygame.display.set_caption('Pygame Platformer')
 clock = pygame.time.Clock()
 tick = 0
 
-level = gen_level(4)
+level = gen_level(5)
 drawing = Drawing(display, level)
 
 while True:

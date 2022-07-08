@@ -204,7 +204,6 @@ class Spike(Obstacle):
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         GameObject.__init__(self, x, y, width, height, surface)
 
-
     def collide(self, entity: Player, mode: str) -> str:
         if entity.rect.colliderect(self.rect) and entity.hit_cooldown <= 0:
             entity.hit_cooldown = entity.max_hit_cooldown

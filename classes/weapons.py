@@ -4,6 +4,7 @@ class Projectile:
 
     size = (25, 25)
     speed = 10
+    damage = 1
 
     def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
         self.owner = owner
@@ -25,12 +26,15 @@ class Projectile:
 
         self.move()
 
-    def interact(self, entity):
+    def interact(self, entity) -> bool:
         if self.rect.colliderect(entity.rect) and entity != self.owner:
             self.alive = False
+            return True
+        return False
 
 
 class Rocket(Projectile):
+    damage = 2
     sprites = {
         'up': pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
         'left': pygame.transform.rotate(
@@ -47,13 +51,13 @@ class Rocket(Projectile):
         )
     }
 
-    def __init__(self, x, y, dir, movement_vector: pygame.math.Vector2):
+    def __init__(self, x, y, dir, movement_vector: pygame.math.Vector2, owner):
         if dir in ['up', 'down']:
             self.size = self.sprites['up'].get_size()
         else:
             self.size = self.sprites['left'].get_size()
 
-        super().__init__(x, y, movement_vector)
+        super().__init__(x, y, movement_vector, owner)
         self.surf.fill('black')
         self.surf.blit(self.sprites[dir], (0, 0))
 
