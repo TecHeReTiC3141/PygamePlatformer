@@ -85,6 +85,7 @@ class GameObject:
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
         self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.surface.set_colorkey('yellow')
         self.rect = self.surface.get_rect(topleft=(x, y))
 
     def draw(self, surface: pygame.Surface):

@@ -1,8 +1,4 @@
-import pygame.sprite
-
-from scripts.const import *
-from classes.weapons import *
-
+from classes.entity import *
 
 class Player:
     sprites: dict[str, pygame.Surface] \
@@ -145,7 +141,7 @@ class Player:
 
     def shoot(self) -> Projectile:
         return Projectile(self.rect.centerx, self.rect.centery,
-                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)))
+                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')

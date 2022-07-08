@@ -34,13 +34,14 @@ class Level:
     possible_states = ['scrolling', 'game']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
-                 decor: list[Decor], surface: pygame.Surface, background_surf: pygame.Surface,
+                 decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
                  start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
         self.obstacles = obstacles
         self.collectable = collectable
         self.decor = decor
+        self.entities = entities
         self.surf = surface
         self.surf.set_colorkey('yellow')
 
@@ -67,8 +68,9 @@ class Level:
         self.player.draw(self.surf)
 
         camera_surf = pygame.Surface(self.camera.display_size)
-        camera_surf.fill('yellow')
         camera_surf.set_colorkey('yellow')
+        camera_surf.fill('yellow')
+
         if self.state == 'scrolling':
             camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
