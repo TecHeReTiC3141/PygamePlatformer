@@ -1,9 +1,10 @@
 import pygame
+from math import *
 
 class Projectile:
 
     size = (25, 25)
-    speed = 10
+    speed = 8
     damage = 1
 
 
@@ -24,7 +25,6 @@ class Projectile:
         surface.blit(self.surf, self.rect)
 
     def update(self):
-
         self.move()
 
     def interact(self, entity) -> bool:
@@ -35,34 +35,21 @@ class Projectile:
 
 
 class Rocket(Projectile):
-    damage = 2
-    sprites = {
-        'up': pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
-        'left': pygame.transform.rotate(
-            pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
-            90
-        ),
-        'down': pygame.transform.rotate(
-            pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
-            180
-        ),
-        'right': pygame.transform.rotate(
+    damage = 1
+    sprite = pygame.transform.rotate(
             pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
             270
         )
-    }
+
 
     def __init__(self, x, y, dir, movement_vector: pygame.math.Vector2, owner):
-        if dir in ['up', 'down']:
-            self.size = self.sprites['up'].get_size()
-        else:
-            self.size = self.sprites['left'].get_size()
+        self.angle = acos(movement_vector.x)
+        if movement_vector.y > 0:
+            self.angle = 2 * pi - self.angle
+
+        self.sprite = pygame.transform.rotate(self.sprite, degrees(self.angle))
+        self.size = self.sprite.get_size()
 
         super().__init__(x, y, movement_vector, owner)
         self.surf.fill('black')
-        self.surf.blit(self.sprites[dir], (0, 0))
-
-
-
-
-
+        self.surf.blit(self.sprite, (0, 0))

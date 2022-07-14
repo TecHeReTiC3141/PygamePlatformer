@@ -152,18 +152,18 @@
 </data>
  </layer>
  <objectgroup id="3" name="GameObjects">
-  <object id="1" name="GreenCannon" type="Entity" gid="506" x="4790.4" y="7337.9" width="213.037" height="290.498" rotation="269.615">
+  <object id="1" name="GreenCannon" type="Entity" gid="506" x="4734.4" y="7417.9" width="434.457" height="501.015" rotation="269.615">
    <properties>
     <property name="direction" value="left"/>
    </properties>
   </object>
   <object id="3" name="LevelEnd" type="LevelEnd" gid="556" x="3662.09" y="767.212" width="310" height="520"/>
-  <object id="4" name="GreenCannon" type="Entity" gid="506" x="3512.68" y="1639.16" width="213.037" height="277.331" rotation="179.892">
+  <object id="4" name="GreenCannon" type="Entity" gid="506" x="3510.74" y="1916.13" width="213.037" height="277.331" rotation="179.892">
    <properties>
     <property name="direction" value="down"/>
    </properties>
   </object>
-  <object id="5" name="GreenCannon" type="Entity" gid="506" x="3952.51" y="1608.54" width="213.037" height="277.331" rotation="179.314">
+  <object id="5" name="GreenCannon" type="Entity" gid="506" x="3984.51" y="1904.54" width="213.037" height="277.331" rotation="179.314">
    <properties>
     <property name="direction" value="down"/>
    </properties>
@@ -175,22 +175,22 @@
     <property name="typ" value="vert"/>
    </properties>
   </object>
-  <object id="9" name="GreenCannon" type="Entity" gid="506" x="2711.67" y="1258.3" width="213.037" height="277.331" rotation="270.885">
+  <object id="9" name="GreenCannon" type="Entity" gid="506" x="2519.67" y="1274.3" width="213.037" height="277.331" rotation="270.885">
    <properties>
     <property name="direction" value="left"/>
    </properties>
   </object>
-  <object id="10" name="GreenCannon" type="Entity" gid="506" x="332.681" y="4970.53" width="213.037" height="277.331" rotation="91.5173">
+  <object id="10" name="GreenCannon" type="Entity" gid="506" x="391.622" y="5017.75" width="213.037" height="277.331" rotation="90.3203">
    <properties>
     <property name="direction" value="right"/>
    </properties>
   </object>
-  <object id="11" name="GreenCannon" type="Entity" gid="506" x="333.481" y="5285.33" width="213.037" height="277.331" rotation="91.5173">
+  <object id="11" name="GreenCannon" type="Entity" gid="506" x="393.602" y="5323.15" width="213.037" height="277.331" rotation="91.5173">
    <properties>
     <property name="direction" value="right"/>
    </properties>
   </object>
-  <object id="12" name="Player" type="Marker" x="660" y="7636">
+  <object id="12" name="Player" type="Marker" x="188" y="7582">
    <point/>
   </object>
  </objectgroup>

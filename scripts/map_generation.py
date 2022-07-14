@@ -21,10 +21,10 @@ def gen_level(num: int) -> Level:
     level_end: LevelEnd = None
     # Loading objects
     for obj in obj_layer:
-        print(obj.type, obj.name, obj.x, obj.y, obj.width, obj.height, obj.image)
+
         if obj.type == 'Marker':
             if obj.name == 'Player':
-                start_pos = (obj.x * SCALE, obj.y)
+                start_pos = (obj.x, obj.y)
 
         elif obj.type == 'Decor':
             decor.append(Decor(obj.x, obj.y, obj.width, obj.height, obj.image, ))
@@ -42,12 +42,12 @@ def gen_level(num: int) -> Level:
 
         elif obj.type == 'LevelEnd':
             level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image)
-            print(level_end)
 
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':
                 entities.append(Cannon(obj.x, obj.y, obj.width, obj.height,
-                                       obj.direction))
+                                       obj.direction, None))
+                print(obj.x, obj.y, obj.width, obj.height)
 
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
                               level_map.height * BLOCK_SIZE))

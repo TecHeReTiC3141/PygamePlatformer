@@ -51,7 +51,9 @@ class Level:
         self.projectiles: list[Projectile] = []
 
         self.player = Player(*start_pos)
-        self.last_checkpoint = start_pos
+        for entity in self.entities:
+            entity.target = self.player
+        self.last_checkpoint = self.player.rect.center
         self.level_end = end_level
 
         self.state = 'scrolling'
