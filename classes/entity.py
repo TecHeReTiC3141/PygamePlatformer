@@ -55,7 +55,7 @@ class Cannon(Entity):
             pygame.image.load('resources/images/entities/cannon/green_cannon.png').convert_alpha(),
             270)
 
-    def __init__(self, x, y, width, height, direction, target: Entity, fixed=False):
+    def __init__(self, x, y, width, height, direction, max_dist, target: Entity, fixed=False):
         if direction in ['up', 'down']:
             self.size = (width * SCALE, height * SCALE)
             self.velocity = pygame.math.Vector2(0, 1 if direction == 'down' else -1)
@@ -77,10 +77,12 @@ class Cannon(Entity):
         self.shoot_cooldown = self.max_shoot_cooldown
         self.fixed = fixed
         self.target = target
+        self.max_dist = max_dist
         print(x, y, self.rect)
 
     def shoot(self) -> Projectile:
-        return Rocket(self.rect.centerx + cos(self.angle) * 5, self.rect.centery - sin(self.angle) * 5,
+        return Rocket(self.rect.x + cos(self.angle) * self.rect.width // 2,
+                      self.rect.y - sin(self.angle) * self.rect.height // 2,
                    self.direction, self.velocity, self)
 
     def get_angle(self):

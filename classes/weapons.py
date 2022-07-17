@@ -41,7 +41,6 @@ class Rocket(Projectile):
             270
         )
 
-
     def __init__(self, x, y, dir, movement_vector: pygame.math.Vector2, owner):
         self.angle = acos(movement_vector.x)
         if movement_vector.y > 0:

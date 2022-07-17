@@ -45,8 +45,18 @@ def gen_level(num: int) -> Level:
 
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':
-                entities.append(Cannon(obj.x, obj.y, obj.width, obj.height,
-                                       obj.direction, None))
+                # TODO fix getting topleft pos of cannon
+                if obj.direction == 'up':
+                    x, y = obj.x, obj.y
+                elif obj.direction == 'down':
+                    x, y = obj.x - obj.width, obj.y + obj.height
+                elif obj.direction == 'right':
+                    x, y = obj.x, obj.y + obj.height
+                elif obj.direction == 'left':
+                    x, y = obj.x - obj.height // 2, obj.y + obj.width // 2
+
+                entities.append(Cannon(x, y, obj.width, obj.height,
+                                       obj.direction, obj.max_dist, None, ))
                 print(obj.x, obj.y, obj.width, obj.height)
 
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,

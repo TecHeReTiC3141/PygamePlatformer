@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="138" tilecount="9" columns="0">
+<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="138" tilecount="10" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="70" height="110" source="door_closed.png"/>
@@ -27,5 +27,8 @@
  </tile>
  <tile id="9">
   <image width="120" height="120" source="../../resources/images/surrounding/spikes/base_down_spike.png"/>
+ </tile>
+ <tile id="10">
+  <image width="60" height="76" source="../../resources/images/entities/cannon/green_cannon.png"/>
  </tile>
 </tileset>
