@@ -1,14 +1,19 @@
 import pygame
 from math import *
+from random import *
+
 
 class Projectile:
-
     size = (25, 25)
-    speed = 8
+    speed = 12
     damage = 1
-
+    sprite = pygame.Surface(size)
 
     def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
+        self.angle = acos(movement_vector.x)
+        if movement_vector.y > 0:
+            self.angle = 2 * pi - self.angle
+
         self.owner = owner
         self.surf = pygame.Surface(self.size)
         self.surf.set_colorkey('black')
@@ -27,11 +32,25 @@ class Projectile:
     def update(self):
         self.move()
 
+    def set_angle(self, alpha):
+        self.angle = (self.angle + alpha) % (2 * pi)
+        self.vector = pygame.math.Vector2(cos(self.angle), -sin(self.angle))
+        self.sprite = pygame.transform.rotate(self.sprite, degrees(alpha))
+        self.size = self.sprite.get_size()
+        self.surf = pygame.Surface(self.size)
+        self.surf.set_colorkey('black')
+        self.surf.blit(self.sprite, (0, 0))
+        self.rect = self.surf.get_rect(topleft=self.rect.topleft)
+
     def interact(self, entity) -> bool:
         if self.rect.colliderect(entity.rect) and entity != self.owner:
             self.alive = False
             if isinstance(entity, Projectile):
-                entity.alive = False
+                if randint(0, 2):
+                    entity.alive = False
+                else:
+
+                    entity.set_angle(uniform(-pi / 2, pi / 2))
             return True
         return False
 
@@ -39,18 +58,27 @@ class Projectile:
 class Rocket(Projectile):
     damage = 1
     sprite = pygame.transform.rotate(
-            pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
-            270
-        )
+        pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
+        270
+    )
 
-    def __init__(self, x, y, dir, movement_vector: pygame.math.Vector2, owner):
+    def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
         self.angle = acos(movement_vector.x)
         if movement_vector.y > 0:
             self.angle = 2 * pi - self.angle
-
         self.sprite = pygame.transform.rotate(self.sprite, degrees(self.angle))
         self.size = self.sprite.get_size()
 
         super().__init__(x, y, movement_vector, owner)
         self.surf.fill('black')
         self.surf.blit(self.sprite, (0, 0))
+
+    def interact(self, entity) -> bool:
+        if self.rect.colliderect(entity.rect) and entity != self.owner:
+
+            if isinstance(entity, Projectile):
+                entity.alive = False
+            else:
+                self.alive = False
+            return True
+        return False

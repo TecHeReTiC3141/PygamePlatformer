@@ -83,7 +83,7 @@ class Cannon(Entity):
     def shoot(self) -> Projectile:
         return Rocket(self.rect.x + cos(self.angle) * self.rect.width // 2,
                       self.rect.y - sin(self.angle) * self.rect.height // 2,
-                   self.direction, self.velocity, self)
+                  self.velocity, self)
 
     def get_angle(self):
         t_x, t_y = self.target.rect.center

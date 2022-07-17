@@ -8,7 +8,7 @@ class Player(Entity):
 
     jump_strength = 60
     max_jump_cooldown = 25
-    max_shoot_cooldown = 25
+    max_shoot_cooldown = 20
     falling_momentum = 3
     friction = -.25
     max_vel = 5
@@ -133,7 +133,7 @@ class Player(Entity):
 
         self.shoot_cooldown = self.max_shoot_cooldown
         return Projectile(self.rect.centerx, self.rect.centery,
-                      pygame.math.Vector2(cos(self.angle), -sin(self.angle)) * 2, self)
+                      pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
