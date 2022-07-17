@@ -30,6 +30,8 @@ class Projectile:
     def interact(self, entity) -> bool:
         if self.rect.colliderect(entity.rect) and entity != self.owner:
             self.alive = False
+            if isinstance(entity, Projectile):
+                entity.alive = False
             return True
         return False
 

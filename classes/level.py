@@ -8,7 +8,6 @@ class Camera:
         self.offset = pygame.math.Vector2(0, 0)
         width, height = surf.get_size()
         if width >= height:
-
             self.display_size = pygame.math.Vector2(int(height * ASPECT_RATIO), height)
         else:
             self.display_size = pygame.math.Vector2(width, int(width / ASPECT_RATIO))
@@ -44,6 +43,8 @@ class Level:
         self.entities = entities
         self.surf = surface
         self.surf.set_colorkey('yellow')
+        self.aspect_ratio = max(self.surf.get_width(), self.surf.get_height()) / \
+                            min(self.surf.get_width(), self.surf.get_height())
 
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
@@ -89,7 +90,10 @@ class Level:
             obj.interact(self.player)
 
         for proj in self.projectiles:
-            for obst in self.blocks + self.obstacles + self.entities + [self.player]:
+            for obst in self.blocks + self.obstacles + \
+                        self.projectiles + self.entities + [self.player]:
+                if type(obst) == type(proj):
+                    continue
                 coll = proj.interact(obst)
                 if coll and isinstance(obst, Entity) and \
                         (not obst.has_hit_cooldown or obst.hit_cooldown <= 0):
@@ -108,18 +112,17 @@ class Level:
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
             self.player.rect.y = max(self.player.rect.y, 0)
 
-    # TODO introduce entities into game cycle
     def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
             if self.surf.get_width() >= self.surf.get_height():
-                self.camera.move('h')
+                self.camera.move('h', round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
                     self.state = 'game'
                     self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
             else:
-                self.camera.move('v')
+                self.camera.move('v', round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
                     self.state = 'game'
@@ -134,7 +137,8 @@ class Level:
                         self.player.jump()
 
                     elif event.key == pygame.K_e:
-                        self.projectiles.append(self.player.shoot())
+                        if self.player.shoot_cooldown <= 0:
+                            self.projectiles.append(self.player.shoot())
 
                     elif event.key == pygame.K_o and self.level_end.active:
                         return True

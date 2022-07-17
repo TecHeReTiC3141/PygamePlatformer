@@ -123,7 +123,6 @@ class Animated(GameObject):
         self.frame_count %= self.frames_per_sprite * len(self.sprites)
 
 
-# TODO add sprite
 class MovingPlatform(Block, GameObject):
 
     def __init__(self, x, y, width, height, surface: pygame.Surface, typ: str, dist, speed=5):

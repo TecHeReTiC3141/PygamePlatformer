@@ -8,6 +8,7 @@ class Player(Entity):
 
     jump_strength = 60
     max_jump_cooldown = 25
+    max_shoot_cooldown = 25
     falling_momentum = 3
     friction = -.25
     max_vel = 5
@@ -21,6 +22,8 @@ class Player(Entity):
         self.angle = 0
         self.speed = 2
         self.jump_cooldown = 0
+        self.shoot_cooldown = 0
+
         self.is_jump = False
         self.air_time = 0
 
@@ -117,6 +120,7 @@ class Player(Entity):
             self.collided_sides[direct] = False
 
         self.jump_cooldown -= 1
+        self.shoot_cooldown -= 1
         self.hit_cooldown -= 1
 
     def jump(self):
@@ -126,8 +130,10 @@ class Player(Entity):
             self.is_jump = True
 
     def shoot(self) -> Projectile:
+
+        self.shoot_cooldown = self.max_shoot_cooldown
         return Projectile(self.rect.centerx, self.rect.centery,
-                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)) * 2, self)
+                      pygame.math.Vector2(cos(self.angle), -sin(self.angle)) * 2, self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
@@ -139,14 +145,14 @@ class Player(Entity):
         pygame.draw.rect(self.image, 'blue',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
 
-        if self.collided_sides['down']:
-            pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
-                             (self.rect.right, self.rect.height - 5), 5)
-        if self.collided_sides['left']:
-            pygame.draw.line(self.image, 'green', (0, 0),
-                             (0, self.rect.height), 5)
-        if self.collided_sides['right']:
-            pygame.draw.line(self.image, 'green', (self.rect.width, 0),
-                             (self.rect.width, self.rect.height), 5)
+        # if self.collided_sides['down']:
+        #     pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
+        #                      (self.rect.right, self.rect.height - 5), 5)
+        # if self.collided_sides['left']:
+        #     pygame.draw.line(self.image, 'green', (0, 0),
+        #                      (0, self.rect.height), 5)
+        # if self.collided_sides['right']:
+        #     pygame.draw.line(self.image, 'green', (self.rect.width, 0),
+        #                      (self.rect.width, self.rect.height), 5)
         if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)
