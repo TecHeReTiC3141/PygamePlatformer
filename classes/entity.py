@@ -47,7 +47,7 @@ class Entity:
 class Cannon(Entity):
     max_health = 5
     proj_speed = 3
-    max_shoot_cooldown = 60
+    max_shoot_cooldown = 75
     has_hit_cooldown = False
     is_on = False
     max_dist = 1000

@@ -57,6 +57,7 @@ class Projectile:
 
 class Rocket(Projectile):
     damage = 1
+    speed = 10
     sprite = pygame.transform.rotate(
         pygame.image.load('resources/images/entities/projectiles/small_rocket.png').convert_alpha(),
         270

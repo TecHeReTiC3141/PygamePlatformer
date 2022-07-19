@@ -119,9 +119,12 @@ class Player(Entity):
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
-        self.jump_cooldown -= 1
-        self.shoot_cooldown -= 1
-        self.hit_cooldown -= 1
+        if self.jump_cooldown > 0:
+            self.jump_cooldown -= 1
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
@@ -144,7 +147,12 @@ class Player(Entity):
                          (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
         pygame.draw.rect(self.image, 'blue',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
-
+        pygame.draw.rect(surface, 'black',
+                         (self.rect.x - 5, self.rect.y - 30, self.rect.width + 10, 25))
+        pygame.draw.rect(surface, 'blue',
+                         (self.rect.x - 2, self.rect.y - 27,
+                          round((self.rect.width + 6) *
+                                (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
         # if self.collided_sides['down']:
         #     pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
         #                      (self.rect.right, self.rect.height - 5), 5)

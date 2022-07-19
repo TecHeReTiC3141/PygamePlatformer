@@ -1,4 +1,6 @@
 from classes.surroundings import *
+from scripts.game_manager import *
+from scripts.ui_elements import *
 
 
 class Camera:
