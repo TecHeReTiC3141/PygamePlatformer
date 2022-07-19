@@ -1,10 +1,6 @@
-import pygame.sprite
+from classes.entity import *
 
-from scripts.const import *
-from classes.weapons import *
-
-
-class Player:
+class Player(Entity):
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
            for i in ['left', 'right']}
@@ -12,31 +8,28 @@ class Player:
 
     jump_strength = 60
     max_jump_cooldown = 25
+    max_shoot_cooldown = 20
     falling_momentum = 3
     friction = -.25
     max_vel = 5
     max_health = 12
-    max_hit_cooldown = 90
 
-    def __init__(self, x, y):
-        self.image = pygame.Surface(self.size)
-        self.image.set_colorkey('yellow')
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.prev_rect = self.rect.copy()
+    def __init__(self, x, y, direction='left'):
+        super().__init__(x, y, direction)
+
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         self.angle = 0
-        self.direction = 'left'
         self.speed = 2
         self.jump_cooldown = 0
-        self.hit_cooldown = 0
+        self.shoot_cooldown = 0
+
         self.is_jump = False
         self.air_time = 0
 
         self.collided_sides = {i: False for i in directions}
 
         self.score = 0
-        self.health = 12
 
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
@@ -69,17 +62,17 @@ class Player:
             self.velocity.x = 0
         self.velocity.x = max(-self.max_vel, min(self.velocity.x, self.max_vel))
 
-    def get_angle(self, offset: pygame.math.Vector2):
+    def get_angle(self, offset: pygame.math.Vector2, camera_size: pygame.math.Vector2):
         m_x, m_y = pygame.mouse.get_pos()
-        m_x += offset.x
-        m_y += offset.y
+        m_x = int(m_x * camera_size.x / DISP_WIDTH + offset.x)
+        m_y = int(m_y * camera_size.y / DISP_HEIGHT + offset.y)
         c_x, c_y = self.rect.center
         dist = sqrt((c_x - m_x) ** 2 + (c_y - m_y) ** 2)
         self.angle = acos((m_x - c_x) / max(dist, .01))
         if m_y >= c_y:
             self.angle = 2 * pi - self.angle
 
-    def update(self, dt):
+    def update(self, dt=1):
         # print(self.velocity, self.acceleration)
         # if self.movement.length():
         #     norm_move = self.movement.normalize()
@@ -98,9 +91,9 @@ class Player:
 
         self.velocity.x = 0
         if self.acceleration.x > 0:
-            self.acceleration.x = max(self.acceleration.x - .2, 0)
+            self.acceleration.x = max(self.acceleration.x - .22, 0)
         else:
-            self.acceleration.x = min(self.acceleration.x + .2, 0)
+            self.acceleration.x = min(self.acceleration.x + .22, 0)
         if self.collided_sides['up']:
             self.velocity.y = 0
 
@@ -126,26 +119,24 @@ class Player:
         for direct in self.collided_sides:
             self.collided_sides[direct] = False
 
-        self.jump_cooldown -= 1
-        self.hit_cooldown -= 1
+        if self.jump_cooldown > 0:
+            self.jump_cooldown -= 1
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
-            print(self.air_time)
             self.jump_cooldown = self.max_jump_cooldown
-            # if self.collided_sides['left'] and not self.collided_sides['down']:
-            #     self.velocity.y = -self.jump_strength // 2
-            #     self.velocity.x = self.jump_strength
-            # elif self.collided_sides['right'] and not self.collided_sides['down']:
-            #     self.velocity.y = -self.jump_strength // 2
-            #     self.velocity.x = -self.jump_strength
-            # else:
             self.velocity.y = -self.jump_strength
             self.is_jump = True
 
     def shoot(self) -> Projectile:
+
+        self.shoot_cooldown = self.max_shoot_cooldown
         return Projectile(self.rect.centerx, self.rect.centery,
-                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)))
+                      pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
@@ -156,15 +147,20 @@ class Player:
                          (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
         pygame.draw.rect(self.image, 'blue',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
-
-        if self.collided_sides['down']:
-            pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
-                             (self.rect.right, self.rect.height - 5), 5)
-        if self.collided_sides['left']:
-            pygame.draw.line(self.image, 'green', (0, 0),
-                             (0, self.rect.height), 5)
-        if self.collided_sides['right']:
-            pygame.draw.line(self.image, 'green', (self.rect.width, 0),
-                             (self.rect.width, self.rect.height), 5)
+        pygame.draw.rect(surface, 'black',
+                         (self.rect.x - 5, self.rect.y - 30, self.rect.width + 10, 25))
+        pygame.draw.rect(surface, 'blue',
+                         (self.rect.x - 2, self.rect.y - 27,
+                          round((self.rect.width + 6) *
+                                (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
+        # if self.collided_sides['down']:
+        #     pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
+        #                      (self.rect.right, self.rect.height - 5), 5)
+        # if self.collided_sides['left']:
+        #     pygame.draw.line(self.image, 'green', (0, 0),
+        #                      (0, self.rect.height), 5)
+        # if self.collided_sides['right']:
+        #     pygame.draw.line(self.image, 'green', (self.rect.width, 0),
+        #                      (self.rect.width, self.rect.height), 5)
         if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)

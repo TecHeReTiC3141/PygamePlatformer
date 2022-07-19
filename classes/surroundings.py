@@ -85,6 +85,7 @@ class GameObject:
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
         self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.surface.set_colorkey('yellow')
         self.rect = self.surface.get_rect(topleft=(x, y))
 
     def draw(self, surface: pygame.Surface):
@@ -122,7 +123,6 @@ class Animated(GameObject):
         self.frame_count %= self.frames_per_sprite * len(self.sprites)
 
 
-# TODO add sprite
 class MovingPlatform(Block, GameObject):
 
     def __init__(self, x, y, width, height, surface: pygame.Surface, typ: str, dist, speed=5):
@@ -185,15 +185,15 @@ class MovingPlatform(Block, GameObject):
                     entity.collided_sides['down'] = True
                     return 'down'
 
-        elif mode == 'h' and entity.rect.colliderect(self.up_outer_rect):
+        if mode == 'h' and entity.rect.colliderect(self.up_outer_rect):
             entity.collided_sides['down'] = True
             return 'down'
 
-        elif mode == 'v' and entity.rect.colliderect(self.left_outer_rect):
+        if mode == 'v' and entity.rect.colliderect(self.left_outer_rect):
             entity.collided_sides['right'] = True
             return 'right'
 
-        elif mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
+        if mode == 'v' and entity.rect.colliderect(self.right_outer_rect):
             entity.collided_sides['left'] = True
             return 'left'
 
@@ -203,13 +203,12 @@ class Spike(Obstacle):
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         GameObject.__init__(self, x, y, width, height, surface)
 
-
     def collide(self, entity: Player, mode: str) -> str:
         if entity.rect.colliderect(self.rect) and entity.hit_cooldown <= 0:
             entity.hit_cooldown = entity.max_hit_cooldown
             if mode == 'v':
                 # left side
-                entity.health -= 1
+                entity.hurt(1)
                 if entity.velocity.x > 0:
                     entity.rect.right = self.rect.left
                     entity.collided_sides['right'] = True
@@ -235,7 +234,7 @@ class Spike(Obstacle):
                 elif entity.velocity.y < 0:
                     entity.rect.top = self.rect.bottom
                     entity.collided_sides['top'] = True
-                    entity.health -= 2
+                    entity.hurt(2)
                     return 'top'
 
 
@@ -253,7 +252,6 @@ class LevelEnd(GameObject):
     def interact(self, player: Player):
 
         if player.rect.colliderect(self.active_zone):
-            print('active')
             if not self.active:
                 self.surface = pygame.image.load(self.sprites[1]).convert_alpha()
                 self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,

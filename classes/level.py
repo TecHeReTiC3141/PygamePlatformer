@@ -1,4 +1,6 @@
 from classes.surroundings import *
+from scripts.game_manager import *
+from scripts.ui_elements import *
 
 
 class Camera:
@@ -8,7 +10,6 @@ class Camera:
         self.offset = pygame.math.Vector2(0, 0)
         width, height = surf.get_size()
         if width >= height:
-
             self.display_size = pygame.math.Vector2(int(height * ASPECT_RATIO), height)
         else:
             self.display_size = pygame.math.Vector2(width, int(width / ASPECT_RATIO))
@@ -34,15 +35,18 @@ class Level:
     possible_states = ['scrolling', 'game']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
-                 decor: list[Decor], surface: pygame.Surface, background_surf: pygame.Surface,
+                 decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
                  start_pos: tuple[int, int], end_level: LevelEnd):
         self.num = num
         self.blocks = walls
         self.obstacles = obstacles
         self.collectable = collectable
         self.decor = decor
+        self.entities = entities
         self.surf = surface
         self.surf.set_colorkey('yellow')
+        self.aspect_ratio = max(self.surf.get_width(), self.surf.get_height()) / \
+                            min(self.surf.get_width(), self.surf.get_height())
 
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
@@ -50,7 +54,9 @@ class Level:
         self.projectiles: list[Projectile] = []
 
         self.player = Player(*start_pos)
-        self.last_checkpoint = start_pos
+        for entity in self.entities:
+            entity.target = self.player
+        self.last_checkpoint = self.player.rect.center
         self.level_end = end_level
 
         self.state = 'scrolling'
@@ -60,15 +66,16 @@ class Level:
         self.surf.fill('yellow')
 
         for obj in self.blocks + self.collectable + self.obstacles \
-                   + self.projectiles + self.decor:
+                   + self.projectiles + self.decor + self.entities:
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
         self.player.draw(self.surf)
 
         camera_surf = pygame.Surface(self.camera.display_size)
-        camera_surf.fill('yellow')
         camera_surf.set_colorkey('yellow')
+        camera_surf.fill('yellow')
+
         if self.state == 'scrolling':
             camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
@@ -79,43 +86,45 @@ class Level:
 
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
 
-    # TODO try to solve problem connected with collisions and movement
-    def physics(self, entities: list[Player], dt):
+    def physics(self, dt):
 
-        for entity in entities:
-            for obj in self.obstacles + self.collectable:
-                obj.interact(entity)
+        for obj in self.obstacles + self.collectable:
+            obj.interact(self.player)
 
         for proj in self.projectiles:
-            for block in self.blocks + self.obstacles:
-                proj.interact(block)
+            for obst in self.blocks + self.obstacles + \
+                        self.projectiles + self.entities + [self.player]:
+                if type(obst) == type(proj):
+                    continue
+                coll = proj.interact(obst)
+                if coll and isinstance(obst, Entity) and \
+                        (not obst.has_hit_cooldown or obst.hit_cooldown <= 0):
+                    obst.hurt(proj.damage)
 
         if dt <= 3:
-            for entity in entities:
-                entity.prev_rect = entity.rect.copy()
-                if self.state == 'game':
-                    entity.vert_move(dt)
-                for wall in self.blocks + self.obstacles:
-                    wall.collide(entity, 'h')
-                if self.state == 'game':
-                    entity.hor_move(dt)
-                for wall in self.blocks + self.obstacles:
-                    wall.collide(entity, 'v')
-                entity.rect.x = min(max(entity.rect.x, 0), self.surf.get_width() - self.player.rect.width)
-                entity.rect.y = max(entity.rect.y, 0)
+            self.player.prev_rect = self.player.rect.copy()
+            if self.state == 'game':
+                self.player.vert_move(dt)
+            for wall in self.blocks + self.obstacles:
+                wall.collide(self.player, 'h')
+            if self.state == 'game':
+                self.player.hor_move(dt)
+            for wall in self.blocks + self.obstacles:
+                wall.collide(self.player, 'v')
+            self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
+            self.player.rect.y = max(self.player.rect.y, 0)
 
     def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
-            print(self.state)
             if self.surf.get_width() >= self.surf.get_height():
-                self.camera.move('h')
+                self.camera.move('h', round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
                     self.state = 'game'
                     self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
             else:
-                self.camera.move('v')
+                self.camera.move('v', round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
                     self.state = 'game'
@@ -130,7 +139,8 @@ class Level:
                         self.player.jump()
 
                     elif event.key == pygame.K_e:
-                        self.projectiles.append(self.player.shoot())
+                        if self.player.shoot_cooldown <= 0:
+                            self.projectiles.append(self.player.shoot())
 
                     elif event.key == pygame.K_o and self.level_end.active:
                         return True
@@ -156,7 +166,7 @@ class Level:
                             self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                              self.surf.get_width())
 
-        self.player.get_angle(self.camera.offset)
+        self.player.get_angle(self.camera.offset, self.camera.display_size)
 
         if self.player.rect.y >= self.surf.get_height():
             self.player.health = 0
@@ -166,7 +176,7 @@ class Level:
             self.player.rect.center = self.last_checkpoint
 
         self.player.update(dt)
-        self.physics([self.player], dt)
+        self.physics(dt)
         self.update()
 
         self.clear()
@@ -174,8 +184,13 @@ class Level:
 
     # updating of game objects
     def update(self):
-        for obj in self.obstacles + self.projectiles + self.collectable:
-            obj.update()
+        for obj in self.obstacles + self.projectiles + self.collectable + self.entities:
+            if isinstance(obj, Cannon):
+                proj = obj.update()
+                if proj:
+                    self.projectiles.append(proj)
+            else:
+                obj.update()
 
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
