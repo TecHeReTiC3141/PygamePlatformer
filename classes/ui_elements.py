@@ -21,25 +21,33 @@ class UI:
 class Button(UI):
     pass
 
-class LevelChangeStateButton(Button):
+class ChangeStateButton(Button):
     state = ""
 
-class GameChangeStateButton(Button):
-    state = ""
+class LevelChangeStateButton(ChangeStateButton):
+    pass
+
+class GameChangeStateButton(ChangeStateButton):
+    pass
 
 class DirectionButton(LevelChangeStateButton):
     image = pygame.image.load(ui_images / 'Direction_button.png')
     dirs = {'d': 0, 'l': 90, 'u': 180, 'r': 270}
-    state = 'main_game'
+    state = 'game'
 
     def __init__(self, x, y, size: tuple, dir):
-        self.image = pygame.transform.scale(pygame.transform.rotate(self.image, self.dirs[dir]), size)
+        self.image = pygame.transform.scale(pygame.transform.rotate(self.image,
+                                                                    self.dirs[dir]), size)
         self.rect = self.image.get_rect(topleft=(x, y))
 
 
 class PauseButton(LevelChangeStateButton):
     image = pygame.image.load(ui_images / 'Pause_button.png')
     state = 'pause_menu'
+
+
+class UI_container(UI): # menus, etc
+    pass
 
 
 

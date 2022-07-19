@@ -3,8 +3,7 @@ from pytmx.util_pygame import load_pygame
 
 
 # TODO add more levels (at least 6-7)
-# TODO entities to level
-def gen_level(num: int) -> Level:
+def gen_level(game_manager: GameManager, num: int) -> Level:
     path = 'level' + str(num)
     level_map = load_pygame(f'levels/{path}.tmx')
 
@@ -45,7 +44,6 @@ def gen_level(num: int) -> Level:
 
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':
-                # TODO fix getting topleft pos of cannon
                 if obj.direction == 'up':
                     x, y = obj.x, obj.y
                 elif obj.direction == 'down':
@@ -74,5 +72,5 @@ def gen_level(num: int) -> Level:
         background_surf.blit(surf, (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
     level = Level(num, walls, obstacles, collectable,
-                  decor, entities, surface, background_surf, start_pos, level_end)
+                  decor, entities, surface, background_surf, start_pos, level_end, game_manager)
     return level

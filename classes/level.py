@@ -1,6 +1,6 @@
 from classes.surroundings import *
-from scripts.game_manager import *
-from scripts.ui_elements import *
+from classes.ui_elements import *
+from classes.game_manager import *
 
 
 class Camera:
@@ -32,11 +32,11 @@ class Camera:
 
 
 class Level:
-    possible_states = ['scrolling', 'game']
+    possible_states = ['scrolling', 'game', 'pause_menu']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
                  decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
-                 start_pos: tuple[int, int], end_level: LevelEnd):
+                 start_pos: tuple[int, int], end_level: LevelEnd, game_manager: GameManager):
         self.num = num
         self.blocks = walls
         self.obstacles = obstacles
@@ -48,6 +48,13 @@ class Level:
         self.aspect_ratio = max(self.surf.get_width(), self.surf.get_height()) / \
                             min(self.surf.get_width(), self.surf.get_height())
 
+        self.ui_elements: list[UI] = [
+            DirectionButton(DISP_WIDTH - 200, 30, (70, 70), 'r' if self.surf.get_width() >
+                                                                   self.surf.get_width() else 'd'),
+            PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
+
+        ]
+        self.game_manager = game_manager
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
         self.camera = Camera(surface)
@@ -114,6 +121,16 @@ class Level:
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
             self.player.rect.y = max(self.player.rect.y, 0)
 
+    def change_state(self, new_state: str):
+        if self.state == 'scrolling':
+            if new_state == 'game':
+                self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
+                for ui in self.ui_elements:
+                    if isinstance(ui, DirectionButton):
+                        self.ui_elements.remove(ui)
+
+        self.state = new_state
+
     def game_cycle(self, dt) -> bool:
 
         if self.state == 'scrolling':
@@ -121,18 +138,17 @@ class Level:
                 self.camera.move('h', round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
-                    self.state = 'game'
-                    self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
+                    self.change_state('game')
             else:
                 self.camera.move('v', round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
-                    self.state = 'game'
-                    self.camera.display_size = pygame.math.Vector2(DISP_WIDTH, DISP_HEIGHT)
+                    self.change_state('game')
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+
             if self.state == 'game':
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -145,26 +161,42 @@ class Level:
                     elif event.key == pygame.K_o and self.level_end.active:
                         return True
 
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 4:
-                        if self.surf.get_width() <= self.surf.get_height():
-                            self.camera.display_size.x = max(self.camera.display_size.x - 100, DISP_WIDTH - 500)
-                            self.camera.display_size.y = max(self.camera.display_size.x / ASPECT_RATIO,
-                                                             DISP_HEIGHT - 500 / ASPECT_RATIO)
-                        else:
-                            self.camera.display_size.y = max(self.camera.display_size.y - 100,
-                                                             DISP_HEIGHT - 500 / ASPECT_RATIO)
-                            self.camera.display_size.x = max(self.camera.display_size.y * ASPECT_RATIO,
-                                                             DISP_WIDTH - 500)
-                    elif event.button == 5:
-                        if self.surf.get_width() <= self.surf.get_height():
-                            self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
-                            self.camera.display_size.y = min(self.camera.display_size.x / ASPECT_RATIO,
-                                                             self.surf.get_height())
-                        else:
-                            self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
-                            self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
-                                                             self.surf.get_width())
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if event.button == 1:
+                    for ui in self.ui_elements:
+                        if not ui.rect.collidepoint(pygame.mouse.get_pos()):
+                            continue
+
+                        if isinstance(ui, Button):
+                            if isinstance(ui, ChangeStateButton):
+                                if isinstance(ui, LevelChangeStateButton):
+                                    self.change_state(ui.state)
+                                elif isinstance(ui, GameChangeStateButton):
+                                    self.game_manager.state = ui.state
+
+                        elif isinstance(ui, UI_container):
+                            pass
+
+                elif event.button == 4:
+                    if self.surf.get_width() <= self.surf.get_height():
+                        self.camera.display_size.x = max(self.camera.display_size.x - 100, DISP_WIDTH - 500)
+                        self.camera.display_size.y = max(self.camera.display_size.x / ASPECT_RATIO,
+                                                         DISP_HEIGHT - 500 / ASPECT_RATIO)
+                    else:
+                        self.camera.display_size.y = max(self.camera.display_size.y - 100,
+                                                         DISP_HEIGHT - 500 / ASPECT_RATIO)
+                        self.camera.display_size.x = max(self.camera.display_size.y * ASPECT_RATIO,
+                                                         DISP_WIDTH - 500)
+                elif event.button == 5:
+                    if self.surf.get_width() <= self.surf.get_height():
+                        self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
+                        self.camera.display_size.y = min(self.camera.display_size.x / ASPECT_RATIO,
+                                                         self.surf.get_height())
+                    else:
+                        self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
+                        self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
+                                                         self.surf.get_width())
 
         self.player.get_angle(self.camera.offset, self.camera.display_size)
 
@@ -218,7 +250,7 @@ class Drawing:
         self.level.draw(self.surf)
 
     # TODO draw main menu, pause menu and kinda levels map
-    def draw_player_stats(self):
+    def draw_ui(self):
         if self.level.state == 'game':
             pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
             pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
@@ -230,6 +262,8 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 15))
+        for ui in self.level.ui_elements:
+            ui.draw(self.surf)
 
     def update(self):
         if self.player_score < self.level.player.score:
@@ -238,5 +272,5 @@ class Drawing:
     def draw(self):
         self.background()
         self.draw_level()
-        self.draw_player_stats()
+        self.draw_ui()
         self.update()
