@@ -20,3 +20,6 @@ info_font = pygame.font.Font(None, 40)
 stats_font = pygame.font.SysFont('Cambria', 50)
 
 heart = pygame.image.load('resources/images/interface/heart.png').convert_alpha()
+
+blur = pygame.Surface((DISP_WIDTH, DISP_HEIGHT))
+blur.set_alpha(100)

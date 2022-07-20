@@ -3,8 +3,8 @@ from pathlib import Path
 
 ui_images = Path('resources/images/ui')
 
-class UI:
 
+class UI:
     image = pygame.Surface((50, 50))
 
     def __init__(self, x, y, size: tuple):
@@ -21,14 +21,18 @@ class UI:
 class Button(UI):
     pass
 
+
 class ChangeStateButton(Button):
     state = ""
+
 
 class LevelChangeStateButton(ChangeStateButton):
     pass
 
+
 class GameChangeStateButton(ChangeStateButton):
     pass
+
 
 class DirectionButton(LevelChangeStateButton):
     image = pygame.image.load(ui_images / 'Direction_button.png')
@@ -43,12 +47,27 @@ class DirectionButton(LevelChangeStateButton):
 
 class PauseButton(LevelChangeStateButton):
     image = pygame.image.load(ui_images / 'Pause_button.png')
-    state = 'pause_menu'
+    state = 'pause'
 
 
-class UI_container(UI): # menus, etc
-    pass
+class UnpauseButton(LevelChangeStateButton):
+    image = pygame.image.load(ui_images / 'Pause_button.png')
+    state = 'game'
+
+    def __init__(self, x, y, size: tuple, state):
+        super().__init__(x, y, size)
+        self.state = state
 
 
+class UI_container(UI):  # menus, etc
 
+    def __init__(self, x, y, size: tuple, content: list[UI]):
+        self.active = False
+        super().__init__(x, y, size)
+        self.content = content
 
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.image, self.rect)
+
+    def update(self, mouse: tuple):
+        pass
