@@ -1,5 +1,5 @@
-import pygame
 from pathlib import Path
+from scripts.const import *
 
 ui_images = Path('resources/images/ui')
 
@@ -61,13 +61,35 @@ class UnpauseButton(LevelChangeStateButton):
 
 class UI_container(UI):  # menus, etc
 
-    def __init__(self, x, y, size: tuple, content: list[UI]):
+    def __init__(self, x, y, size: tuple, content: list[UI], align='center'):
         self.active = False
         super().__init__(x, y, size)
         self.content = content
+        for ui in self.content:
+            self.image.blit(ui.image, ui.rect.topleft)
+            ui.rect.x += self.rect.x
+            ui.rect.y += self.rect.y
 
-    def draw(self, surface: pygame.Surface):
+        self.align = align
+        self.init_pos = self.rect.center
+
+    def draw(self, surface: pygame.Surface, speed=5):
+        move = pygame.math.Vector2(0, 0)
+        if self.active:
+            if self.align == 'center' and self.rect.center != (DISP_WIDTH // 2, DISP_HEIGHT // 2):
+                move.x = -speed if self.rect.centerx > DISP_WIDTH // 2 else speed
+                move.y = -speed if self.rect.centery > DISP_HEIGHT // 2 else speed
+        else:
+            if self.rect.center != self.init_pos:
+                move.x = -speed if self.rect.centerx > self.init_pos[0] else speed
+                move.y = -speed if self.rect.centery > self.init_pos[0] else speed
+        self.rect.move_ip(move)
         surface.blit(self.image, self.rect)
 
     def update(self, mouse: tuple):
         pass
+
+
+class MainMenu(UI_container):
+
+    pass
