@@ -6,8 +6,10 @@ ui_images = Path('resources/images/ui')
 
 class UI:
     image = pygame.Surface((50, 50))
+    active = True
 
     def __init__(self, x, y, size: tuple):
+
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect(topleft=(x, y))
 
@@ -58,10 +60,17 @@ class UnpauseButton(LevelChangeStateButton):
         super().__init__(x, y, size)
         self.state = state
 
+class QuitButton(GameChangeStateButton):
+    image = pygame.image.load(ui_images / 'Exit_button.png')
+
+
+class SettingsButton(LevelChangeStateButton):
+    image = pygame.image.load(ui_images / 'Settings_button.png')
+
 
 class UI_container(UI):  # menus, etc
 
-    def __init__(self, x, y, size: tuple, content: list[UI], align='center'):
+    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple, level_name: str):
         self.active = False
         super().__init__(x, y, size)
         self.content = content
@@ -69,27 +78,40 @@ class UI_container(UI):  # menus, etc
             self.image.blit(ui.image, ui.rect.topleft)
             ui.rect.x += self.rect.x
             ui.rect.y += self.rect.y
-
-        self.align = align
+        self.image.blit(menu_font.render(level_name, True, '#9C6409'), (80, 115))
+        self.image.blit(menu_font.render('Pause', True, '#9C6409'), (250, 15))
         self.init_pos = self.rect.center
+        self.end_pos = end_point
+
+    def move(self, speed=20):
+        move = pygame.math.Vector2(0, 0)
+        if self.active and self.rect.center != self.end_pos:
+            move.x = -speed if self.rect.centerx > self.end_pos[0] else speed \
+                if self.rect.centerx < self.end_pos[0] else 0
+
+            move.y = -speed if self.rect.centery > self.end_pos[1] else speed \
+                if self.rect.centery < self.end_pos[1] else 0
+            print(self.rect)
+        elif not self.active and self.rect.center != self.init_pos:
+            move.x = -speed if self.rect.centerx > self.init_pos[0] else speed\
+                if self.rect.centerx < self.init_pos[0] else 0
+
+            move.y = -speed if self.rect.centery > self.init_pos[1] else speed \
+                if self.rect.centery < self.init_pos[1] else 0
+        else:
+            for ui in self.content:
+                ui.rect.x += self.end_pos[0] - self.init_pos[0]
+                ui.rect.y += self.end_pos[1] - self.init_pos[1]
+        self.rect.move_ip(move)
 
     def draw(self, surface: pygame.Surface, speed=5):
-        move = pygame.math.Vector2(0, 0)
-        if self.active:
-            if self.align == 'center' and self.rect.center != (DISP_WIDTH // 2, DISP_HEIGHT // 2):
-                move.x = -speed if self.rect.centerx > DISP_WIDTH // 2 else speed
-                move.y = -speed if self.rect.centery > DISP_HEIGHT // 2 else speed
-        else:
-            if self.rect.center != self.init_pos:
-                move.x = -speed if self.rect.centerx > self.init_pos[0] else speed
-                move.y = -speed if self.rect.centery > self.init_pos[0] else speed
-        self.rect.move_ip(move)
+        self.move(speed)
         surface.blit(self.image, self.rect)
 
     def update(self, mouse: tuple):
         pass
 
 
-class MainMenu(UI_container):
-
+class PauseMenu(UI_container):
+    image = pygame.image.load(ui_images / 'Pause_menu.png')
     pass

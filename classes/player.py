@@ -36,14 +36,14 @@ class Player(Entity):
         if keys[pygame.K_a]:
             self.acceleration.x -= .3
             self.direction = 'left'
-            if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
-                self.angle = pi - self.angle
+            # if 3 * pi / 2 <= self.angle or self.angle <= pi / 2:
+            #     self.angle = pi - self.angle
 
         if keys[pygame.K_d]:
             self.acceleration.x += .3
             self.direction = 'right'
-            if pi / 2 <= self.angle <= 3 * pi / 2:
-                self.angle = (3 * pi - self.angle) % 360
+            # if pi / 2 <= self.angle <= 3 * pi / 2:
+            #     self.angle = (3 * pi - self.angle) % 360
 
         self.acceleration.x += self.velocity.x * self.friction
         self.velocity.x += self.acceleration.x * dt

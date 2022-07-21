@@ -52,6 +52,12 @@ class Level:
             'skip_scrolling': DirectionButton(DISP_WIDTH - 200, 30, (70, 70), 'r' if self.surf.get_width() >
                                                                                      self.surf.get_width() else 'd'),
             'pause_button': PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
+            'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
+                                    [
+                                        QuitButton(70, 210, (140, 140)),
+                                        SettingsButton(250, 210, (140, 140)),
+                                        UnpauseButton(430, 210, (140, 140), 'game'),
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}')
         }
         self.game_manager = game_manager
         self.background_surf = background_surf
@@ -136,6 +142,7 @@ class Level:
                                                                    self.ui_elements['pause_button'].rect.size,
                                                                    self.state)
                 self.ui_elements.pop('pause_button')
+                self.ui_elements['pause_menu'].active = True
 
         elif self.state == 'game':
             if new_state == 'pause':
@@ -143,12 +150,14 @@ class Level:
                                                                    self.ui_elements['pause_button'].rect.size,
                                                                    self.state)
                 self.ui_elements.pop('pause_button')
+                self.ui_elements['pause_menu'].active = True
 
         elif self.state == 'pause':
             if new_state in ['game', 'scrolling']:
                 self.ui_elements['pause_button'] = PauseButton(*self.ui_elements['unpause_button'].rect.topleft,
                                                                self.ui_elements['unpause_button'].rect.size)
                 self.ui_elements.pop('unpause_button')
+                self.ui_elements['pause_menu'].active = False
         self.state = new_state
 
     def game_cycle(self, dt) -> bool:
@@ -196,7 +205,13 @@ class Level:
                                     self.game_manager.state = ui.state
 
                         elif isinstance(ui, UI_container):
-                            pass
+                            for ui_el in ui.content:
+                                if isinstance(ui_el, Button):
+                                    if isinstance(ui_el, ChangeStateButton):
+                                        if isinstance(ui_el, LevelChangeStateButton):
+                                            self.change_state(ui_el.state)
+                                        elif isinstance(ui_el, GameChangeStateButton):
+                                            self.game_manager.state = ui_el.state
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
