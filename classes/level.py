@@ -62,6 +62,7 @@ class Level:
         self.game_manager = game_manager
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
+
         self.camera = Camera(surface)
         self.projectiles: list[Projectile] = []
 
@@ -114,10 +115,13 @@ class Level:
                         self.projectiles + self.entities + [self.player]:
                 if type(obst) == type(proj):
                     continue
+                elif isinstance(obst, Entity) and obst.hit_cooldown > 0:
+                    continue
                 coll = proj.interact(obst)
                 if coll and isinstance(obst, Entity) and \
                         (not obst.has_hit_cooldown or obst.hit_cooldown <= 0):
                     obst.hurt(proj.damage)
+                    obst.rect.x += proj.vector.x * proj.speed * 2
 
         if dt <= 3:
             self.player.prev_rect = self.player.rect.copy()

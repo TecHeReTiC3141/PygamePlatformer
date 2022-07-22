@@ -116,6 +116,4 @@ class Cannon(Entity):
             return self.shoot()
 
     def draw(self, surface: pygame.Surface):
-
         super().draw(surface)
-        pygame.draw.rect(surface, 'red', self.rect, width=5)

@@ -287,6 +287,6 @@ class Coin(Animated, Collectable):
 
 
 class Key(Collectable):
-
+    pass
 
 # TODO implement keys which player must collect to open LevelEnd.
