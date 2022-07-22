@@ -285,4 +285,8 @@ class Coin(Animated, Collectable):
             self.value = 0
             self.alive = False
 
+
+class Key(Collectable):
+
+
 # TODO implement keys which player must collect to open LevelEnd.
