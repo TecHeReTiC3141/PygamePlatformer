@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="../tilesets/gameObjs.tsx"/>
+ <object name="LevelEnd" gid="1" width="320" height="520"/>
+</template>

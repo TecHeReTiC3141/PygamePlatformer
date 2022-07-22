@@ -70,7 +70,7 @@ class SettingsButton(LevelChangeStateButton):
 
 class UI_container(UI):  # menus, etc
 
-    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple, level_name: str):
+    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple):
         self.active = False
         super().__init__(x, y, size)
         self.content = content
@@ -78,8 +78,7 @@ class UI_container(UI):  # menus, etc
             self.image.blit(ui.image, ui.rect.topleft)
             ui.rect.x += self.rect.x
             ui.rect.y += self.rect.y
-        self.image.blit(menu_font.render(level_name, True, '#9C6409'), (80, 115))
-        self.image.blit(menu_font.render('Pause', True, '#9C6409'), (250, 15))
+
         self.init_pos = self.rect.center
         self.end_pos = end_point
 
@@ -104,7 +103,7 @@ class UI_container(UI):  # menus, etc
                 ui.rect.y += self.end_pos[1] - self.init_pos[1]
         self.rect.move_ip(move)
 
-    def draw(self, surface: pygame.Surface, speed=5):
+    def draw(self, surface: pygame.Surface, speed=20):
         self.move(speed)
         surface.blit(self.image, self.rect)
 
@@ -114,4 +113,24 @@ class UI_container(UI):  # menus, etc
 
 class PauseMenu(UI_container):
     image = pygame.image.load(ui_images / 'Pause_menu.png')
-    pass
+
+    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple,
+                 level_name: str, cur_time):
+        self.active = False
+        super().__init__(x, y, size, content, end_point)
+        self.content = content
+        for ui in self.content:
+            self.image.blit(ui.image, ui.rect.topleft)
+            ui.rect.x += self.rect.x
+            ui.rect.y += self.rect.y
+        self.image.blit(menu_font.render(level_name, True, '#9C6409'), (80, 115))
+        self.image.blit(menu_font.render('Pause', True, '#9C6409'), (250, 15))
+        self.init_pos = self.rect.center
+        self.end_pos = end_point
+        self.time = cur_time
+
+    def draw(self, surface: pygame.Surface, speed=20):
+        pygame.draw.rect(self.image, '#B8B1A6', (240, 120, 200, 40))
+        self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
+                        (240, 110))
+        super().draw(surface, speed)

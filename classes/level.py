@@ -57,7 +57,7 @@ class Level:
                                         QuitButton(70, 210, (140, 140)),
                                         SettingsButton(250, 210, (140, 140)),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
-                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}')
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0)
         }
         self.game_manager = game_manager
         self.background_surf = background_surf
@@ -71,6 +71,7 @@ class Level:
         self.last_checkpoint = self.player.rect.center
         self.level_end = end_level
 
+        self.init_time = time()
         self.state = 'scrolling'
 
     def draw(self, surface: pygame.Surface):
@@ -151,6 +152,7 @@ class Level:
                                                                    self.state)
                 self.ui_elements.pop('pause_button')
                 self.ui_elements['pause_menu'].active = True
+                self.ui_elements['pause_menu'].time = time() - self.init_time
 
         elif self.state == 'pause':
             if new_state in ['game', 'scrolling']:
