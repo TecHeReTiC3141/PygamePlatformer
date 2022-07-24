@@ -19,12 +19,26 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
 
     key_count = 0
     level_end: LevelEnd = None
+
+    surface = pygame.Surface((level_map.width * BLOCK_SIZE,
+                              level_map.height * BLOCK_SIZE))
+
+    background_surf = pygame.Surface((level_map.width * BLOCK_SIZE,
+                                      level_map.height * BLOCK_SIZE))
+
+    for x, y, surf in background.tiles():
+        background_surf.blit(surf, (x * BLOCK_SIZE, y * BLOCK_SIZE))
+
     # Loading objects
     for obj in obj_layer:
 
         if obj.type == 'Marker':
             if obj.name == 'Player':
                 start_pos = (obj.x, obj.y)
+
+            elif obj.name == 'Text':
+                background_surf.blit(stats_font.render(obj.text, True, obj.color),
+                                     (obj.x * SCALE, obj.y * SCALE))
 
         elif obj.type == 'Decor':
             decor.append(Decor(obj.x, obj.y, obj.width, obj.height, obj.image, ))
@@ -62,19 +76,12 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
                                        obj.direction, obj.max_dist, None, ))
                 print(obj.x, obj.y, obj.width, obj.height)
 
-    surface = pygame.Surface((level_map.width * BLOCK_SIZE,
-                              level_map.height * BLOCK_SIZE))
 
-    background_surf = pygame.Surface((level_map.width * BLOCK_SIZE,
-                                      level_map.height * BLOCK_SIZE))
     assert isinstance(level_end, LevelEnd), "No LevelEnd"
     # Loading blocks
     walls: list[Block] = []
     for x, y, surf in blocks.tiles():
         walls.append(Block(x, y, surf))
-
-    for x, y, surf in background.tiles():
-        background_surf.blit(surf, (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
     level = Level(num, walls, obstacles, collectable,
                   decor, entities, surface, background_surf, start_pos, key_count, level_end, game_manager)

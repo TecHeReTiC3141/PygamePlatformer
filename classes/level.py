@@ -234,13 +234,15 @@ class Level:
                                                          DISP_WIDTH - 500)
                 elif event.button == 5 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
-                        self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width())
+                        self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width(),
+                                                         DISP_WIDTH * 3)
                         self.camera.display_size.y = min(self.camera.display_size.x / ASPECT_RATIO,
-                                                         self.surf.get_height())
+                                                         self.surf.get_height(), DISP_HEIGHT * 3)
                     else:
-                        self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height())
+                        self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height(),
+                                                         DISP_HEIGHT * 3)
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
-                                                         self.surf.get_width())
+                                                         self.surf.get_width(), DISP_WIDTH * 3)
 
         self.player.get_angle(self.camera.offset, self.camera.display_size)
 

@@ -314,4 +314,3 @@ class Key(Moving, Collectable):
         if player.rect.colliderect(self.rect):
             player.keys += 1
             self.alive = False
-
