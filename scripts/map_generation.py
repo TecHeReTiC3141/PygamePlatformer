@@ -17,6 +17,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
     collectable: list[Collectable] = []
     entities: list[Entity] = []
 
+    key_count = 0
     level_end: LevelEnd = None
     # Loading objects
     for obj in obj_layer:
@@ -31,6 +32,10 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
         elif obj.type == 'Money':
             collectable.append(Coin(obj.x, obj.y, obj.width, obj.height, obj.image))
 
+        elif obj.type == 'Key':
+            collectable.append(Key(obj.x, obj.y, obj.width, obj.height, obj.image))
+            key_count += 1
+
         elif obj.type == 'MovingPlatform':
             obstacles.append(MovingPlatform(obj.x, obj.y, obj.width,
                                             obj.height, obj.image, obj.typ, obj.dist, obj.speed))
@@ -40,7 +45,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
                                    obj.height, obj.image))
 
         elif obj.type == 'LevelEnd':
-            level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image)
+            level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image, key_count)
 
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':
@@ -72,5 +77,5 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
         background_surf.blit(surf, (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
     level = Level(num, walls, obstacles, collectable,
-                  decor, entities, surface, background_surf, start_pos, level_end, game_manager)
+                  decor, entities, surface, background_surf, start_pos, key_count, level_end, game_manager)
     return level

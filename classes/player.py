@@ -30,6 +30,7 @@ class Player(Entity):
         self.collided_sides = {i: False for i in directions}
 
         self.score = 0
+        self.keys = 0
 
     def hor_move(self, dt):
         keys = pygame.key.get_pressed()
@@ -42,6 +43,9 @@ class Player(Entity):
         if keys[pygame.K_d]:
             self.acceleration.x += .3
             self.direction = 'right'
+
+        if keys[pygame.K_w]:
+            self.rect.y -= 15
             # if pi / 2 <= self.angle <= 3 * pi / 2:
             #     self.angle = (3 * pi - self.angle) % 360
 
@@ -97,7 +101,7 @@ class Player(Entity):
         if self.collided_sides['up']:
             self.velocity.y = 0
 
-        max_sliding_down = 10
+        max_sliding_down = 30
 
         if self.collided_sides['down']:
             max_sliding_down = 0

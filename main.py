@@ -6,9 +6,10 @@ pygame.display.set_caption('Pygame Platformer')
 clock = pygame.time.Clock()
 tick = 0
 game_manager = GameManager()
-level = gen_level(game_manager, 5)
+level = gen_level(game_manager, 6)
 drawing = Drawing(display, level)
 
+# TODO implement console for debugging
 while True:
     delta = clock.tick(FPS) * .001 * FPS
 

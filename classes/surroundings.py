@@ -1,3 +1,5 @@
+import pygame
+
 from classes.player import *
 
 
@@ -108,6 +110,25 @@ class Obstacle(GameObject, Block):
 
 class Collectable(GameObject):
     pass
+
+
+class Moving(GameObject):
+    padding = 40
+    speed = 2
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.init_point = self.rect.center
+
+    def draw(self, surface: pygame.Surface):
+        super().draw(surface)
+        self.move()
+
+    def move(self):
+        self.rect.y += self.speed
+        if self.rect.y > self.init_point[1] + self.padding \
+            or self.rect.y < self.init_point[1] - self.padding:
+            self.speed *= -1
 
 
 class Animated(GameObject):
@@ -242,16 +263,17 @@ class LevelEnd(GameObject):
     sprites = {0: 'resources/images/surrounding/door_closed.png',
                1: 'resources/images/surrounding/door_open.png'}
 
-    def __init__(self, x, y, width, height, surface: pygame.Surface):
+    def __init__(self, x, y, width, height, surface: pygame.Surface, key_count):
         super().__init__(x, y, width, height, surface)
         self.active_zone = pygame.Rect(self.rect.x - self.rect.width,
                                        self.rect.y,
                                        self.rect.width * 3, self.rect.height)
         self.active = 0
+        self.key_count = key_count
 
     def interact(self, player: Player):
 
-        if player.rect.colliderect(self.active_zone):
+        if player.rect.colliderect(self.active_zone) and player.keys == self.key_count:
             if not self.active:
                 self.surface = pygame.image.load(self.sprites[1]).convert_alpha()
                 self.surface = pygame.transform.scale(self.surface, (self.surface.get_width() * SCALE,
@@ -286,7 +308,10 @@ class Coin(Animated, Collectable):
             self.alive = False
 
 
-class Key(Collectable):
-    pass
+class Key(Moving, Collectable):
 
-# TODO implement keys which player must collect to open LevelEnd.
+    def interact(self, player: Player):
+        if player.rect.colliderect(self.rect):
+            player.keys += 1
+            self.alive = False
+

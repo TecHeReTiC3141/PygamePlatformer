@@ -36,7 +36,7 @@ class Level:
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
                  decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
-                 start_pos: tuple[int, int], end_level: LevelEnd, game_manager: GameManager):
+                 start_pos: tuple[int, int], key_count, end_level: LevelEnd, game_manager: GameManager):
         self.num = num
         self.blocks = walls
         self.obstacles = obstacles
@@ -70,7 +70,10 @@ class Level:
         for entity in self.entities:
             entity.target = self.player
         self.last_checkpoint = self.player.rect.center
+
+        self.key_count = key_count
         self.level_end = end_level
+        self.level_end.key_count = key_count
 
         self.init_time = time()
         self.state = 'scrolling'
@@ -277,6 +280,10 @@ class Drawing:
     hearts_dict = {i: pygame.image.load(f'resources/images/interface/heart{i}.png').convert_alpha()
                    for i in range(4)}
     empty_heart = pygame.image.load('resources/images/interface/heart_empty.png').convert_alpha()
+    coin = pygame.transform.scale(pygame.image.load('resources/images/surrounding/coins/gold_coin_3.png'),
+                                  (35, 35)).convert_alpha()
+    key = pygame.transform.scale(pygame.image.load('resources/images/surrounding/key.png'),
+                                  (35, 35)).convert_alpha()
 
     def __init__(self, surf: pygame.Surface, level: Level):
         self.surf = surf
@@ -294,16 +301,21 @@ class Drawing:
     # TODO draw main menu, pause menu and kinda levels map
     def draw_ui(self):
         if self.level.state == 'game':
-            pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 5 + 20, DISP_HEIGHT // 6 + 20))
-            pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 5, DISP_HEIGHT // 6))
-            self.surf.blit(stats_font.render(f'Score: {self.player_score}', True, 'yellow'), (5, 65))
+            pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 6, DISP_HEIGHT // 5 + 20))
+            pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 6 - 20, DISP_HEIGHT // 5))
+            self.surf.blit(self.coin, (10, 65))
+            self.surf.blit(stats_font.render(str(self.player_score), True, 'yellow'), (55, 50))
+            if self.level.key_count:
+                self.surf.blit(self.key, (10, 105))
+                self.surf.blit(stats_font.render(f'{self.level.player.keys} / {self.level.key_count}', True, 'grey'), (55, 90))
+
             for i in range(0, 12, 4):
                 if self.level.player.health >= i + 4:
-                    self.surf.blit(self.hearts_dict[0], (5 + i * 15, 15))
+                    self.surf.blit(self.hearts_dict[0], (5 + i * 15, 5))
                 elif i < self.level.player.health < i + 4:
-                    self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 15))
+                    self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 5))
                 else:
-                    self.surf.blit(self.empty_heart, (5 + i * 15, 15))
+                    self.surf.blit(self.empty_heart, (5 + i * 15, 5))
         for ui in self.level.ui_elements.values():
             ui.draw(self.surf)
 
