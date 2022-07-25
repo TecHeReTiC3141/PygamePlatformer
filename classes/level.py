@@ -171,6 +171,8 @@ class Level:
                                                                self.ui_elements['unpause_button'].rect.size)
                 self.ui_elements.pop('unpause_button')
                 self.ui_elements['pause_menu'].active = False
+        print(self.ui_elements)
+        print(self.state, new_state)
         self.state = new_state
 
     def game_cycle(self, dt) -> bool:
@@ -217,8 +219,12 @@ class Level:
                                 elif isinstance(ui, GameChangeStateButton):
                                     self.game_manager.state = ui.state
 
-                        elif isinstance(ui, UI_container):
+                        elif isinstance(ui, UI_container) and ui.active:
+
                             for ui_el in ui.content:
+                                print(ui_el.rect)
+                                if not ui_el.rect.collidepoint(pygame.mouse.get_pos()):
+                                    continue
                                 if isinstance(ui_el, Button):
                                     if isinstance(ui_el, ChangeStateButton):
                                         if isinstance(ui_el, LevelChangeStateButton):
@@ -309,13 +315,14 @@ class Drawing:
     # TODO draw main menu, pause menu and kinda levels map
     def draw_ui(self):
         if self.level.state == 'game':
-            pygame.draw.rect(self.surf, 'black', (-10, 0, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 20), border_radius=8)
-            pygame.draw.rect(self.surf, '#6c380f', (-10, 0, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5), border_radius=8)
+            pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30), border_radius=8)
+            pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10), border_radius=8)
             self.surf.blit(self.coin, (10, 65))
             self.surf.blit(stats_font.render(str(self.player_score), True, 'yellow'), (55, 50))
             if self.level.key_count:
                 self.surf.blit(self.key, (10, 105))
                 self.surf.blit(stats_font.render(f'{self.level.player.keys} / {self.level.key_count}', True, 'grey'), (55, 90))
+
 
             for i in range(0, 12, 4):
                 if self.level.player.health >= i + 4:
@@ -324,6 +331,8 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 5))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 5))
+        self.surf.blit(stats_font.render(f'level_state - {self.level.state}', True, 'black'),
+                       (5, DISP_HEIGHT // 4))
         for ui in self.level.ui_elements.values():
             ui.draw(self.surf)
 

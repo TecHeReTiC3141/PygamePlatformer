@@ -78,7 +78,7 @@ class UI_container(UI):  # menus, etc
             self.image.blit(ui.image, ui.rect.topleft)
             ui.rect.x += self.rect.x
             ui.rect.y += self.rect.y
-
+            print(ui.rect)
         self.init_pos = self.rect.center
         self.end_pos = end_point
 
@@ -90,18 +90,18 @@ class UI_container(UI):  # menus, etc
 
             move.y = -speed if self.rect.centery > self.end_pos[1] else speed \
                 if self.rect.centery < self.end_pos[1] else 0
-            print(self.rect)
+
         elif not self.active and self.rect.center != self.init_pos:
             move.x = -speed if self.rect.centerx > self.init_pos[0] else speed\
                 if self.rect.centerx < self.init_pos[0] else 0
 
             move.y = -speed if self.rect.centery > self.init_pos[1] else speed \
                 if self.rect.centery < self.init_pos[1] else 0
-        else:
+
+        if move.length():
+            self.rect.move_ip(move)
             for ui in self.content:
-                ui.rect.x += self.end_pos[0] - self.init_pos[0]
-                ui.rect.y += self.end_pos[1] - self.init_pos[1]
-        self.rect.move_ip(move)
+                ui.rect.move_ip(move)
 
     def draw(self, surface: pygame.Surface, speed=20):
         self.move(speed)
@@ -116,15 +116,9 @@ class PauseMenu(UI_container):
 
     def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple,
                  level_name: str, cur_time):
-        self.active = False
         super().__init__(x, y, size, content, end_point)
-        self.content = content
-        for ui in self.content:
-            self.image.blit(ui.image, ui.rect.topleft)
-            ui.rect.x += self.rect.x
-            ui.rect.y += self.rect.y
         self.image.blit(menu_font.render(level_name, True, '#9C6409'), (80, 115))
-        self.image.blit(menu_font.render('Pause', True, '#9C6409'), (250, 15))
+        self.image.blit(menu_font.render('Pause', True, '#9C6409'), (250, 10))
         self.init_pos = self.rect.center
         self.end_pos = end_point
         self.time = cur_time
