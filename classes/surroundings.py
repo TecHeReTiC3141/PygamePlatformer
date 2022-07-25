@@ -2,7 +2,7 @@ import pygame
 
 from classes.player import *
 
-
+# TODO think about block's friction
 class Block:
     movable = False
 

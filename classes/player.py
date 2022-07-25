@@ -1,5 +1,6 @@
 from classes.entity import *
 
+# TODO hardcode moving parameters
 class Player(Entity):
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_sprite_{i}.png').convert_alpha()
@@ -10,7 +11,7 @@ class Player(Entity):
     max_jump_cooldown = 25
     max_shoot_cooldown = 20
     falling_momentum = 3
-    friction = -.25
+    friction = -.3
     max_vel = 5
     max_health = 12
 
@@ -58,7 +59,7 @@ class Player(Entity):
 
     def vert_move(self, dt):
         self.velocity.y += self.acceleration.y * dt
-        self.velocity.y = min(self.velocity.y, 7)
+        self.velocity.y = min(self.velocity.y, 12)
         self.rect.y += int(self.velocity.y * dt + .5 * self.acceleration.y * dt ** 2)
 
     def cap_hor_speed(self):

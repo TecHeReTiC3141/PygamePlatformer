@@ -1,7 +1,5 @@
 from classes.surroundings import *
 from classes.ui_elements import *
-from classes.game_manager import *
-
 
 class Camera:
 
@@ -222,7 +220,6 @@ class Level:
                         elif isinstance(ui, UI_container) and ui.active:
 
                             for ui_el in ui.content:
-                                print(ui_el.rect)
                                 if not ui_el.rect.collidepoint(pygame.mouse.get_pos()):
                                     continue
                                 if isinstance(ui_el, Button):
@@ -297,7 +294,7 @@ class Drawing:
     coin = pygame.transform.scale(pygame.image.load('resources/images/surrounding/coins/gold_coin_3.png'),
                                   (35, 35)).convert_alpha()
     key = pygame.transform.scale(pygame.image.load('resources/images/surrounding/key.png'),
-                                  (35, 35)).convert_alpha()
+                                 (35, 35)).convert_alpha()
 
     def __init__(self, surf: pygame.Surface, level: Level):
         self.surf = surf
@@ -315,14 +312,16 @@ class Drawing:
     # TODO draw main menu, pause menu and kinda levels map
     def draw_ui(self):
         if self.level.state == 'game':
-            pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30), border_radius=8)
-            pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10), border_radius=8)
+            pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
+                             border_radius=8)
+            pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10),
+                             border_radius=8)
             self.surf.blit(self.coin, (10, 65))
             self.surf.blit(stats_font.render(str(self.player_score), True, 'yellow'), (55, 50))
             if self.level.key_count:
                 self.surf.blit(self.key, (10, 105))
-                self.surf.blit(stats_font.render(f'{self.level.player.keys} / {self.level.key_count}', True, 'grey'), (55, 90))
-
+                self.surf.blit(stats_font.render(f'{self.level.player.keys} / {self.level.key_count}', True, 'grey'),
+                               (55, 90))
 
             for i in range(0, 12, 4):
                 if self.level.player.health >= i + 4:

@@ -1,5 +1,6 @@
 from pathlib import Path
 from scripts.const import *
+from classes.game_manager import GameManager
 
 ui_images = Path('resources/images/ui')
 
@@ -128,3 +129,14 @@ class PauseMenu(UI_container):
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (240, 110))
         super().draw(surface, speed)
+
+# TODO revise pysimplegui and implement Settings Window
+class Window:
+    layout = [[]]
+
+    def __init__(self, game_manager: GameManager):
+        self.game_manager = game_manager
+
+
+class SettingsWindow(Window):
+    pass
