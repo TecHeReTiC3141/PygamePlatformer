@@ -127,7 +127,7 @@ class Moving(GameObject):
     def move(self):
         self.rect.y += self.speed
         if self.rect.y > self.init_point[1] + self.padding \
-            or self.rect.y < self.init_point[1] - self.padding:
+                or self.rect.y < self.init_point[1] - self.padding:
             self.speed *= -1
 
 
@@ -304,7 +304,6 @@ class Coin(Animated, Collectable):
     def interact(self, player: Player):
         if player.rect.colliderect(self.rect):
             player.score += self.value
-            self.value = 0
             self.alive = False
 
 

@@ -84,6 +84,8 @@ class Level:
 
         for obj in self.blocks + self.collectable + self.obstacles \
                    + self.projectiles + self.decor + self.entities:
+            if isinstance(obj, Collectable) and not obj.alive:
+                continue
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -111,6 +113,8 @@ class Level:
     def physics(self, dt):
 
         for obj in self.obstacles + self.collectable:
+            if isinstance(obj, Collectable) and not obj.alive:
+                continue
             obj.interact(self.player)
 
         for proj in self.projectiles:
@@ -235,14 +239,14 @@ class Level:
                 elif event.button == 5 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
                         self.camera.display_size.x = min(self.camera.display_size.x + 100, self.surf.get_width(),
-                                                         DISP_WIDTH * 3)
+                                                         DISP_WIDTH * 2)
                         self.camera.display_size.y = min(self.camera.display_size.x / ASPECT_RATIO,
-                                                         self.surf.get_height(), DISP_HEIGHT * 3)
+                                                         self.surf.get_height(), DISP_HEIGHT * 2)
                     else:
                         self.camera.display_size.y = min(self.camera.display_size.y + 100, self.surf.get_height(),
-                                                         DISP_HEIGHT * 3)
+                                                         DISP_HEIGHT * 2)
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
-                                                         self.surf.get_width(), DISP_WIDTH * 3)
+                                                         self.surf.get_width(), DISP_WIDTH * 2)
 
         self.player.get_angle(self.camera.offset, self.camera.display_size)
 
@@ -251,7 +255,11 @@ class Level:
 
         if self.player.health <= 0:
             self.player.health = self.player.max_health
+            self.player.score = 0
+            self.player.keys = 0
             self.player.rect.center = self.last_checkpoint
+            for obj in self.collectable:
+                obj.alive = True
 
         if self.state == 'game':
             self.player.update(dt)
@@ -274,8 +282,6 @@ class Level:
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
                                        self.projectiles))
-
-        self.collectable = list(filter(lambda i: i.alive, self.collectable))
 
 
 class Drawing:
@@ -303,8 +309,8 @@ class Drawing:
     # TODO draw main menu, pause menu and kinda levels map
     def draw_ui(self):
         if self.level.state == 'game':
-            pygame.draw.rect(self.surf, 'black', (0, 0, DISP_WIDTH // 6, DISP_HEIGHT // 5 + 20))
-            pygame.draw.rect(self.surf, '#6c380f', (0, 0, DISP_WIDTH // 6 - 20, DISP_HEIGHT // 5))
+            pygame.draw.rect(self.surf, 'black', (-10, 0, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 20), border_radius=8)
+            pygame.draw.rect(self.surf, '#6c380f', (-10, 0, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5), border_radius=8)
             self.surf.blit(self.coin, (10, 65))
             self.surf.blit(stats_font.render(str(self.player_score), True, 'yellow'), (55, 50))
             if self.level.key_count:
