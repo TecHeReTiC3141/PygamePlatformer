@@ -1,6 +1,5 @@
 from pathlib import Path
-from scripts.const import *
-from classes.game_manager import GameManager
+from classes.gui_elements import *
 
 ui_images = Path('resources/images/ui')
 
@@ -10,7 +9,6 @@ class UI:
     active = True
 
     def __init__(self, x, y, size: tuple):
-
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect(topleft=(x, y))
 
@@ -37,6 +35,13 @@ class GameChangeStateButton(ChangeStateButton):
     pass
 
 
+class GUI_trigger(Button):
+
+    def __init__(self, x, y, size: tuple, gui_class: type):
+        super().__init__(x, y, size)
+        self.gui = gui_class
+
+
 class DirectionButton(LevelChangeStateButton):
     image = pygame.image.load(ui_images / 'Direction_button.png')
     dirs = {'d': 0, 'l': 90, 'u': 180, 'r': 270}
@@ -60,6 +65,7 @@ class UnpauseButton(LevelChangeStateButton):
     def __init__(self, x, y, size: tuple, state):
         super().__init__(x, y, size)
         self.state = state
+
 
 class QuitButton(GameChangeStateButton):
     image = pygame.image.load(ui_images / 'Exit_button.png')
@@ -93,7 +99,7 @@ class UI_container(UI):  # menus, etc
                 if self.rect.centery < self.end_pos[1] else 0
 
         elif not self.active and self.rect.center != self.init_pos:
-            move.x = -speed if self.rect.centerx > self.init_pos[0] else speed\
+            move.x = -speed if self.rect.centerx > self.init_pos[0] else speed \
                 if self.rect.centerx < self.init_pos[0] else 0
 
             move.y = -speed if self.rect.centery > self.init_pos[1] else speed \
@@ -129,14 +135,3 @@ class PauseMenu(UI_container):
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (240, 110))
         super().draw(surface, speed)
-
-# TODO revise pysimplegui and implement Settings Window
-class Window:
-    layout = [[]]
-
-    def __init__(self, game_manager: GameManager):
-        self.game_manager = game_manager
-
-
-class SettingsWindow(Window):
-    pass
