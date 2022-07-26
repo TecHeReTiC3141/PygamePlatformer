@@ -75,5 +75,5 @@ class SettingsWindow(Window):
 
         self.close()
 
-game_manager = GameManager(pygame.Surface((DISP_WIDTH, DISP_HEIGHT)))
-SettingsWindow(game_manager)
+# game_manager = GameManager(pygame.Surface((DISP_WIDTH, DISP_HEIGHT)))
+# SettingsWindow(game_manager)

@@ -1,6 +1,7 @@
 from classes.surroundings import *
 from classes.ui_elements import *
 
+
 class Camera:
 
     def __init__(self, surf: pygame.Surface):
@@ -53,7 +54,7 @@ class Level:
             'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
                                     [
                                         QuitButton(70, 210, (140, 140)),
-                                        SettingsButton(250, 210, (140, 140)),
+                                        SettingsButton(250, 210, (140, 140), SettingsWindow),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0)
         }
@@ -141,6 +142,19 @@ class Level:
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
             self.player.rect.y = max(self.player.rect.y, 0)
 
+    def check_ui(self, ui: UI):
+        if not ui.rect.collidepoint(pygame.mouse.get_pos()):
+            return
+
+        if isinstance(ui, Button):
+            if isinstance(ui, ChangeStateButton):
+                if isinstance(ui, LevelChangeStateButton):
+                    self.change_state(ui.state)
+                elif isinstance(ui, GameChangeStateButton):
+                    self.game_manager.state = ui.state
+            elif isinstance(ui, GUI_trigger):
+                ui.gui(self.game_manager)
+
     def change_state(self, new_state: str):
         if self.state == 'scrolling':
             if new_state == 'game':
@@ -207,27 +221,11 @@ class Level:
 
                 if event.button == 1:
                     for ui in list(self.ui_elements.values()):
-                        if not ui.rect.collidepoint(pygame.mouse.get_pos()):
-                            continue
-
-                        if isinstance(ui, Button):
-                            if isinstance(ui, ChangeStateButton):
-                                if isinstance(ui, LevelChangeStateButton):
-                                    self.change_state(ui.state)
-                                elif isinstance(ui, GameChangeStateButton):
-                                    self.game_manager.state = ui.state
-
-                        elif isinstance(ui, UI_container) and ui.active:
-
+                        if isinstance(ui, UI_container) and ui.active:
                             for ui_el in ui.content:
-                                if not ui_el.rect.collidepoint(pygame.mouse.get_pos()):
-                                    continue
-                                if isinstance(ui_el, Button):
-                                    if isinstance(ui_el, ChangeStateButton):
-                                        if isinstance(ui_el, LevelChangeStateButton):
-                                            self.change_state(ui_el.state)
-                                        elif isinstance(ui_el, GameChangeStateButton):
-                                            self.game_manager.state = ui_el.state
+                                self.check_ui(ui_el)
+                        else:
+                            self.check_ui(ui)
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
