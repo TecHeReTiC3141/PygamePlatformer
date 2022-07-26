@@ -309,7 +309,7 @@ class Drawing:
     def draw_level(self):
         self.level.draw(self.surf)
 
-    # TODO draw main menu, pause menu and kinda levels map
+    # TODO draw main menu and kinda levels map
     def draw_ui(self):
         if self.level.state == 'game':
             pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
