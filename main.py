@@ -3,10 +3,12 @@ from classes.drawing import Drawing
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
 pygame.display.set_caption('Pygame Platformer')
+pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico'),
+                                               (32, 32)))
 
 tick = 0
 game_manager = GameManager(display)
-level = gen_level(game_manager, 1)
+level = gen_level(game_manager, 6)
 drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging

@@ -67,7 +67,7 @@ class UnpauseButton(LevelChangeStateButton):
         self.state = state
 
 
-class QuitButton(GameChangeStateButton):
+class QuitButton(GUI_trigger):
     image = pygame.image.load(ui_images / 'Exit_button.png')
 
 

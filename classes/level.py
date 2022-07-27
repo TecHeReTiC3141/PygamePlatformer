@@ -53,7 +53,7 @@ class Level:
             'pause_button': PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
             'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140)),
+                                        QuitButton(70, 210, (140, 140), Quit),
                                         SettingsButton(250, 210, (140, 140), SettingsWindow),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0)
@@ -194,12 +194,12 @@ class Level:
 
         if self.state == 'scrolling':
             if self.surf.get_width() >= self.surf.get_height():
-                self.camera.move('h', round(4 * self.aspect_ratio))
+                self.camera.move('h') # round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
                     self.change_state('game')
             else:
-                self.camera.move('v', round(4 * self.aspect_ratio))
+                self.camera.move('v') # round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
                     self.change_state('game')

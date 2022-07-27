@@ -1,10 +1,9 @@
 import PySimpleGUI as sg
-import pygame
 
 from classes.game_manager import *
 
-# TODO revise pysimplegui and implement Settings Window
-class Window:
+
+class Window:  # abstract class for all GUI windows
     layout = [[]]
 
     def __init__(self, game_manager: GameManager, win_name: str, theme='DarkAmber', ):
@@ -28,6 +27,10 @@ class Window:
 class SettingsWindow(Window):
 
     def __init__(self, game_manager: GameManager, theme='DarkAmber', ):
+
+        sg.theme(theme)
+        sg.set_options(font='Frank 12')
+
         graphics_tab = sg.Tab('Graphics', [
             [sg.Frame('Game', [
                 [sg.Spin(['Low', 'Medium', 'Hard'], initial_value=game_manager.difficulty,
@@ -65,7 +68,7 @@ class SettingsWindow(Window):
     def run(self):
 
         while True:
-            event,  values = self.window.read()
+            event, values = self.window.read()
             if event == sg.WINDOW_CLOSED or event == 'Reset':
                 break
 
@@ -74,6 +77,34 @@ class SettingsWindow(Window):
                                     fullscreen=values['-FULLSCREEN-'],
                                     debug=values['-DEBUG-'],
                                     )
+                break
+
+        self.close()
+
+
+class Quit(Window):
+
+    def __init__(self, game_manager: GameManager, theme='DarkAmber', ):
+
+        sg.theme(theme)
+        sg.set_options(font='Frank 12')
+
+        self.layout = [
+            [sg.T('Are you sure you would like to quit?')],
+            [sg.B('Yes', button_color='red'), sg.B('No', button_color='green')],
+        ]
+
+        super().__init__(game_manager, 'Quit')
+
+    def run(self):
+
+        while True:
+            event, values = self.window.read()
+
+            if event == 'Yes':
+                self.close()
+                pygame.quit()
+            else:
                 break
 
         self.close()
