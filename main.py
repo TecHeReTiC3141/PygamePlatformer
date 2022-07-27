@@ -4,15 +4,14 @@ from classes.drawing import Drawing
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
 pygame.display.set_caption('Pygame Platformer')
 
-clock = pygame.time.Clock()
 tick = 0
 game_manager = GameManager(display)
-level = gen_level(game_manager, 6)
+level = gen_level(game_manager, 1)
 drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging
 while True:
-    delta = clock.tick(FPS) * .001 * FPS
+    delta = game_manager.clock.tick(FPS) * .001 * FPS
 
     drawing.draw()
 

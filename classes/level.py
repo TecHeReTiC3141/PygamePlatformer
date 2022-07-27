@@ -143,7 +143,10 @@ class Level:
             self.player.rect.y = max(self.player.rect.y, 0)
 
     def check_ui(self, ui: UI):
-        if not ui.rect.collidepoint(pygame.mouse.get_pos()):
+        mouse = list(pygame.mouse.get_pos())
+        mouse[0] = round(mouse[0] / self.game_manager.res[0] * DISP_WIDTH)
+        mouse[1] = round(mouse[1] / self.game_manager.res[1] * DISP_HEIGHT)
+        if not ui.rect.collidepoint(mouse):
             return
 
         if isinstance(ui, Button):

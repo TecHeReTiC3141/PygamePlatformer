@@ -25,7 +25,7 @@ class Drawing:
 
     # TODO draw main menu and kinda levels map
     def draw_ui(self):
-        if self.level.state == 'game':
+        if self.level.state == 'game': # displaying player's stats
             pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
                              border_radius=8)
             pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10),
@@ -44,14 +44,20 @@ class Drawing:
                     self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 5))
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 5))
-        self.surf.blit(stats_font.render(f'level_state - {self.level.state}', True, 'black'),
-                       (5, DISP_HEIGHT // 4))
+
+        if self.manager.show_debug: # displaying debug info
+            self.surf.blit(info_font.render(f'level_state: {self.level.state}', True, 'black'),
+                           (5, 200))
+            self.surf.blit(info_font.render(f'FPS: {round(self.manager.clock.get_fps())}',
+                                                 True, 'red'), (5, 170))
+
         for ui in self.level.ui_elements.values():
             ui.draw(self.surf)
 
     def update(self):
         if self.player_score < self.level.player.score:
             self.player_score += 1
+        self.player_score = min(self.level.player.score, self.player_score)
 
     def draw(self):
         self.background()

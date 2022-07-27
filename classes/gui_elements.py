@@ -13,7 +13,7 @@ class Window:
         sg.theme(theme)
         sg.set_options(font='Frank 12')
 
-        self.window = sg.Window(win_name, self.layout, finalize=True)
+        self.window = sg.Window(win_name, self.layout, finalize=True, no_titlebar=True)
         self.run()
 
     def run(self):
@@ -36,15 +36,15 @@ class SettingsWindow(Window):
             ])],
             [sg.HorizontalSeparator()],
             [sg.Frame('Graphics', [
-                [sg.Text('Resolution'), sg.Spin(['900x600', '1080x720', '1440x900'],
+                [sg.Text('Resolution'), sg.Spin(['900x600', '1280x720', '1440x900'],
                                                 initial_value='1440x900', key='-RES-'),
-                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Show damage', key='-DAMAGEIND-')]
+                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Show debug info', key='-DEBUG-')]
             ], )]
         ], expand_y=True, expand_x=True)
 
         sound_tab = sg.Tab('Sounds', [
             [sg.Frame('Sounds', [
-                [sg.Slider((1, 10), key='-SOUNDVOL', orientation='h', default_value=5)]
+                [sg.Slider((1, 10), key='-SOUNDVOL-', orientation='h', default_value=5)]
             ], expand_y=True, expand_x=True)],
 
             [sg.Frame('Music', [
@@ -70,8 +70,11 @@ class SettingsWindow(Window):
                 break
 
             elif event == 'Apply':
-                pass
-                # self.manager.update()
+                self.manager.update(res=tuple(map(int, values['-RES-'].split('x'))),
+                                    fullscreen=values['-FULLSCREEN-'],
+                                    debug=values['-DEBUG-'],
+                                    )
+                break
 
         self.close()
 
