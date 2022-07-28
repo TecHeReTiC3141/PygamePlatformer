@@ -31,7 +31,7 @@ class Camera:
 
 
 class Level:
-    possible_states = ['scrolling', 'game', 'pause_menu']
+    possible_states = ['scrolling', 'game', 'pause', 'end_level']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
                  decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
@@ -56,7 +56,15 @@ class Level:
                                         QuitButton(70, 210, (140, 140), Quit),
                                         SettingsButton(250, 210, (140, 140), SettingsWindow),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
-                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0)
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0),
+            'endlevel_menu': EndLevelMenu(DISP_WIDTH, DISP_HEIGHT // 2 - 180, (640, 360),
+                                    [
+                                        QuitButton(70, 210, (140, 140), Quit),
+                                        RetryButton(250, 210, (140, 140)),
+                                        NextLevelButton(430, 210, (140, 140)),
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
+                                          len([i for i in collectable if isinstance(i, Coin)]) * Coin.value, 0)
+
         }
         self.game_manager = game_manager
         self.background_surf = background_surf

@@ -18,7 +18,7 @@ while True:
     drawing.draw()
 
     end_level = level.game_cycle(delta)
-    if end_level:
+    if end_level is not None:
         level = gen_level(game_manager, level.num + 1)
         drawing.level = level
 

@@ -46,7 +46,7 @@ class Player(Entity):
             self.direction = 'right'
 
         if keys[pygame.K_w]:
-            self.rect.y -= 15
+            self.rect.y -= 20
             # if pi / 2 <= self.angle <= 3 * pi / 2:
             #     self.angle = (3 * pi - self.angle) % 360
 
@@ -138,7 +138,6 @@ class Player(Entity):
             self.is_jump = True
 
     def shoot(self) -> Projectile:
-
         self.shoot_cooldown = self.max_shoot_cooldown
         return Projectile(self.rect.centerx, self.rect.centery,
                       pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)

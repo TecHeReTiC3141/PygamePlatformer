@@ -1,6 +1,5 @@
-import pygame
-
 from classes.player import *
+
 
 # TODO think about block's friction
 class Block:
@@ -313,3 +312,5 @@ class Key(Moving, Collectable):
         if player.rect.colliderect(self.rect):
             player.keys += 1
             self.alive = False
+
+# TODO think about implementation of particles

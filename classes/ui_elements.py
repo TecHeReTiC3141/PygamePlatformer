@@ -35,6 +35,10 @@ class GameChangeStateButton(ChangeStateButton):
     pass
 
 
+class LevelQuitButton(Button):
+    next_level = True
+
+
 class GUI_trigger(Button):
 
     def __init__(self, x, y, size: tuple, gui_class: type):
@@ -73,6 +77,15 @@ class QuitButton(GUI_trigger):
 
 class SettingsButton(GUI_trigger):
     image = pygame.image.load(ui_images / 'Settings_button.png')
+
+
+class RetryButton(LevelQuitButton):
+    next_level = False
+    image = pygame.image.load(ui_images / 'Retry_button.png')
+
+
+class NextLevelButton(LevelQuitButton):
+    image = pygame.image.load(ui_images / 'Pause_button.png')
 
 
 class UI_container(UI):  # menus, etc
@@ -134,4 +147,30 @@ class PauseMenu(UI_container):
         pygame.draw.rect(self.image, '#B8B1A6', (240, 120, 200, 40))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (240, 110))
+        super().draw(surface, speed)
+
+
+class EndLevelMenu(UI_container):
+    image = pygame.image.load(ui_images / 'Pause_menu.png')
+
+    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple,
+                 level_name: str, cur_time, max_score, player_score):
+        super().__init__(x, y, size, content, end_point)
+        self.image.blit(menu_font.render(level_name + " passed!", True, '#9C6409'), (160, 45))
+        self.image.blit(menu_font.render('Time', True, '#9C6409'), (330, 120))
+        self.image.blit(menu_font.render(strftime('%M:%S', gmtime(cur_time)), True, '#9C6409'), (480, 120))
+        self.init_pos = self.rect.center
+        self.end_pos = end_point
+
+        self.cur_score = 0
+        self.player_score = player_score
+        self.max_score = max_score
+
+    def draw(self, surface: pygame.Surface, speed=20):
+        if self.cur_score < self.player_score:
+            self.cur_score += 1
+
+        pygame.draw.rect(self.image, '#eecc67', (240, 120, 200, 40))
+        self.image.blit(menu_font.render(f'{self.cur_score} / {self.max_score}', True, '#9C6409'), (85, 120))
+
         super().draw(surface, speed)

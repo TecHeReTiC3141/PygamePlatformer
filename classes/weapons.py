@@ -2,7 +2,7 @@ import pygame
 from math import *
 from random import *
 
-
+# Implement pixel-perfect collisions for projectiles
 class Projectile:
     size = (25, 25)
     speed = 12
