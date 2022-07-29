@@ -106,7 +106,7 @@ class Level:
             camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
 
-        elif self.state == 'game':
+        elif self.state == 'game' or self.state == 'end_level':
             camera_surf.blit(self.background_surf, (0, 0), self.camera.scroll(self.player))
             camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
 
@@ -166,6 +166,9 @@ class Level:
             elif isinstance(ui, GUI_trigger):
                 ui.gui(self.game_manager)
 
+            elif isinstance(ui, LevelQuitButton):
+                return ui.next_level
+
     def change_state(self, new_state: str):
         if self.state == 'scrolling':
             if new_state == 'game':
@@ -173,26 +176,25 @@ class Level:
                 self.ui_elements.pop('skip_scrolling')
 
             elif new_state == 'pause':
-                self.ui_elements['unpause_button'] = UnpauseButton(*self.ui_elements['pause_button'].rect.topleft,
-                                                                   self.ui_elements['pause_button'].rect.size,
-                                                                   self.state)
                 self.ui_elements.pop('pause_button')
                 self.ui_elements['pause_menu'].active = True
 
         elif self.state == 'game':
             if new_state == 'pause':
-                self.ui_elements['unpause_button'] = UnpauseButton(*self.ui_elements['pause_button'].rect.topleft,
-                                                                   self.ui_elements['pause_button'].rect.size,
-                                                                   self.state)
                 self.ui_elements.pop('pause_button')
                 self.ui_elements['pause_menu'].active = True
                 self.ui_elements['pause_menu'].time = time() - self.init_time
 
+            elif new_state == 'end_level':
+                self.ui_elements['endlevel_menu'].time = time() - self.init_time
+                self.ui_elements['endlevel_menu'].player_score = self.player.score
+
+                self.ui_elements['endlevel_menu'].active = True
+                self.ui_elements.pop('pause_button')
+
         elif self.state == 'pause':
             if new_state in ['game', 'scrolling']:
-                self.ui_elements['pause_button'] = PauseButton(*self.ui_elements['unpause_button'].rect.topleft,
-                                                               self.ui_elements['unpause_button'].rect.size)
-                self.ui_elements.pop('unpause_button')
+                self.ui_elements['pause_button'] = PauseButton(DISP_WIDTH - 100, 30, (70, 70))
                 self.ui_elements['pause_menu'].active = False
         print(self.ui_elements)
         print(self.state, new_state)
@@ -216,8 +218,12 @@ class Level:
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-            if self.state == 'game':
-                if event.type == pygame.KEYDOWN:
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.change_state('pause' if self.state == 'game' else 'game')
+
+                elif self.state == 'game':
                     if event.key == pygame.K_SPACE:
                         self.player.jump()
 
@@ -226,17 +232,21 @@ class Level:
                             self.projectiles.append(self.player.shoot())
 
                     elif event.key == pygame.K_o and self.level_end.active:
-                        return True
+                        self.change_state('end_level')
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
                     for ui in list(self.ui_elements.values()):
                         if isinstance(ui, UI_container) and ui.active:
                             for ui_el in ui.content:
-                                self.check_ui(ui_el)
+                                end_level = self.check_ui(ui_el)
+                                if end_level is not None:
+                                    return end_level
                         else:
-                            self.check_ui(ui)
+                            end_level = self.check_ui(ui)
+                            if end_level is not None:
+                                return end_level
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():

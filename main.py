@@ -8,7 +8,7 @@ pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico
 
 tick = 0
 game_manager = GameManager(display)
-level = gen_level(game_manager, 6)
+level = gen_level(game_manager, 5)
 drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging
@@ -19,7 +19,7 @@ while True:
 
     end_level = level.game_cycle(delta)
     if end_level is not None:
-        level = gen_level(game_manager, level.num + 1)
+        level = gen_level(game_manager, level.num + end_level)
         drawing.level = level
 
     pygame.display.update()

@@ -1,5 +1,6 @@
 from classes.entity import *
 
+
 # TODO hardcode moving parameters
 class Player(Entity):
     sprites: dict[str, pygame.Surface] \
@@ -46,7 +47,7 @@ class Player(Entity):
             self.direction = 'right'
 
         if keys[pygame.K_w]:
-            self.rect.y -= 20
+            self.rect.y -= 25
             # if pi / 2 <= self.angle <= 3 * pi / 2:
             #     self.angle = (3 * pi - self.angle) % 360
 
@@ -140,7 +141,7 @@ class Player(Entity):
     def shoot(self) -> Projectile:
         self.shoot_cooldown = self.max_shoot_cooldown
         return Projectile(self.rect.centerx, self.rect.centery,
-                      pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
+                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')

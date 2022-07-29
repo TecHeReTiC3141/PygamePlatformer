@@ -46,7 +46,7 @@ class Drawing:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 5))
 
         if self.manager.show_debug: # displaying debug info
-            self.surf.blit(info_font.render(f'level_state: {self.level.state}', True, 'black'),
+            self.surf.blit(info_font.render(f'level_state: {self.level.state}', True, 'red'),
                            (5, 200))
             self.surf.blit(info_font.render(f'FPS: {round(self.manager.clock.get_fps())}',
                                                  True, 'red'), (5, 170))
