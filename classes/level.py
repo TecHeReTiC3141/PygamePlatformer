@@ -1,6 +1,7 @@
 from classes.surroundings import *
 from classes.ui_elements import *
 
+
 class Camera:
 
     def __init__(self, surf: pygame.Surface):
@@ -30,7 +31,7 @@ class Camera:
 
 
 class Level:
-    possible_states = ['scrolling', 'game', 'pause_menu']
+    possible_states = ['scrolling', 'game', 'pause', 'end_level']
 
     def __init__(self, num, walls: list[Block], obstacles: list[Obstacle], collectable: list[Collectable],
                  decor: list[Decor], entities: list[Entity], surface: pygame.Surface, background_surf: pygame.Surface,
@@ -52,10 +53,18 @@ class Level:
             'pause_button': PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
             'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140)),
-                                        SettingsButton(250, 210, (140, 140)),
+                                        QuitButton(70, 210, (140, 140), Quit),
+                                        SettingsButton(250, 210, (140, 140), SettingsWindow),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
-                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0)
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0),
+            'endlevel_menu': EndLevelMenu(DISP_WIDTH, DISP_HEIGHT // 2 - 180, (640, 360),
+                                    [
+                                        QuitButton(70, 210, (140, 140), Quit),
+                                        RetryButton(250, 210, (140, 140)),
+                                        NextLevelButton(430, 210, (140, 140)),
+                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
+                                          len([i for i in collectable if isinstance(i, Coin)]) * Coin.value, 0)
+
         }
         self.game_manager = game_manager
         self.background_surf = background_surf
@@ -97,7 +106,7 @@ class Level:
             camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
 
-        elif self.state == 'game':
+        elif self.state == 'game' or self.state == 'end_level':
             camera_surf.blit(self.background_surf, (0, 0), self.camera.scroll(self.player))
             camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
 
@@ -141,6 +150,25 @@ class Level:
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
             self.player.rect.y = max(self.player.rect.y, 0)
 
+    def check_ui(self, ui: UI):
+        mouse = list(pygame.mouse.get_pos())
+        mouse[0] = round(mouse[0] / self.game_manager.res[0] * DISP_WIDTH)
+        mouse[1] = round(mouse[1] / self.game_manager.res[1] * DISP_HEIGHT)
+        if not ui.rect.collidepoint(mouse):
+            return
+
+        if isinstance(ui, Button):
+            if isinstance(ui, ChangeStateButton):
+                if isinstance(ui, LevelChangeStateButton):
+                    self.change_state(ui.state)
+                elif isinstance(ui, GameChangeStateButton):
+                    self.game_manager.state = ui.state
+            elif isinstance(ui, GUI_trigger):
+                ui.gui(self.game_manager)
+
+            elif isinstance(ui, LevelQuitButton):
+                return ui.next_level
+
     def change_state(self, new_state: str):
         if self.state == 'scrolling':
             if new_state == 'game':
@@ -148,26 +176,25 @@ class Level:
                 self.ui_elements.pop('skip_scrolling')
 
             elif new_state == 'pause':
-                self.ui_elements['unpause_button'] = UnpauseButton(*self.ui_elements['pause_button'].rect.topleft,
-                                                                   self.ui_elements['pause_button'].rect.size,
-                                                                   self.state)
                 self.ui_elements.pop('pause_button')
                 self.ui_elements['pause_menu'].active = True
 
         elif self.state == 'game':
             if new_state == 'pause':
-                self.ui_elements['unpause_button'] = UnpauseButton(*self.ui_elements['pause_button'].rect.topleft,
-                                                                   self.ui_elements['pause_button'].rect.size,
-                                                                   self.state)
                 self.ui_elements.pop('pause_button')
                 self.ui_elements['pause_menu'].active = True
                 self.ui_elements['pause_menu'].time = time() - self.init_time
 
+            elif new_state == 'end_level':
+                self.ui_elements['endlevel_menu'].time = time() - self.init_time
+                self.ui_elements['endlevel_menu'].player_score = self.player.score
+
+                self.ui_elements['endlevel_menu'].active = True
+                self.ui_elements.pop('pause_button')
+
         elif self.state == 'pause':
             if new_state in ['game', 'scrolling']:
-                self.ui_elements['pause_button'] = PauseButton(*self.ui_elements['unpause_button'].rect.topleft,
-                                                               self.ui_elements['unpause_button'].rect.size)
-                self.ui_elements.pop('unpause_button')
+                self.ui_elements['pause_button'] = PauseButton(DISP_WIDTH - 100, 30, (70, 70))
                 self.ui_elements['pause_menu'].active = False
         print(self.ui_elements)
         print(self.state, new_state)
@@ -177,12 +204,12 @@ class Level:
 
         if self.state == 'scrolling':
             if self.surf.get_width() >= self.surf.get_height():
-                self.camera.move('h', round(4 * self.aspect_ratio))
+                self.camera.move('h') # round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
                     self.change_state('game')
             else:
-                self.camera.move('v', round(4 * self.aspect_ratio))
+                self.camera.move('v') # round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
                     self.change_state('game')
@@ -191,8 +218,12 @@ class Level:
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-            if self.state == 'game':
-                if event.type == pygame.KEYDOWN:
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.change_state('pause' if self.state == 'game' else 'game')
+
+                elif self.state == 'game':
                     if event.key == pygame.K_SPACE:
                         self.player.jump()
 
@@ -201,33 +232,21 @@ class Level:
                             self.projectiles.append(self.player.shoot())
 
                     elif event.key == pygame.K_o and self.level_end.active:
-                        return True
+                        self.change_state('end_level')
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
                     for ui in list(self.ui_elements.values()):
-                        if not ui.rect.collidepoint(pygame.mouse.get_pos()):
-                            continue
-
-                        if isinstance(ui, Button):
-                            if isinstance(ui, ChangeStateButton):
-                                if isinstance(ui, LevelChangeStateButton):
-                                    self.change_state(ui.state)
-                                elif isinstance(ui, GameChangeStateButton):
-                                    self.game_manager.state = ui.state
-
-                        elif isinstance(ui, UI_container) and ui.active:
-
+                        if isinstance(ui, UI_container) and ui.active:
                             for ui_el in ui.content:
-                                if not ui_el.rect.collidepoint(pygame.mouse.get_pos()):
-                                    continue
-                                if isinstance(ui_el, Button):
-                                    if isinstance(ui_el, ChangeStateButton):
-                                        if isinstance(ui_el, LevelChangeStateButton):
-                                            self.change_state(ui_el.state)
-                                        elif isinstance(ui_el, GameChangeStateButton):
-                                            self.game_manager.state = ui_el.state
+                                end_level = self.check_ui(ui_el)
+                                if end_level is not None:
+                                    return end_level
+                        else:
+                            end_level = self.check_ui(ui)
+                            if end_level is not None:
+                                return end_level
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
@@ -285,62 +304,3 @@ class Level:
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
                                        self.projectiles))
-
-
-class Drawing:
-    hearts_dict = {i: pygame.image.load(f'resources/images/interface/heart{i}.png').convert_alpha()
-                   for i in range(4)}
-    empty_heart = pygame.image.load('resources/images/interface/heart_empty.png').convert_alpha()
-    coin = pygame.transform.scale(pygame.image.load('resources/images/surrounding/coins/gold_coin_3.png'),
-                                  (35, 35)).convert_alpha()
-    key = pygame.transform.scale(pygame.image.load('resources/images/surrounding/key.png'),
-                                 (35, 35)).convert_alpha()
-
-    def __init__(self, surf: pygame.Surface, level: Level):
-        self.surf = surf
-        self.level = level
-        self.background_surf = pygame.Surface(self.surf.get_size())
-        self.background_surf.fill('black')
-        self.player_score = 0
-
-    def background(self):
-        self.surf.blit(self.background_surf, (0, 0))
-
-    def draw_level(self):
-        self.level.draw(self.surf)
-
-    # TODO draw main menu, pause menu and kinda levels map
-    def draw_ui(self):
-        if self.level.state == 'game':
-            pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
-                             border_radius=8)
-            pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10),
-                             border_radius=8)
-            self.surf.blit(self.coin, (10, 65))
-            self.surf.blit(stats_font.render(str(self.player_score), True, 'yellow'), (55, 50))
-            if self.level.key_count:
-                self.surf.blit(self.key, (10, 105))
-                self.surf.blit(stats_font.render(f'{self.level.player.keys} / {self.level.key_count}', True, 'grey'),
-                               (55, 90))
-
-            for i in range(0, 12, 4):
-                if self.level.player.health >= i + 4:
-                    self.surf.blit(self.hearts_dict[0], (5 + i * 15, 5))
-                elif i < self.level.player.health < i + 4:
-                    self.surf.blit(self.hearts_dict[self.level.player.health % 4], (5 + i * 15, 5))
-                else:
-                    self.surf.blit(self.empty_heart, (5 + i * 15, 5))
-        self.surf.blit(stats_font.render(f'level_state - {self.level.state}', True, 'black'),
-                       (5, DISP_HEIGHT // 4))
-        for ui in self.level.ui_elements.values():
-            ui.draw(self.surf)
-
-    def update(self):
-        if self.player_score < self.level.player.score:
-            self.player_score += 1
-
-    def draw(self):
-        self.background()
-        self.draw_level()
-        self.draw_ui()
-        self.update()

@@ -14,6 +14,8 @@ class Entity:
         x, y = x * SCALE, y * SCALE
         self.image = pygame.Surface(self.size)
         self.image.set_colorkey('yellow')
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.rect = self.image.get_rect(topleft=(x, y))
         self.prev_rect = self.rect.copy()
         self.health = self.max_health

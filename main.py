@@ -1,23 +1,25 @@
 from scripts.map_generation import *
+from classes.drawing import Drawing
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
 pygame.display.set_caption('Pygame Platformer')
+pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico'),
+                                               (32, 32)))
 
-clock = pygame.time.Clock()
 tick = 0
-game_manager = GameManager()
-level = gen_level(game_manager, 6)
-drawing = Drawing(display, level)
+game_manager = GameManager(display)
+level = gen_level(game_manager, 5)
+drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging
 while True:
-    delta = clock.tick(FPS) * .001 * FPS
+    delta = game_manager.clock.tick(FPS) * .001 * FPS
 
     drawing.draw()
 
     end_level = level.game_cycle(delta)
-    if end_level:
-        level = gen_level(game_manager, level.num + 1)
+    if end_level is not None:
+        level = gen_level(game_manager, level.num + end_level)
         drawing.level = level
 
     pygame.display.update()

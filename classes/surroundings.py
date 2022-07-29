@@ -1,6 +1,5 @@
-import pygame
-
 from classes.player import *
+
 
 # TODO think about block's friction
 class Block:
@@ -8,6 +7,7 @@ class Block:
 
     def __init__(self, x, y, surface: pygame.Surface):
         self.surface = pygame.transform.scale(surface, (BLOCK_SIZE, BLOCK_SIZE))
+        self.mask = pygame.mask.from_surface(self.surface)
 
         self.rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
         self.left_outer_rect = pygame.Rect(self.rect.left - 3, self.rect.top,
@@ -87,6 +87,8 @@ class GameObject:
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
         self.surface = pygame.transform.scale(surface, (width, height)).convert_alpha()
+        self.mask = pygame.mask.from_surface(self.surface)
+
         self.surface.set_colorkey('yellow')
         self.rect = self.surface.get_rect(topleft=(x, y))
 
@@ -177,8 +179,6 @@ class MovingPlatform(Block, GameObject):
     def interact(self, player: Player):
         side = self.collide(player, 'h') or self.collide(player, 'v')
         if side:
-            print(player.velocity, player.collided_sides)
-
             player.rect.move_ip(self.movement)
 
     def update(self):
@@ -294,7 +294,6 @@ class Coin(Animated, Collectable):
             pygame.image.load(f'resources/images/surrounding/coins/gold_coin_{i}.png').convert_alpha(),
             (70, 69))
         for i in range(7)}
-
     value = 50
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
@@ -313,3 +312,5 @@ class Key(Moving, Collectable):
         if player.rect.colliderect(self.rect):
             player.keys += 1
             self.alive = False
+
+# TODO think about implementation of particles
