@@ -53,13 +53,13 @@ class Level:
             'pause_button': PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
             'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140)),
+                                        ToMenu(70, 210, (140, 140)),
                                         SettingsButton(250, 210, (140, 140)),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0),
             'endlevel_menu': EndLevelMenu(DISP_WIDTH, DISP_HEIGHT // 2 - 180, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140)),
+                                        ToMenu(70, 210, (140, 140)),
                                         RetryButton(250, 210, (140, 140)),
                                         NextLevelButton(430, 210, (140, 140)),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
@@ -113,9 +113,10 @@ class Level:
         elif self.state == 'pause':
             camera_surf.blit(self.background_surf, (0, 0), self.camera.free_scroll())
             camera_surf.blit(self.surf, (0, 0), self.camera.free_scroll())
-            camera_surf.blit(pygame.transform.scale(blur, self.surf.get_size()), (0, 0))
 
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
+        if self.state == 'pause':
+            surface.blit(blur, (0, 0))
 
     def physics(self, dt):
 
@@ -162,12 +163,12 @@ class Level:
                 if isinstance(ui, LevelChangeStateButton):
                     self.change_state(ui.state)
                 elif isinstance(ui, GameChangeStateButton):
-                    self.game_manager.state = ui.state
+                    return ui
             elif isinstance(ui, GUI_trigger):
                 ui.gui(self.game_manager)
 
             elif isinstance(ui, LevelQuitButton):
-                return ui.next_level
+                return ui
 
             elif isinstance(ui, TextButton):
                 return self.check_ui(ui.func_button)
@@ -218,7 +219,6 @@ class Level:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -311,14 +311,14 @@ class MainMenu(Level):
 
     def __init__(self, game_manager: GameManager):
         self.ui_elements: dict[str, UI] = {
-            'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 200, (200, 100),
-                       (200, DISP_HEIGHT // 2 - 200),
+            'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 150, (200, 100),
+                       (320, DISP_HEIGHT // 2 - 150),
                        ToLevels(0, 0, (10, 10)), 'green', 'Levels'),
             'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
-                       (200, DISP_HEIGHT // 2),
+                       (320, DISP_HEIGHT // 2),
                        SettingsButton(0, 0, (10, 10), ), 'blue', 'Settings'),
-            'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 200, (200, 100),
-                       (200, DISP_HEIGHT // 2 + 200),
+            'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 150, (200, 100),
+                       (320, DISP_HEIGHT // 2 + 150),
                        QuitButton(0, 0, (10, 10)), 'red', 'Quit'),
         }
 
@@ -336,4 +336,6 @@ class MainMenu(Level):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     for ui in self.ui_elements.values():
-                        self.check_ui(ui)
+                        to_level = self.check_ui(ui)
+                        if to_level is not None:
+                            return to_level

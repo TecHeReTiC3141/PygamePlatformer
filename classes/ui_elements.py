@@ -106,6 +106,11 @@ class ToLevels(GameChangeStateButton):
     state = 'game'
 
 
+class ToMenu(GameChangeStateButton):
+    image = pygame.image.load(ui_images / 'Exit_button.png')
+    state = 'main_menu'
+
+
 class QuitButton(GUI_trigger):
     image = pygame.image.load(ui_images / 'Exit_button.png')
     gui = Quit
@@ -132,11 +137,11 @@ class TextButton(Button, Movable_UI):
         super().__init__(x, y, size, end_pos)
         self.image.set_colorkey('yellow')
         self.image.fill('yellow')
-        pygame.draw.rect(self.image, 'gray',
-                         (0, 0, self.rect.width, self.rect.height), width=5, border_radius=2)
+        pygame.draw.rect(self.image, 'black',
+                         (0, 0, self.rect.width, self.rect.height), border_radius=3)
 
         pygame.draw.rect(self.image, button_color,
-                         (5, 5, self.rect.width - 10, self.rect.height - 10), border_radius=5)
+                         (5, 5, self.rect.width - 10, self.rect.height - 10), border_radius=8)
         title = font.render(text, True, color)
         self.image.blit(title, ((self.rect.width - title.get_width()) // 2,
                                 (self.rect.height - title.get_height()) // 2))

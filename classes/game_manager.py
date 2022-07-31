@@ -18,6 +18,7 @@ class GameManager:
     def change_state(self, new_state):
         pass
 
+
     def update(self, res: tuple, fullscreen: bool, debug: bool):
         if fullscreen:
             self.display = pygame.display.set_mode(res, pygame.FULLSCREEN)
