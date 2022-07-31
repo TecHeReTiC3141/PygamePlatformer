@@ -1,5 +1,6 @@
 from classes.level import *
 
+
 class Drawing:
     hearts_dict = {i: pygame.image.load(f'resources/images/interface/heart{i}.png').convert_alpha()
                    for i in range(4)}
@@ -25,7 +26,7 @@ class Drawing:
 
     # TODO draw main menu and kinda levels map
     def draw_ui(self):
-        if self.level.state == 'game': # displaying player's stats
+        if self.level.state == 'game':  # displaying player's stats
             pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
                              border_radius=8)
             pygame.draw.rect(self.surf, '#6c380f', (-10, -10, DISP_WIDTH // 6 - 10, DISP_HEIGHT // 5 + 10),
@@ -45,11 +46,11 @@ class Drawing:
                 else:
                     self.surf.blit(self.empty_heart, (5 + i * 15, 5))
 
-        if self.manager.show_debug: # displaying debug info
+        if self.manager.show_debug:  # displaying debug info
             self.surf.blit(info_font.render(f'level_state: {self.level.state}', True, 'red'),
                            (5, 200))
             self.surf.blit(info_font.render(f'FPS: {round(self.manager.clock.get_fps())}',
-                                                 True, 'red'), (5, 170))
+                                            True, 'red'), (5, 170))
 
         for ui in self.level.ui_elements.values():
             ui.draw(self.surf)

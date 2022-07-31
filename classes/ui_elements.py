@@ -11,12 +11,45 @@ class UI:
     def __init__(self, x, y, size: tuple):
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.init_pos = self.rect.center
+        self.end_pos = self.rect.center
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.image, self.rect)
 
     def update(self, mouse: tuple):
         pass
+
+    def move(self, speed=20) -> pygame.math.Vector2:
+        move = pygame.math.Vector2(0, 0)
+        if self.active and self.rect.center != self.end_pos:
+            move.x = -speed if self.rect.centerx > self.end_pos[0] else speed \
+                if self.rect.centerx < self.end_pos[0] else 0
+
+            move.y = -speed if self.rect.centery > self.end_pos[1] else speed \
+                if self.rect.centery < self.end_pos[1] else 0
+
+        elif not self.active and self.rect.center != self.init_pos:
+            move.x = -speed if self.rect.centerx > self.init_pos[0] else speed \
+                if self.rect.centerx < self.init_pos[0] else 0
+
+            move.y = -speed if self.rect.centery > self.init_pos[1] else speed \
+                if self.rect.centery < self.init_pos[1] else 0
+
+        if move.length():
+            self.rect.move_ip(move)
+        return move
+
+
+class Movable_UI(UI):
+
+    def __init__(self, x, y, size: tuple, end_pos: tuple):
+        super().__init__(x, y, size)
+        self.end_pos = end_pos
+
+    def draw(self, surface: pygame.Surface):
+        super().draw(surface)
+        self.move()
 
 
 class Button(UI):
@@ -88,11 +121,11 @@ class NextLevelButton(LevelQuitButton):
     image = pygame.image.load(ui_images / 'Pause_button.png')
 
 
-class UI_container(UI):  # menus, etc
+class UI_container(Movable_UI):  # menus, etc
 
     def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple):
         self.active = False
-        super().__init__(x, y, size)
+        super().__init__(x, y, size, end_point)
         self.content = content
         for ui in self.content:
             self.image.blit(ui.image, ui.rect.topleft)
@@ -103,29 +136,10 @@ class UI_container(UI):  # menus, etc
         self.end_pos = end_point
 
     def move(self, speed=20):
-        move = pygame.math.Vector2(0, 0)
-        if self.active and self.rect.center != self.end_pos:
-            move.x = -speed if self.rect.centerx > self.end_pos[0] else speed \
-                if self.rect.centerx < self.end_pos[0] else 0
-
-            move.y = -speed if self.rect.centery > self.end_pos[1] else speed \
-                if self.rect.centery < self.end_pos[1] else 0
-
-        elif not self.active and self.rect.center != self.init_pos:
-            move.x = -speed if self.rect.centerx > self.init_pos[0] else speed \
-                if self.rect.centerx < self.init_pos[0] else 0
-
-            move.y = -speed if self.rect.centery > self.init_pos[1] else speed \
-                if self.rect.centery < self.init_pos[1] else 0
-
+        move = super().move(speed)
         if move.length():
-            self.rect.move_ip(move)
             for ui in self.content:
                 ui.rect.move_ip(move)
-
-    def draw(self, surface: pygame.Surface, speed=20):
-        self.move(speed)
-        surface.blit(self.image, self.rect)
 
     def update(self, mouse: tuple):
         pass
@@ -147,7 +161,7 @@ class PauseMenu(UI_container):
         pygame.draw.rect(self.image, '#B8B1A6', (240, 120, 200, 40))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (240, 110))
-        super().draw(surface, speed)
+        super().draw(surface)
 
 
 class EndLevelMenu(UI_container):
@@ -176,4 +190,4 @@ class EndLevelMenu(UI_container):
         pygame.draw.rect(self.image, '#B8B1A6', (480, 120, 110, 45))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (480, 120))
-        super().draw(surface, speed)
+        super().draw(surface)
