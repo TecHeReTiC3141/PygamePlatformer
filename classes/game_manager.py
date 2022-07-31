@@ -4,7 +4,7 @@ from scripts.const import *
 class GameManager:
 
     def __init__(self, display: pygame.Surface, res=(DISP_WIDTH, DISP_HEIGHT)):
-        self.game_state = 'game'
+        self.game_state = 'main_menu'
         self.display = display
         self.is_paused = False
         self.difficulty = 'Medium'
@@ -14,7 +14,6 @@ class GameManager:
 
         # settings
         self.show_debug = True
-
 
     def change_state(self, new_state):
         pass

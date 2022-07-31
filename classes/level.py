@@ -53,13 +53,13 @@ class Level:
             'pause_button': PauseButton(DISP_WIDTH - 100, 30, (70, 70)),
             'pause_menu': PauseMenu(DISP_WIDTH // 4, -360, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140), Quit),
-                                        SettingsButton(250, 210, (140, 140), SettingsWindow),
+                                        QuitButton(70, 210, (140, 140)),
+                                        SettingsButton(250, 210, (140, 140)),
                                         UnpauseButton(430, 210, (140, 140), 'game'),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0),
             'endlevel_menu': EndLevelMenu(DISP_WIDTH, DISP_HEIGHT // 2 - 180, (640, 360),
                                     [
-                                        QuitButton(70, 210, (140, 140), Quit),
+                                        QuitButton(70, 210, (140, 140)),
                                         RetryButton(250, 210, (140, 140)),
                                         NextLevelButton(430, 210, (140, 140)),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
@@ -169,6 +169,9 @@ class Level:
             elif isinstance(ui, LevelQuitButton):
                 return ui.next_level
 
+            elif isinstance(ui, TextButton):
+                return self.check_ui(ui.func_button)
+
     def change_state(self, new_state: str):
         if self.state == 'scrolling':
             if new_state == 'game':
@@ -196,8 +199,6 @@ class Level:
             if new_state in ['game', 'scrolling']:
                 self.ui_elements['pause_button'] = PauseButton(DISP_WIDTH - 100, 30, (70, 70))
                 self.ui_elements['pause_menu'].active = False
-        print(self.ui_elements)
-        print(self.state, new_state)
         self.state = new_state
 
     def game_cycle(self, dt) -> bool:
@@ -304,3 +305,35 @@ class Level:
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
                                        self.projectiles))
+
+
+class MainMenu(Level):
+
+    def __init__(self, game_manager: GameManager):
+        self.ui_elements: dict[str, UI] = {
+            'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 200, (200, 100),
+                       (200, DISP_HEIGHT // 2 - 200),
+                       ToLevels(0, 0, (10, 10)), 'green', 'Levels'),
+            'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
+                       (200, DISP_HEIGHT // 2),
+                       SettingsButton(0, 0, (10, 10), ), 'blue', 'Settings'),
+            'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 200, (200, 100),
+                       (200, DISP_HEIGHT // 2 + 200),
+                       QuitButton(0, 0, (10, 10)), 'red', 'Quit'),
+        }
+
+        self.surf = pygame.Surface((DISP_WIDTH, DISP_HEIGHT))
+        self.game_manager = game_manager
+
+    def draw(self, surface: pygame.Surface):
+        self.surf.fill('gray')
+        surface.blit(self.surf, (0, 0))
+
+    def game_cycle(self, dt) -> bool:
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for ui in self.ui_elements.values():
+                        self.check_ui(ui)

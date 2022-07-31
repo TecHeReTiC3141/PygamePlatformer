@@ -21,7 +21,6 @@ class Window:  # abstract class for all GUI windows
     def close(self):
         self.window.close()
         self.manager.is_paused = False
-        print('closed')
 
 
 class SettingsWindow(Window):

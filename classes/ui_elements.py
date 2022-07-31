@@ -73,10 +73,7 @@ class LevelQuitButton(Button):
 
 
 class GUI_trigger(Button):
-
-    def __init__(self, x, y, size: tuple, gui_class: type):
-        super().__init__(x, y, size)
-        self.gui = gui_class
+    gui: type = None
 
 
 class DirectionButton(LevelChangeStateButton):
@@ -104,12 +101,19 @@ class UnpauseButton(LevelChangeStateButton):
         self.state = state
 
 
+class ToLevels(GameChangeStateButton):
+    image = pygame.Surface((50, 50))
+    state = 'game'
+
+
 class QuitButton(GUI_trigger):
     image = pygame.image.load(ui_images / 'Exit_button.png')
+    gui = Quit
 
 
 class SettingsButton(GUI_trigger):
     image = pygame.image.load(ui_images / 'Settings_button.png')
+    gui = SettingsWindow
 
 
 class RetryButton(LevelQuitButton):
@@ -119,6 +123,28 @@ class RetryButton(LevelQuitButton):
 
 class NextLevelButton(LevelQuitButton):
     image = pygame.image.load(ui_images / 'Pause_button.png')
+
+
+class TextButton(Button, Movable_UI):
+
+    def __init__(self, x, y, size: tuple, end_pos: tuple, func_button: Button,
+                 button_color, text: str, font=menu_font, color='black',):
+        super().__init__(x, y, size, end_pos)
+        self.image.set_colorkey('yellow')
+        self.image.fill('yellow')
+        pygame.draw.rect(self.image, 'gray',
+                         (0, 0, self.rect.width, self.rect.height), width=5, border_radius=2)
+
+        pygame.draw.rect(self.image, button_color,
+                         (5, 5, self.rect.width - 10, self.rect.height - 10), border_radius=5)
+        title = font.render(text, True, color)
+        self.image.blit(title, ((self.rect.width - title.get_width()) // 2,
+                                (self.rect.height - title.get_height()) // 2))
+        self.func_button = func_button
+
+    def move(self, speed=20) -> pygame.math.Vector2:
+        super().move(speed)
+        self.func_button.rect = self.rect
 
 
 class UI_container(Movable_UI):  # menus, etc
