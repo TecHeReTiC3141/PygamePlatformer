@@ -162,7 +162,6 @@ class UI_container(Movable_UI):  # menus, etc
             self.image.blit(ui.image, ui.rect.topleft)
             ui.rect.x += self.rect.x
             ui.rect.y += self.rect.y
-            print(ui.rect)
         self.init_pos = self.rect.center
         self.end_pos = end_point
 

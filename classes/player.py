@@ -69,10 +69,12 @@ class Player(Entity):
         self.velocity.x = max(-self.max_vel, min(self.velocity.x, self.max_vel))
 
     # TODO fix problem with getting angle on other screen resolutions
-    def get_angle(self, offset: pygame.math.Vector2, camera_size: pygame.math.Vector2):
+    def get_angle(self, offset: pygame.math.Vector2, camera_size: pygame.math.Vector2, res: tuple):
         m_x, m_y = pygame.mouse.get_pos()
-        m_x = int(m_x * camera_size.x / DISP_WIDTH + offset.x)
-        m_y = int(m_y * camera_size.y / DISP_HEIGHT + offset.y)
+        print(m_x, m_y, camera_size, res)
+        m_x = int(m_x * camera_size.x / res[0] + offset.x)
+        m_y = int(m_y * camera_size.y / res[1] + offset.y)
+        print(m_x, m_y)
         c_x, c_y = self.rect.center
         dist = sqrt((c_x - m_x) ** 2 + (c_y - m_y) ** 2)
         self.angle = acos((m_x - c_x) / max(dist, .01))

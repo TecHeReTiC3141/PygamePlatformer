@@ -271,7 +271,7 @@ class Level:
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                          self.surf.get_width(), DISP_WIDTH * 2)
 
-        self.player.get_angle(self.camera.offset, self.camera.display_size)
+        self.player.get_angle(self.camera.offset, self.camera.display_size, self.game_manager.res)
 
         if self.player.rect.y >= self.surf.get_height():
             self.player.health = 0
