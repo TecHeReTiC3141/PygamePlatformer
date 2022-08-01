@@ -1,3 +1,5 @@
+import pygame
+
 from classes.surroundings import *
 from classes.ui_elements import *
 
@@ -309,24 +311,23 @@ class Level:
 
 class MainMenu(Level):
 
-    def __init__(self, game_manager: GameManager):
+    def __init__(self, game_manager: GameManager, surface: pygame.Surface):
+        self.surf = surface
         self.ui_elements: dict[str, UI] = {
-            'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 150, (200, 100),
-                       (320, DISP_HEIGHT // 2 - 150),
-                       ToLevels(0, 0, (10, 10)), 'green', 'Levels'),
+            'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 120, (200, 100),
+                       (320, DISP_HEIGHT // 2 - 120),
+                       ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409'),
             'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
                        (320, DISP_HEIGHT // 2),
-                       SettingsButton(0, 0, (10, 10), ), 'blue', 'Settings'),
-            'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 150, (200, 100),
-                       (320, DISP_HEIGHT // 2 + 150),
-                       QuitButton(0, 0, (10, 10)), 'red', 'Quit'),
+                       SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409'),
+            'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 120, (200, 100),
+                       (320, DISP_HEIGHT // 2 + 120),
+                       QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409'),
         }
 
-        self.surf = pygame.Surface((DISP_WIDTH, DISP_HEIGHT))
         self.game_manager = game_manager
 
     def draw(self, surface: pygame.Surface):
-        self.surf.fill('gray')
         surface.blit(self.surf, (0, 0))
 
     def game_cycle(self, dt) -> bool:

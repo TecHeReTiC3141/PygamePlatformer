@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="140" tilecount="11" columns="0">
+<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="140" tilecount="12" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="70" height="110" source="door_closed.png"/>
@@ -33,5 +33,8 @@
  </tile>
  <tile id="11">
   <image width="140" height="140" source="../../resources/images/surrounding/key.png"/>
+ </tile>
+ <tile id="12">
+  <image width="90" height="113" source="../../resources/images/entities/player/menu_player.png"/>
  </tile>
 </tileset>

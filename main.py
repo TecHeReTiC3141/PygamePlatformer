@@ -7,7 +7,7 @@ pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico
                                                (32, 32)))
 
 game_manager = GameManager(display)
-level = MainMenu(game_manager)
+level = gen_main_menu(game_manager)
 drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging
@@ -26,7 +26,7 @@ while True:
     elif game_manager.game_state == 'game':
         cyc = level.game_cycle(delta)
         if isinstance(cyc, ToMenu):
-            level = MainMenu(game_manager)
+            level = gen_main_menu(game_manager)
             drawing.level = level
             game_manager.game_state = 'main_menu'
 
