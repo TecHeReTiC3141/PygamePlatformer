@@ -15,6 +15,7 @@ class Player(Entity):
     friction = -.3
     max_vel = 5
     max_health = 12
+    in_water = False
 
     def __init__(self, x, y, direction='left'):
         super().__init__(x, y, direction)

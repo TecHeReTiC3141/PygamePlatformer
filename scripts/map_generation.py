@@ -8,7 +8,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
     level_map = load_pygame(f'levels/{path}.tmx')
 
     obj_layer = level_map.get_layer_by_name('GameObjects')
-    blocks = level_map.get_layer_by_name('BlocksLayer')
+    blocks_layer = level_map.get_layer_by_name('BlocksLayer')
     background = level_map.get_layer_by_name('BackGround')
 
     start_pos = (0, 0)
@@ -16,6 +16,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
     obstacles: list[Obstacle] = []
     collectable: list[Collectable] = []
     entities: list[Entity] = []
+    blocks: list[Block] = []
 
     key_count = 0
     level_end: LevelEnd = None
@@ -61,6 +62,9 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
         elif obj.type == 'LevelEnd':
             level_end = LevelEnd(obj.x, obj.y, obj.width, obj.height, obj.image, key_count)
 
+        elif obj.name == 'Water':
+            obstacles.append(Water(obj.x, obj.y, obj.width, obj.height, obj.image))
+
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':
                 if obj.direction == 'up':
@@ -76,14 +80,13 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
                                        obj.direction, obj.max_dist, None, ))
                 print(obj.x, obj.y, obj.width, obj.height)
 
-
     assert isinstance(level_end, LevelEnd), "No LevelEnd"
-    # Loading blocks
-    walls: list[Block] = []
-    for x, y, surf in blocks.tiles():
-        walls.append(Block(x, y, surf))
 
-    level = Level(num, walls, obstacles, collectable,
+    # Loading blocks
+    for x, y, surf in blocks_layer.tiles():
+        blocks.append(Block(x, y, surf))
+
+    level = Level(num, blocks, obstacles, collectable,
                   decor, entities, surface, background_surf, start_pos, key_count, level_end, game_manager)
     return level
 
@@ -106,3 +109,7 @@ def gen_main_menu(game_manager: GameManager) -> MainMenu:
                      (obj.x * SCALE, (obj.y - obj.height) * SCALE))
 
     return MainMenu(game_manager, surface)
+
+
+def gen_levels_map(game_manager: GameManager) -> LevelMap:
+    pass

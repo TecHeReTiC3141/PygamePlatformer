@@ -340,3 +340,8 @@ class MainMenu(Level):
                         to_level = self.check_ui(ui)
                         if to_level is not None:
                             return to_level
+
+
+# TODO implement map of levels
+class LevelMap(Level):
+    pass

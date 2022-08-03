@@ -214,10 +214,10 @@ class EndLevelMenu(UI_container):
         if self.cur_score < self.player_score:
             self.cur_score += 1
 
-        pygame.draw.rect(self.image, '#eecc67', (85, 120, 170, 45))
-        self.image.blit(menu_font.render(f'{self.cur_score} / {self.max_score}', True, '#9C6409'), (85, 120))
+        pygame.draw.rect(self.image, '#eecc67', (85, 115, 170, 50))
+        self.image.blit(menu_font.render(f'{self.cur_score} / {self.max_score}', True, '#9C6409'), (85, 115))
 
-        pygame.draw.rect(self.image, '#B8B1A6', (480, 120, 110, 45))
+        pygame.draw.rect(self.image, '#B8B1A6', (480, 115, 110, 45))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
-                        (480, 120))
+                        (480, 115))
         super().draw(surface)

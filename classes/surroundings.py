@@ -1,3 +1,4 @@
+from pathlib import Path
 from classes.player import *
 
 
@@ -107,7 +108,8 @@ class Decor(GameObject):
 
 
 class Obstacle(GameObject, Block):
-    pass
+    def collide(self, entity: Player, mode: str) -> str:
+        pass
 
 
 class Collectable(GameObject):
@@ -146,7 +148,7 @@ class Animated(GameObject):
         self.frame_count %= self.frames_per_sprite * len(self.sprites)
 
 
-class MovingPlatform(Block, GameObject):
+class MovingPlatform(Obstacle):
 
     def __init__(self, x, y, width, height, surface: pygame.Surface, typ: str, dist, speed=5):
         self.init_point = pygame.math.Vector2(x * SCALE, y * SCALE)
@@ -218,6 +220,15 @@ class MovingPlatform(Block, GameObject):
             entity.collided_sides['left'] = True
             return 'left'
 
+
+class Water(Animated, Obstacle):
+    source = Path('resources/images/surrounding/animated_water')
+    sprites = {i: pygame.image.load(image).convert_alpha() for i, image in enumerate(source.glob('*.png'))}
+
+    def collide(self, entity: Player, mode: str) -> str:
+        if entity.rect.colliderect(self.rect):
+            entity.velocity *= .8
+            entity.acceleration.x *= .8
 
 class Spike(Obstacle):
 
