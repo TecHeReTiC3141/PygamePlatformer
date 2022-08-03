@@ -226,7 +226,7 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.change_state('pause' if self.state == 'game' else 'game')
 
-                elif self.state == 'game':
+                elif self.state == 'game' and not self.player.in_water:
                     if event.key == pygame.K_SPACE:
                         self.player.jump()
 
@@ -283,6 +283,8 @@ class Level:
             self.player.score = 0
             self.player.keys = 0
             self.player.rect.center = self.last_checkpoint
+            self.player.in_water = False
+
             for obj in self.collectable:
                 obj.alive = True
 

@@ -226,9 +226,9 @@ class Water(Animated, Obstacle):
     sprites = {i: pygame.image.load(image).convert_alpha() for i, image in enumerate(source.glob('*.png'))}
 
     def collide(self, entity: Player, mode: str) -> str:
-        if entity.rect.colliderect(self.rect):
-            entity.velocity *= .8
-            entity.acceleration.x *= .8
+        if entity.rect.colliderect(self.rect) and not entity.in_water:
+            entity.velocity *= 0
+            entity.in_water = True
 
 class Spike(Obstacle):
 

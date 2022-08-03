@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="70" tilewidth="128" tileheight="128" infinite="0" nextlayerid="4" nextobjectid="191">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="70" tilewidth="128" tileheight="128" infinite="0" nextlayerid="4" nextobjectid="192">
  <tileset firstgid="1" source="tilesets/color_tileset.tsx"/>
  <tileset firstgid="257" source="tilesets/test_tileset.tsx"/>
  <tileset firstgid="556" source="tilesets/gameObjs.tsx"/>
@@ -301,6 +301,12 @@
   <object id="187" name="Water" gid="569" x="4736" y="8960" width="136" height="128"/>
   <object id="188" name="Water" gid="569" x="4864" y="8960" width="136" height="128"/>
   <object id="189" name="Water" gid="569" x="4992" y="8960" width="136" height="128"/>
-  <object id="190" name="Water" gid="569" x="2298.67" y="8323.88" width="136" height="128"/>
+  <object id="191" name="Text" type="Marker" x="3550" y="7810">
+   <properties>
+    <property name="color" value="white"/>
+    <property name="text" value="Water can be very dangerous"/>
+   </properties>
+   <point/>
+  </object>
  </objectgroup>
 </map>

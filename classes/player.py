@@ -36,6 +36,8 @@ class Player(Entity):
         self.keys = 0
 
     def hor_move(self, dt):
+        if self.in_water:
+            return
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.acceleration.x -= .3
