@@ -138,7 +138,8 @@ class Level:
                 if coll and isinstance(obst, Entity) and \
                         (not obst.has_hit_cooldown or obst.hit_cooldown <= 0):
                     obst.hurt(proj.damage)
-                    obst.rect.x += proj.vector.x * proj.speed * 2
+                    if isinstance(obst, Player):
+                        obst.rect.x += proj.vector.x * proj.speed * 2
 
         if dt <= 3:
             self.player.prev_rect = self.player.rect.copy()
@@ -314,12 +315,19 @@ class Level:
                 proj = obj.update()
                 if proj:
                     self.projectiles.append(proj)
+            elif isinstance(obj, Projectile):
+                new_trace = obj.add_trace()
+                if new_trace:
+                    self.decor.append(new_trace)
+                obj.update()
             else:
                 obj.update()
 
     def clear(self):
         self.projectiles = list(filter(lambda i: i.alive,
                                        self.projectiles))
+        self.decor = list(filter(lambda i: i.life_time, self.decor))
+
 
 
 class MainMenu(Level):

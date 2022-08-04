@@ -1,0 +1,70 @@
+from scripts.const import *
+
+
+class Decor:
+    surface = pygame.Surface((10, 10))
+
+    def __init__(self, x, y, life_time):
+        self.rect = self.surface.get_rect(topleft=(x, y))
+        self.life_time = life_time
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.surface, self.rect)
+
+    def update(self):
+        self.life_time -= 1
+
+
+class Particle(Decor):
+    has_physics = True
+
+    def __init__(self, x, y, velocity: pygame.math.Vector2, life_time):
+        self.rect = self.surface.get_rect(center=(x, y))
+        self.velocity = velocity
+        self.life_time = life_time
+        self.max_life_time = life_time
+
+    def update(self):
+        self.rect.move_ip(self.velocity)
+        if self.has_physics:
+            self.velocity.y += falling_momentum
+        super().update()
+
+
+class WaterDrop(Particle):
+    has_physics = True
+
+    def __init__(self, x, y, width, height, velocity: pygame.math.Vector2, life_time):
+        self.surface = pygame.Surface((width, height))
+        self.surface.fill('blue')
+        super().__init__(x, y, velocity, life_time)
+
+
+class RocketSmoke(Particle):
+    has_physics = True
+
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2, life_time):
+        self.surface = pygame.Surface((radius * 2, radius * 2))
+        self.surface.set_colorkey('black')
+        super().__init__(x, y, velocity, life_time)
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('black')
+        pygame.draw.circle(self.surface, 'gray', (self.rect.width // 2, self.rect.height // 2),
+                           round(self.rect.width // 2 * self.life_time / self.max_life_time))
+        super().draw(surface)
+
+
+class MagicFlashes(Particle):
+    has_physics = False
+
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2, life_time):
+        self.surface = pygame.Surface((radius * 2, radius * 2))
+        self.surface.set_colorkey('black')
+        super().__init__(x, y, velocity, life_time)
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('black')
+        pygame.draw.circle(self.surface, 'white', (self.rect.width // 2, self.rect.height // 2),
+                           round(self.rect.width // 2 * self.life_time / self.max_life_time))
+        super().draw(surface)

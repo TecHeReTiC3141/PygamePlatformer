@@ -144,7 +144,7 @@ class Player(Entity):
 
     def shoot(self) -> Projectile:
         self.shoot_cooldown = self.max_shoot_cooldown
-        return Projectile(self.rect.centerx, self.rect.centery,
+        return MagicBall(self.rect.centerx, self.rect.centery,
                           pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):

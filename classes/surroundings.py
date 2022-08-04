@@ -1,5 +1,6 @@
 from pathlib import Path
 from classes.player import *
+from classes.decor import *
 
 
 # TODO think about block's friction
@@ -102,10 +103,6 @@ class GameObject:
 
     def update(self):
         pass
-
-
-class Decor(GameObject):
-    pass
 
 
 class Obstacle(GameObject, Block):
@@ -237,7 +234,8 @@ class Water(Animated, Obstacle):
                 surface = pygame.Surface((randint(8, 12), randint(8, 12)))
                 surface.fill('blue')
                 velocity = pygame.math.Vector2((x - entity.rect.centerx) // 8, randint(-30, -20))
-                particles.append(Particle(x, y, surface, velocity, life_time=randint(80, 120)))
+                particles.append(WaterDrop(x, y, randint(8, 12), randint(8, 12), velocity,
+                                           life_time=randint(80, 120)))
             return particles
 
 
@@ -333,24 +331,4 @@ class Key(Moving, Collectable):
     def interact(self, player: Player):
         if player.rect.colliderect(self.rect):
             player.keys += 1
-            self.alive = False
-
-
-# TODO think about implementation of particles
-class Particle(Decor):
-
-    def __init__(self, x, y, surface: pygame.Surface, velocity: pygame.math.Vector2, life_time,
-                 has_physics=True, ):
-        self.surface = surface
-        self.rect = self.surface.get_rect(topleft=(x, y))
-        self.velocity = velocity
-        self.has_physics = has_physics
-        self.life_time = life_time
-
-    def update(self):
-        if self.has_physics:
-            self.rect.move_ip(self.velocity)
-            self.velocity.y += falling_momentum
-        self.life_time -= 1
-        if self.life_time <= 0:
             self.alive = False
