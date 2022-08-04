@@ -12,6 +12,7 @@ FPS = 60
 BLOCK_SIZE = 64
 TILED_SIZE = 128
 SCALE = BLOCK_SIZE / TILED_SIZE
+falling_momentum = 3
 
 directions = ['up', 'down', 'left', 'right']
 

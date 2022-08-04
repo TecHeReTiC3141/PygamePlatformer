@@ -144,12 +144,22 @@ class Level:
             self.player.prev_rect = self.player.rect.copy()
             if self.state == 'game':
                 self.player.vert_move(dt)
-            for wall in self.blocks + self.obstacles:
-                wall.collide(self.player, 'h')
+            for block in self.blocks + self.obstacles:
+                if hasattr(block, 'returns_decor') and block.returns_decor:
+                    new_decor: list[Decor] = block.collide(self.player, 'h')
+                    if new_decor:
+                        self.decor.extend(new_decor)
+                else:
+                    block.collide(self.player, 'h')
             if self.state == 'game':
                 self.player.hor_move(dt)
-            for wall in self.blocks + self.obstacles:
-                wall.collide(self.player, 'v')
+            for block in self.blocks + self.obstacles:
+                if hasattr(block, 'returns_decor') and block.returns_decor:
+                    new_decor: list[Decor] = block.collide(self.player, 'v')
+                    if new_decor:
+                        self.decor.extend(new_decor)
+                else:
+                    block.collide(self.player, 'v')
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
             self.player.rect.y = max(self.player.rect.y, 0)
 
@@ -298,7 +308,8 @@ class Level:
 
     # updating of game objects
     def update(self):
-        for obj in self.obstacles + self.projectiles + self.collectable + self.entities:
+        for obj in self.obstacles + self.projectiles + self.collectable \
+                   + self.entities + self.decor:
             if isinstance(obj, Cannon):
                 proj = obj.update()
                 if proj:

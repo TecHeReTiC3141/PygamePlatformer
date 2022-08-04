@@ -84,6 +84,7 @@ class MovableBlock(Block):
 class GameObject:
     sprites: dict[int, pygame.Surface] = {}
     alive = True
+    returns_decor = False
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         x, y, width, height = x * SCALE, y * SCALE, width * SCALE, height * SCALE
@@ -224,11 +225,21 @@ class MovingPlatform(Obstacle):
 class Water(Animated, Obstacle):
     source = Path('resources/images/surrounding/animated_water')
     sprites = {i: pygame.image.load(image).convert_alpha() for i, image in enumerate(source.glob('*.png'))}
+    returns_decor = True
 
-    def collide(self, entity: Player, mode: str) -> str:
+    def collide(self, entity: Player, mode: str) -> list[Decor]:
         if entity.rect.colliderect(self.rect) and not entity.in_water:
             entity.velocity *= 0
             entity.in_water = True
+            particles = []
+            for i in range(randint(7, 10)):
+                x, y = randint(entity.rect.left, entity.rect.right), self.rect.top
+                surface = pygame.Surface((randint(8, 12), randint(8, 12)))
+                surface.fill('blue')
+                velocity = pygame.math.Vector2((x - entity.rect.centerx) // 8, randint(-30, -20))
+                particles.append(Particle(x, y, surface, velocity, life_time=randint(80, 120)))
+            return particles
+
 
 class Spike(Obstacle):
 
@@ -324,4 +335,22 @@ class Key(Moving, Collectable):
             player.keys += 1
             self.alive = False
 
+
 # TODO think about implementation of particles
+class Particle(Decor):
+
+    def __init__(self, x, y, surface: pygame.Surface, velocity: pygame.math.Vector2, life_time,
+                 has_physics=True, ):
+        self.surface = surface
+        self.rect = self.surface.get_rect(topleft=(x, y))
+        self.velocity = velocity
+        self.has_physics = has_physics
+        self.life_time = life_time
+
+    def update(self):
+        if self.has_physics:
+            self.rect.move_ip(self.velocity)
+            self.velocity.y += falling_momentum
+        self.life_time -= 1
+        if self.life_time <= 0:
+            self.alive = False
