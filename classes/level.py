@@ -91,8 +91,8 @@ class Level:
 
         self.surf.fill('yellow')
 
-        for obj in self.blocks + self.collectable + self.obstacles \
-                   + self.projectiles + self.decor + self.entities:
+        for obj in self.blocks + self.collectable + self.obstacles + self.decor \
+                   + self.projectiles + self.entities:
             if isinstance(obj, Collectable) and not obj.alive:
                 continue
             obj.draw(self.surf)

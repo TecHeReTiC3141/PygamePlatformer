@@ -231,10 +231,9 @@ class Water(Animated, Obstacle):
             particles = []
             for i in range(randint(7, 10)):
                 x, y = randint(entity.rect.left, entity.rect.right), self.rect.top
-                surface = pygame.Surface((randint(8, 12), randint(8, 12)))
-                surface.fill('blue')
                 velocity = pygame.math.Vector2((x - entity.rect.centerx) // 8, randint(-30, -20))
                 particles.append(WaterDrop(x, y, randint(8, 12), randint(8, 12), velocity,
+                                           pygame.math.Vector2(0, falling_momentum),
                                            life_time=randint(80, 120)))
             return particles
 

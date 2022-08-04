@@ -18,35 +18,40 @@ class Decor:
 class Particle(Decor):
     has_physics = True
 
-    def __init__(self, x, y, velocity: pygame.math.Vector2, life_time):
+    def __init__(self, x, y, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time):
         self.rect = self.surface.get_rect(center=(x, y))
         self.velocity = velocity
+        self.acceleration = acceleration
         self.life_time = life_time
         self.max_life_time = life_time
 
     def update(self):
-        self.rect.move_ip(self.velocity)
         if self.has_physics:
-            self.velocity.y += falling_momentum
+            self.rect.move_ip(self.velocity)
+            self.velocity += self.acceleration
+            print(self.velocity, self.acceleration)
         super().update()
 
 
 class WaterDrop(Particle):
     has_physics = True
 
-    def __init__(self, x, y, width, height, velocity: pygame.math.Vector2, life_time):
+    def __init__(self, x, y, width, height, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((width, height))
         self.surface.fill('blue')
-        super().__init__(x, y, velocity, life_time)
+        super().__init__(x, y, velocity, acceleration, life_time)
 
 
 class RocketSmoke(Particle):
-    has_physics = True
+    has_physics = False
 
-    def __init__(self, x, y, radius, velocity: pygame.math.Vector2, life_time):
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((radius * 2, radius * 2))
         self.surface.set_colorkey('black')
-        super().__init__(x, y, velocity, life_time)
+        super().__init__(x, y, velocity, acceleration,  life_time)
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
@@ -58,10 +63,11 @@ class RocketSmoke(Particle):
 class MagicFlashes(Particle):
     has_physics = False
 
-    def __init__(self, x, y, radius, velocity: pygame.math.Vector2, life_time):
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((radius * 2, radius * 2))
         self.surface.set_colorkey('black')
-        super().__init__(x, y, velocity, life_time)
+        super().__init__(x, y, velocity, acceleration, life_time)
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')

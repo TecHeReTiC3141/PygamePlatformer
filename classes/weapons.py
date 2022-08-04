@@ -1,5 +1,6 @@
 from classes.decor import *
 
+
 # TODO implement saving trace as attribute
 class Projectile:
     size = (40, 40)
@@ -76,9 +77,9 @@ class MagicBall(Projectile):
                            (self.rect.width // 2, self.rect.height // 2), self.rect.width // 2, 5)
 
     def add_trace(self) -> Particle:
-        if not randint(0, 1):
-            return MagicFlashes(self.rect.centerx, self.rect.centery, randint(8, 10),
-                            self.vector * self.speed // 2, randint(80, 120))
+        return MagicFlashes(self.rect.centerx, self.rect.centery, 6,
+                            self.vector * self.speed // 2, pygame.math.Vector2(), 20)
+
 
 class Rocket(Projectile):
     damage = 1
@@ -110,7 +111,5 @@ class Rocket(Projectile):
         return False
 
     def add_trace(self) -> Particle:
-        pass
-        # if not randint(0, 4):
-        #     return WaterDrop(self.rect.centerx, self.rect.centery, randint(8, 10), randint(8, 10),
-        #                     self.vector * (-1), randint(80, 120))
+        return RocketSmoke(self.rect.centerx + randint(-7, 7), self.rect.centery + randint(-7, 7), randint(6, 8),
+                           self.vector * (-1), pygame.math.Vector2(), randint(20, 25))
