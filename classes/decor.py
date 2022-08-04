@@ -55,7 +55,9 @@ class RocketSmoke(Particle):
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
-        pygame.draw.circle(self.surface, 'gray', (self.rect.width // 2, self.rect.height // 2),
+        pygame.draw.circle(self.surface, (round(255 * (self.max_life_time - self.life_time) / self.max_life_time),
+                                          round(255 * (self.max_life_time - self.life_time) / self.max_life_time),
+                                          round(255 * (self.max_life_time - self.life_time) / self.max_life_time)), (self.rect.width // 2, self.rect.height // 2),
                            round(self.rect.width // 2 * self.life_time / self.max_life_time))
         super().draw(surface)
 
@@ -71,6 +73,9 @@ class MagicFlashes(Particle):
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
-        pygame.draw.circle(self.surface, 'white', (self.rect.width // 2, self.rect.height // 2),
+        pygame.draw.circle(self.surface, (255 - round(242 * self.life_time / self.max_life_time),
+                                          255 - round(115 * self.life_time / self.max_life_time),
+                                          255 - round(43 * self.life_time / self.max_life_time)),
+                           (self.rect.width // 2, self.rect.height // 2),
                            round(self.rect.width // 2 * self.life_time / self.max_life_time))
         super().draw(surface)

@@ -78,7 +78,7 @@ class MagicBall(Projectile):
 
     def add_trace(self) -> Particle:
         return MagicFlashes(self.rect.centerx, self.rect.centery, 6,
-                            self.vector * self.speed // 2, pygame.math.Vector2(), 20)
+                            self.vector * self.speed // 2, pygame.math.Vector2(), 15)
 
 
 class Rocket(Projectile):
