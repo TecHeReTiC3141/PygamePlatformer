@@ -79,3 +79,20 @@ class MagicFlashes(Particle):
                            (self.rect.width // 2, self.rect.height // 2),
                            round(self.rect.width // 2 * self.life_time / self.max_life_time))
         super().draw(surface)
+
+
+class CursorFlashes(Particle):
+
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time, color: tuple):
+        self.surface = pygame.Surface((radius * 2, radius * 2))
+        self.surface.set_colorkey('black')
+        self.color = color
+        super().__init__(x, y, velocity, acceleration, life_time)
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('black')
+        pygame.draw.circle(self.surface, self.color,
+                           (self.rect.width // 2, self.rect.height // 2),
+                           round(self.rect.width // 2 * self.life_time / self.max_life_time))
+        super().draw(surface)

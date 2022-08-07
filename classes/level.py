@@ -60,11 +60,11 @@ class Level:
                                         UnpauseButton(430, 210, (140, 140), 'game'),
                                     ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', 0),
             'endlevel_menu': EndLevelMenu(DISP_WIDTH, DISP_HEIGHT // 2 - 180, (640, 360),
-                                    [
-                                        ToMenu(70, 210, (140, 140)),
-                                        RetryButton(250, 210, (140, 140)),
-                                        NextLevelButton(430, 210, (140, 140)),
-                                    ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
+                                          [
+                                              ToMenu(70, 210, (140, 140)),
+                                              RetryButton(250, 210, (140, 140)),
+                                              NextLevelButton(430, 210, (140, 140)),
+                                          ], (DISP_WIDTH // 2, DISP_HEIGHT // 2), f'Level {self.num}', time(),
                                           len([i for i in collectable if isinstance(i, Coin)]) * Coin.value, 0)
 
         }
@@ -219,19 +219,19 @@ class Level:
 
         if self.state == 'scrolling':
             if self.surf.get_width() >= self.surf.get_height():
-                self.camera.move('h') # round(4 * self.aspect_ratio))
+                self.camera.move('h')  # round(4 * self.aspect_ratio))
                 if self.camera.offset.x + \
                         self.camera.display_size.x >= self.surf.get_width():
                     self.change_state('game')
             else:
-                self.camera.move('v') # round(4 * self.aspect_ratio))
+                self.camera.move('v')  # round(4 * self.aspect_ratio))
                 if self.camera.offset.y + \
                         self.camera.display_size.y >= self.surf.get_height():
                     self.change_state('game')
 
         for event in pygame.event.get():
-            # if event.type == pygame.QUIT:
-            #     pygame.quit()
+            if event.type == pygame.QUIT:
+                pygame.quit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -329,21 +329,20 @@ class Level:
         self.decor = list(filter(lambda i: i.life_time, self.decor))
 
 
-
 class MainMenu(Level):
 
     def __init__(self, game_manager: GameManager, surface: pygame.Surface):
         self.surf = surface
         self.ui_elements: dict[str, UI] = {
             'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 120, (200, 100),
-                       (320, DISP_HEIGHT // 2 - 120),
-                       ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409', delay=0),
+                                 (320, DISP_HEIGHT // 2 - 120),
+                                 ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409', delay=0),
             'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
-                       (320, DISP_HEIGHT // 2),
-                       SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409', delay=20),
+                                   (320, DISP_HEIGHT // 2),
+                                   SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409', delay=20),
             'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 120, (200, 100),
-                       (320, DISP_HEIGHT // 2 + 120),
-                       QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409', delay=40),
+                               (320, DISP_HEIGHT // 2 + 120),
+                               QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409', delay=40),
         }
 
         self.game_manager = game_manager

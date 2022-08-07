@@ -40,4 +40,3 @@ class GameManager:
         else:
             self.display = pygame.display.set_mode(new_config['res'])
         self.__config.update(new_config)
-        print(self.__config)

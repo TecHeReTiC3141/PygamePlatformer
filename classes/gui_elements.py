@@ -34,13 +34,14 @@ class SettingsWindow(Window):
             [sg.Frame('Game', [
                 [sg.Spin(['Low', 'Medium', 'Hard'], initial_value=game_manager.difficulty,
                          text_color='red', key='-DIFFICULTY-',
-                         tooltip='Defines damage from enemies and speed of hostile rockets')]
+                         tooltip='Defines damage from enemies and speed of hostile rockets'),
+                 sg.Checkbox('Show debug info', key='-DEBUG-')]
             ])],
             [sg.HorizontalSeparator()],
             [sg.Frame('Graphics', [
                 [sg.Text('Resolution'), sg.Spin(['900x600', '1280x720', '1440x900'],
                                                 initial_value='1440x900', key='-RES-'),
-                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Show debug info', key='-DEBUG-')]
+                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Particles', key='-PARTICLES-')]
             ], )]
         ], expand_y=True, expand_x=True)
 
@@ -75,6 +76,7 @@ class SettingsWindow(Window):
                 self.manager.update(values['-FULLSCREEN-'],
                                     res=tuple(map(int, values['-RES-'].split('x'))),
                                     show_debug=values['-DEBUG-'],
+                                    particles=values['-PARTICLES-']
                                     )
                 break
 

@@ -20,10 +20,9 @@ while True:
     if game_manager.game_state == 'main_menu':
         to_level = level.game_cycle(delta)
         if isinstance(to_level, ToLevels):
-            level = gen_level(game_manager, 1)
+            level = gen_level(game_manager, 5)
             game_manager.game_state = 'game'
             drawing.level = level
-
 
     elif game_manager.game_state == 'game':
         cyc = level.game_cycle(delta)
