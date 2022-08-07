@@ -24,9 +24,10 @@ class Drawing:
     def draw_level(self):
         self.level.draw(self.surf)
 
-    # TODO draw main menu and kinda levels map
     def draw_ui(self):
+
         if self.manager.game_state == 'game':
+
             if self.level.state == 'game':  # displaying player's stats
                 pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),
                                  border_radius=8)
@@ -47,6 +48,8 @@ class Drawing:
                     else:
                         self.surf.blit(self.empty_heart, (5 + i * 15, 5))
 
+
+
             if self.manager.show_debug:  # displaying debug info
                 self.surf.blit(info_font.render(f'level_state: {self.level.state}', True, 'red'),
                                (5, 200))
@@ -55,6 +58,23 @@ class Drawing:
 
         for ui in self.level.ui_elements.values():
             ui.draw(self.surf)
+        m_x, m_y = pygame.mouse.get_pos()
+        m_x = round(m_x / self.manager.res[0] * DISP_WIDTH)
+        m_y = round(m_y / self.manager.res[1] * DISP_HEIGHT)
+        pygame.draw.polygon(self.surf, self.manager.cursor_color, ((m_x - 15, m_y - 15),
+                                                                   (m_x - 6, m_y - 10),
+                                                                   (m_x + 10, m_y + 6),
+                                                                   (m_x + 15, m_y + 15),
+                                                                   (m_x + 6, m_y + 10),
+                                                                   (m_x - 10, m_y - 6)))
+
+        pygame.draw.polygon(self.surf, 'black', ((m_x - 15, m_y - 15),
+                                                           (m_x - 6, m_y - 10),
+                                                           (m_x + 10, m_y + 6),
+                                                           (m_x + 15, m_y + 15),
+                                                           (m_x + 6, m_y + 10),
+                                                           (m_x - 10, m_y - 6)), width=2)
+
 
     def update(self):
         if self.manager.game_state != 'game':

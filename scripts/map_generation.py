@@ -40,9 +40,9 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
             elif obj.name == 'Text':
                 background_surf.blit(stats_font.render(obj.text, True, obj.color),
                                      (obj.x * SCALE, obj.y * SCALE))
-
-        elif obj.type == 'Decor':
-            decor.append(Decor(obj.x, obj.y, obj.width, obj.height, obj.image, ))
+        #
+        # elif obj.type == 'Decor':
+        #     decor.append(Decor(obj.x, obj.y, obj.width, obj.height, obj.image, ))
 
         elif obj.type == 'Money':
             collectable.append(Coin(obj.x, obj.y, obj.width, obj.height, obj.image))

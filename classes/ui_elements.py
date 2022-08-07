@@ -41,15 +41,19 @@ class UI:
         return move
 
 
+# TODO implement delay for moving_uis
 class Movable_UI(UI):
 
-    def __init__(self, x, y, size: tuple, end_pos: tuple):
+    def __init__(self, x, y, size: tuple, end_pos: tuple, delay=0):
         super().__init__(x, y, size)
         self.end_pos = end_pos
+        self.delay = delay
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
-        self.move()
+        self.delay -= 1
+        if self.delay <= 0:
+            self.move()
 
 
 class Button(UI):
@@ -133,8 +137,8 @@ class NextLevelButton(LevelQuitButton):
 class TextButton(Button, Movable_UI):
 
     def __init__(self, x, y, size: tuple, end_pos: tuple, func_button: Button,
-                 button_color, text: str, font=menu_font, color='black',):
-        super().__init__(x, y, size, end_pos)
+                 button_color, text: str, font=menu_font, color='black', delay=0):
+        super().__init__(x, y, size, end_pos, delay)
         self.image.set_colorkey('yellow')
         self.image.fill('yellow')
         pygame.draw.rect(self.image, 'black',

@@ -230,10 +230,10 @@ class Level:
                     self.change_state('game')
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+            # if event.type == pygame.QUIT:
+            #     pygame.quit()
 
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.change_state('pause' if self.state == 'game' else 'game')
 
@@ -337,16 +337,17 @@ class MainMenu(Level):
         self.ui_elements: dict[str, UI] = {
             'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 120, (200, 100),
                        (320, DISP_HEIGHT // 2 - 120),
-                       ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409'),
+                       ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409', delay=0),
             'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
                        (320, DISP_HEIGHT // 2),
-                       SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409'),
+                       SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409', delay=20),
             'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 120, (200, 100),
                        (320, DISP_HEIGHT // 2 + 120),
-                       QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409'),
+                       QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409', delay=40),
         }
 
         self.game_manager = game_manager
+        self.particles: list[Particle] = []
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surf, (0, 0))
@@ -361,6 +362,8 @@ class MainMenu(Level):
                         to_level = self.check_ui(ui)
                         if to_level is not None:
                             return to_level
+                elif event.button == 3:
+                    self.game_manager.cursor_color = tuple(randint(0, 255) for _ in '...')
 
 
 # TODO implement map of levels

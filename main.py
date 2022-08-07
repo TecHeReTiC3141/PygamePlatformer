@@ -5,6 +5,7 @@ display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
 pygame.display.set_caption('Pygame Platformer')
 pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico'),
                                                (32, 32)))
+pygame.mouse.set_visible(False)
 
 game_manager = GameManager(display)
 level = gen_main_menu(game_manager)
@@ -19,9 +20,10 @@ while True:
     if game_manager.game_state == 'main_menu':
         to_level = level.game_cycle(delta)
         if isinstance(to_level, ToLevels):
-            level = gen_level(game_manager, 5)
+            level = gen_level(game_manager, 1)
             game_manager.game_state = 'game'
             drawing.level = level
+
 
     elif game_manager.game_state == 'game':
         cyc = level.game_cycle(delta)

@@ -7,21 +7,37 @@ class GameManager:
         self.display = display
         self.is_paused = False
         self.difficulty = 'Medium'
-        self.res = res
         self.surf = pygame.Surface(res)
         self.clock = pygame.time.Clock()
 
         # settings
-        self.show_debug = True
+        self.cursor_color = tuple(randint(0, 255) for _ in '...')
+        self.__config = {
+            'res': res,
+            'show_debug': True,
+            'particles': True
+        }
 
     def change_state(self, new_state):
         pass
 
+    @property
+    def res(self):
+        return self.__config['res']
 
-    def update(self, res: tuple, fullscreen: bool, debug: bool):
+    @property
+    def show_debug(self):
+        return self.__config['show_debug']
+
+    @property
+    def particles(self):
+        return self.__config['particles']
+
+
+    def update(self, fullscreen: bool, **new_config: dict):
         if fullscreen:
-            self.display = pygame.display.set_mode(res, pygame.FULLSCREEN)
+            self.display = pygame.display.set_mode(new_config['res'], pygame.FULLSCREEN)
         else:
-            self.display = pygame.display.set_mode(res)
-        self.res = res
-        self.show_debug = debug
+            self.display = pygame.display.set_mode(new_config['res'])
+        self.__config.update(new_config)
+        print(self.__config)

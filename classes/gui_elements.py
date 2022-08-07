@@ -72,9 +72,9 @@ class SettingsWindow(Window):
                 break
 
             elif event == 'Apply':
-                self.manager.update(res=tuple(map(int, values['-RES-'].split('x'))),
-                                    fullscreen=values['-FULLSCREEN-'],
-                                    debug=values['-DEBUG-'],
+                self.manager.update(values['-FULLSCREEN-'],
+                                    res=tuple(map(int, values['-RES-'].split('x'))),
+                                    show_debug=values['-DEBUG-'],
                                     )
                 break
 
