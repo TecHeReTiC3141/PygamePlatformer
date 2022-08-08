@@ -68,7 +68,7 @@ class Level:
                                           len([i for i in collectable if isinstance(i, Coin)]) * Coin.value, 0)
 
         }
-        self.game_manager = game_manager
+        self.manager = game_manager
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
 
@@ -149,7 +149,7 @@ class Level:
                 if hasattr(block, 'returns_decor') and block.returns_decor:
                     new_decor: list[Decor] = block.collide(self.player, 'h')
                     if new_decor:
-                        self.decor.extend(new_decor)
+                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)])
                 else:
                     block.collide(self.player, 'h')
             if self.state == 'game':
@@ -158,7 +158,7 @@ class Level:
                 if hasattr(block, 'returns_decor') and block.returns_decor:
                     new_decor: list[Decor] = block.collide(self.player, 'v')
                     if new_decor:
-                        self.decor.extend(new_decor)
+                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)])
                 else:
                     block.collide(self.player, 'v')
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
@@ -166,8 +166,8 @@ class Level:
 
     def check_ui(self, ui: UI):
         mouse = list(pygame.mouse.get_pos())
-        mouse[0] = round(mouse[0] / self.game_manager.res[0] * DISP_WIDTH)
-        mouse[1] = round(mouse[1] / self.game_manager.res[1] * DISP_HEIGHT)
+        mouse[0] = round(mouse[0] / self.manager.res[0] * DISP_WIDTH)
+        mouse[1] = round(mouse[1] / self.manager.res[1] * DISP_HEIGHT)
         if not ui.rect.collidepoint(mouse):
             return
 
@@ -178,7 +178,7 @@ class Level:
                 elif isinstance(ui, GameChangeStateButton):
                     return ui
             elif isinstance(ui, GUI_trigger):
-                ui.gui(self.game_manager)
+                ui.gui(self.manager)
 
             elif isinstance(ui, LevelQuitButton):
                 return ui
@@ -284,7 +284,7 @@ class Level:
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                          self.surf.get_width(), DISP_WIDTH * 2)
 
-        self.player.get_angle(self.camera.offset, self.camera.display_size, self.game_manager.res)
+        self.player.get_angle(self.camera.offset, self.camera.display_size, self.manager.res)
 
         if self.player.rect.y >= self.surf.get_height():
             self.player.health = 0
@@ -317,7 +317,7 @@ class Level:
                     self.projectiles.append(proj)
             elif isinstance(obj, Projectile):
                 new_trace = obj.add_trace()
-                if new_trace:
+                if new_trace and self.manager.particles:
                     self.decor.append(new_trace)
                 obj.update()
             else:
@@ -345,7 +345,7 @@ class MainMenu(Level):
                                QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409', delay=40),
         }
 
-        self.game_manager = game_manager
+        self.manager = game_manager
         self.particles: list[Particle] = []
 
     def draw(self, surface: pygame.Surface):
@@ -362,7 +362,7 @@ class MainMenu(Level):
                         if to_level is not None:
                             return to_level
                 elif event.button == 3:
-                    self.game_manager.cursor_color = tuple(randint(0, 255) for _ in '...')
+                    self.manager.cursor_color = tuple(randint(0, 255) for _ in '...')
 
 
 # TODO implement map of levels

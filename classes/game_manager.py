@@ -33,7 +33,6 @@ class GameManager:
     def particles(self):
         return self.__config['particles']
 
-
     def update(self, fullscreen: bool, **new_config: dict):
         if fullscreen:
             self.display = pygame.display.set_mode(new_config['res'], pygame.FULLSCREEN)

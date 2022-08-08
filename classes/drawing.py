@@ -85,7 +85,7 @@ class Drawing:
             if self.player_score < self.level.player.score:
                 self.player_score += 1
             self.player_score = min(self.level.player.score, self.player_score)
-        elif self.manager.game_state == 'main_menu':
+        elif self.manager.game_state == 'main_menu' and self.manager.particles:
             m_x, m_y = pygame.mouse.get_pos()
             m_x = round(m_x / self.manager.res[0] * DISP_WIDTH)
             m_y = round(m_y / self.manager.res[1] * DISP_HEIGHT)

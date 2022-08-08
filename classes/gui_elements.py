@@ -35,13 +35,13 @@ class SettingsWindow(Window):
                 [sg.Spin(['Low', 'Medium', 'Hard'], initial_value=game_manager.difficulty,
                          text_color='red', key='-DIFFICULTY-',
                          tooltip='Defines damage from enemies and speed of hostile rockets'),
-                 sg.Checkbox('Show debug info', key='-DEBUG-')]
+                 sg.Checkbox('Show debug info', key='-DEBUG-', default=True)]
             ])],
             [sg.HorizontalSeparator()],
             [sg.Frame('Graphics', [
                 [sg.Text('Resolution'), sg.Spin(['900x600', '1280x720', '1440x900'],
-                                                initial_value='1440x900', key='-RES-'),
-                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Particles', key='-PARTICLES-')]
+                                                initial_value='1280x720', key='-RES-'),
+                 sg.Checkbox('Fullscreen', key='-FULLSCREEN-'), sg.Checkbox('Particles', key='-PARTICLES-', default=True)]
             ], )]
         ], expand_y=True, expand_x=True)
 
