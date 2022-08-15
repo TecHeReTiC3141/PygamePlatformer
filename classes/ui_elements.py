@@ -41,7 +41,6 @@ class UI:
         return move
 
 
-# TODO implement delay for moving_uis
 class Movable_UI(UI):
 
     def __init__(self, x, y, size: tuple, end_pos: tuple, delay=0):

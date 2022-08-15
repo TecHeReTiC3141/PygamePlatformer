@@ -1,5 +1,6 @@
 from scripts.const import *
 
+
 class GameManager:
 
     def __init__(self, display: pygame.Surface, res=(DISP_WIDTH, DISP_HEIGHT)):

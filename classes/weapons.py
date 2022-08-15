@@ -1,7 +1,6 @@
 from classes.decor import *
 
 
-# TODO implement saving trace as attribute
 class Projectile:
     size = (40, 40)
     speed = 12

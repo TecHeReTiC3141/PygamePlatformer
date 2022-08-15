@@ -95,6 +95,8 @@ class Level:
                    + self.projectiles + self.entities:
             if isinstance(obj, Collectable) and not obj.alive:
                 continue
+            elif isinstance(obj, WaterDrop):
+                print(obj.rect)
             obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -149,7 +151,9 @@ class Level:
                 if hasattr(block, 'returns_decor') and block.returns_decor:
                     new_decor: list[Decor] = block.collide(self.player, 'h')
                     if new_decor:
-                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)])
+                        print(new_decor)
+                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
+                                          if not self.manager.particles else new_decor)
                 else:
                     block.collide(self.player, 'h')
             if self.state == 'game':
@@ -158,7 +162,8 @@ class Level:
                 if hasattr(block, 'returns_decor') and block.returns_decor:
                     new_decor: list[Decor] = block.collide(self.player, 'v')
                     if new_decor:
-                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)])
+                        self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
+                                          if not self.manager.particles else new_decor)
                 else:
                     block.collide(self.player, 'v')
             self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)

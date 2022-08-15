@@ -30,7 +30,6 @@ class Particle(Decor):
         if self.has_physics:
             self.rect.move_ip(self.velocity)
             self.velocity += self.acceleration
-            print(self.velocity, self.acceleration)
         super().update()
 
 

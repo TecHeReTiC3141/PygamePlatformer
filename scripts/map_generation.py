@@ -78,7 +78,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
 
                 entities.append(Cannon(x, y, obj.width, obj.height,
                                        obj.direction, obj.max_dist, None, ))
-                print(obj.x, obj.y, obj.width, obj.height)
+                # print(obj.x, obj.y, obj.width, obj.height)
 
     assert isinstance(level_end, LevelEnd), "No LevelEnd"
 
