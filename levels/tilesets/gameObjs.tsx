@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="140" tilecount="13" columns="0">
+<tileset version="1.8" tiledversion="1.8.4" name="gameObjs" tilewidth="400" tileheight="200" tilecount="14" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="70" height="110" source="door_closed.png"/>
@@ -39,5 +39,8 @@
  </tile>
  <tile id="13">
   <image width="64" height="64" source="../../resources/images/surrounding/animated_water/frame_33_delay-0.05s.png"/>
+ </tile>
+ <tile id="15">
+  <image width="128" height="200" source="../../resources/images/ui/Level_enter.png"/>
  </tile>
 </tileset>

@@ -11,7 +11,6 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
     blocks_layer = level_map.get_layer_by_name('BlocksLayer')
     background = level_map.get_layer_by_name('BackGround')
 
-    start_pos = (0, 0)
     decor: list[Decor] = []
     obstacles: list[Obstacle] = []
     collectable: list[Collectable] = []
@@ -19,6 +18,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
     blocks: list[Block] = []
 
     key_count = 0
+    start_pos: tuple = None
     level_end: LevelEnd = None
 
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
@@ -81,6 +81,7 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
                 # print(obj.x, obj.y, obj.width, obj.height)
 
     assert isinstance(level_end, LevelEnd), "No LevelEnd"
+    assert isinstance(start_pos, tuple), "No player"
 
     # Loading blocks
     for x, y, surf in blocks_layer.tiles():
