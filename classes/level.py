@@ -421,9 +421,13 @@ class LevelMap(Level):
         mouse = list(pygame.mouse.get_pos())
         mouse[0] = round(mouse[0] / self.manager.res[0] * DISP_WIDTH)
         mouse[1] = round(mouse[1] / self.manager.res[1] * DISP_HEIGHT)
+        print(mouse, ui.rect)
         if ui.requires_offset:
+            mouse[0] *= self.camera.display_size.x / self.manager.res[0]
+            mouse[1] *= self.camera.display_size.y / self.manager.res[1]
             mouse[0] += self.camera.offset.x
             mouse[1] += self.camera.offset.y
+        print(mouse, ui.rect)
         if not ui.rect.collidepoint(mouse):
             return
         if isinstance(ui, Button):
@@ -440,7 +444,7 @@ class LevelMap(Level):
 
             elif isinstance(ui, TextButton):
                 return self.check_ui(ui.func_button)
-        print(type(ui))
+
         elif isinstance(ui, LevelEnter):
             return ui
 
