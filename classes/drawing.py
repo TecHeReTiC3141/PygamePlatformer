@@ -27,7 +27,7 @@ class Drawing:
 
     def draw_ui(self):
 
-        if self.manager.game_state == 'game':
+        if self.manager.game_state in ['game', 'level_map']:
 
             if self.level.state == 'game':  # displaying player's stats
                 pygame.draw.rect(self.surf, 'black', (-10, -10, DISP_WIDTH // 6 + 10, DISP_HEIGHT // 5 + 30),

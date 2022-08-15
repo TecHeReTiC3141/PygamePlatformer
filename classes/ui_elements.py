@@ -7,6 +7,7 @@ ui_images = Path('resources/images/ui')
 class UI:
     image = pygame.Surface((50, 50))
     active = True
+    requires_offset = False
 
     def __init__(self, x, y, size: tuple):
         self.image = pygame.transform.scale(self.image, size)
@@ -104,9 +105,16 @@ class UnpauseButton(LevelChangeStateButton):
         self.state = state
 
 
-class ToLevels(GameChangeStateButton):
+class ToLevelMap(GameChangeStateButton):
     image = pygame.Surface((50, 50))
     state = 'game'
+
+class ToLevel(GameChangeStateButton):
+    image = pygame.Surface((50, 50))
+    state = 'game'
+
+    def __init__(self, num):
+        self.num = num
 
 
 class ToMenu(GameChangeStateButton):
@@ -223,4 +231,22 @@ class EndLevelMenu(UI_container):
         pygame.draw.rect(self.image, '#B8B1A6', (480, 115, 110, 45))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (480, 115))
+        super().draw(surface)
+
+
+class LevelEnter(UI):
+    requires_offset = True
+    image = pygame.image.load(ui_images / 'Level_enter.png')
+
+    def __init__(self, x, y, size, num, manager: GameManager):
+        super().__init__(x, y, size)
+        self.num = num
+        self.manager = manager
+
+        level_num = menu_font.render(str(num), True, 'black')
+        self.image.blit(level_num,
+                        ((self.image.get_width() - level_num.get_width()) // 2,
+                         self.image.get_height() // 2))
+
+    def draw(self, surface: pygame.Surface):
         super().draw(surface)

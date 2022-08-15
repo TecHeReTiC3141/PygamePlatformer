@@ -19,11 +19,22 @@ if __name__ == '__main__':
         drawing.draw()
 
         if game_manager.game_state == 'main_menu':
+            to_levelmap = level.game_cycle(delta)
+            if isinstance(to_levelmap, ToLevelMap):
+                level = gen_levels_map(game_manager)
+                game_manager.game_state = 'level_map'
+                drawing.level = level
+
+        elif game_manager.game_state == 'level_map':
             to_level = level.game_cycle(delta)
-            if isinstance(to_level, ToLevels):
-                level = gen_level(game_manager, 5)
+            if isinstance(to_level, LevelEnter):
+                level = gen_level(game_manager, to_level.num)
                 game_manager.game_state = 'game'
                 drawing.level = level
+            elif isinstance(to_level, ToMenu):
+                level = gen_main_menu(game_manager)
+                drawing.level = level
+                game_manager.game_state = 'main_menu'
 
         elif game_manager.game_state == 'game':
             cyc = level.game_cycle(delta)

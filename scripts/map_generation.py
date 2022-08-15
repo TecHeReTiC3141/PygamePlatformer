@@ -116,8 +116,30 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
 
     level_map = load_pygame(f'levels/level_map.tmx')
 
-    blocks_layer = level_map.get_layer_by_name('BlockLayer')
-    ul_layer = level_map.get_layer_by_name('UI')
+    game_objs = level_map.get_layer_by_name('GameObjects')
+    blocks_layer = level_map.get_layer_by_name('BlocksLayer')
+    background = level_map.get_layer_by_name('BackGround')
 
-    for  x, y, surf in blocks_layer.tiles():
-        pass
+    background_surface = pygame.Surface((level_map.width * BLOCK_SIZE,
+                                      level_map.height * BLOCK_SIZE))
+    surface = pygame.Surface((level_map.width * BLOCK_SIZE,
+                                      level_map.height * BLOCK_SIZE))
+
+    for x, y, surf in background.tiles():
+        background_surface.blit(pygame.transform.scale(surf, (BLOCK_SIZE, BLOCK_SIZE)),
+                                (x * BLOCK_SIZE, y * BLOCK_SIZE))
+
+    start_pos: tuple = None
+    enters: list[LevelEnter] = []
+    obstacles: list[Obstacle] = []
+
+    for obj in game_objs:
+
+        if obj.type == 'Player':
+            start_pos = (obj.x, obj.y)
+        elif obj.type == 'Level':
+            enters.append(LevelEnter(obj.x * SCALE, obj.y * SCALE, (obj.width, obj.height),
+                                     int(obj.name), game_manager))
+
+    return LevelMap(obstacles, enters, surface,
+                    background_surface, start_pos, game_manager)

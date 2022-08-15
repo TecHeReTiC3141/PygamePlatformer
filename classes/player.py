@@ -15,6 +15,7 @@ class Player(Entity):
     friction = -.3
     max_vel = 5
     max_health = 12
+    speed = 2
     in_water = False
 
     def __init__(self, x, y, direction='left'):
@@ -23,7 +24,7 @@ class Player(Entity):
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         self.angle = 0
-        self.speed = 2
+
         self.jump_cooldown = 0
         self.shoot_cooldown = 0
 
@@ -94,7 +95,6 @@ class Player(Entity):
                 self.collided_sides['left'], self.collided_sides['right']]):
             self.is_jump = False
             self.air_time = 0
-
         else:
             self.air_time += 1
 
@@ -112,7 +112,6 @@ class Player(Entity):
             max_sliding_down = 0
 
         if self.collided_sides['left']:
-
             max_sliding_down = .6
             if not self.collided_sides['down']:
                 self.acceleration.x = max(0, self.acceleration.x)
@@ -144,7 +143,7 @@ class Player(Entity):
     def shoot(self) -> Projectile:
         self.shoot_cooldown = self.max_shoot_cooldown
         return MagicBall(self.rect.centerx, self.rect.centery,
-                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
+                         pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
@@ -166,8 +165,7 @@ class Player(Entity):
 
 
 class PlayerOnMap(Player):
-
-    speed = 3
+    speed = 5
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_eyes_{i}.png').convert_alpha()
            for i in directions}
@@ -177,20 +175,25 @@ class PlayerOnMap(Player):
         if keys[pygame.K_a]:
             self.velocity.x -= self.speed
             self.direction = 'left'
-        elif keys[pygame.K_d]:
+        if keys[pygame.K_d]:
             self.direction = 'right'
             self.velocity.x += self.speed
+        self.rect.move_ip(self.velocity)
 
     def vert_move(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             self.direction = 'up'
             self.velocity.y -= self.speed
-        elif keys[pygame.K_s]:
+        if keys[pygame.K_s]:
             self.direction = 'down'
             self.velocity.y += self.speed
+        self.rect.move_ip(self.velocity)
+
+    def update(self, dt=1):
+        self.velocity *= 0
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
-        self.image.blit(self.sprites[self.direction])
+        self.image.blit(self.sprites[self.direction], (0, 0))
         surface.blit(self.image, self.rect)

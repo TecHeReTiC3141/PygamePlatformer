@@ -173,9 +173,9 @@ class Level:
         mouse = list(pygame.mouse.get_pos())
         mouse[0] = round(mouse[0] / self.manager.res[0] * DISP_WIDTH)
         mouse[1] = round(mouse[1] / self.manager.res[1] * DISP_HEIGHT)
+
         if not ui.rect.collidepoint(mouse):
             return
-
         if isinstance(ui, Button):
             if isinstance(ui, ChangeStateButton):
                 if isinstance(ui, LevelChangeStateButton):
@@ -341,7 +341,7 @@ class MainMenu(Level):
         self.ui_elements: dict[str, UI] = {
             'levels': TextButton(-200, DISP_HEIGHT // 2 - 50 - 120, (200, 100),
                                  (320, DISP_HEIGHT // 2 - 120),
-                                 ToLevels(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409', delay=0),
+                                 ToLevelMap(0, 0, (10, 10)), '#eecc67', 'Levels', color='#9c6409', delay=0),
             'settings': TextButton(-200, DISP_HEIGHT // 2 - 50, (200, 100),
                                    (320, DISP_HEIGHT // 2),
                                    SettingsButton(0, 0, (10, 10), ), '#eecc67', 'Settings', color='#9c6409', delay=20),
@@ -370,6 +370,111 @@ class MainMenu(Level):
                     self.manager.cursor_color = tuple(randint(0, 255) for _ in '...')
 
 
-# TODO implement map of levels
 class LevelMap(Level):
-    pass
+
+    def __init__(self, obstacles: list[Obstacle],
+                 level_enters: list[LevelEnter], surface: pygame.Surface, background_surf: pygame.Surface,
+                 start_pos: tuple[int, int], game_manager: GameManager):
+        self.obstacles = obstacles
+        self.enters = level_enters
+        self.surf = surface
+        self.surf.set_colorkey('yellow')
+        self.surf.fill('yellow')
+        self.aspect_ratio = max(self.surf.get_width(), self.surf.get_height()) / \
+                            min(self.surf.get_width(), self.surf.get_height())
+
+        self.ui_elements: dict[str, UI] = {}
+        self.manager = game_manager
+        self.background_surf = background_surf
+        self.background_surf.set_colorkey('black')
+
+        self.camera = Camera(surface)
+        self.projectiles: list[Projectile] = []
+
+        self.player = PlayerOnMap(*start_pos)
+        self.state = 'scrolling'
+
+    def physics(self, dt):
+        self.player.prev_rect = self.player.rect.copy()
+        self.player.vert_move(dt)
+        for block in self.obstacles:
+            if hasattr(block, 'returns_decor') and block.returns_decor:
+                new_decor: list[Decor] = block.collide(self.player, 'h')
+                if new_decor:
+                    self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
+                                      if not self.manager.particles else new_decor)
+            else:
+                block.collide(self.player, 'h')
+        self.player.hor_move(dt)
+        for block in self.obstacles:
+            if hasattr(block, 'returns_decor') and block.returns_decor:
+                new_decor: list[Decor] = block.collide(self.player, 'v')
+                if new_decor:
+                    self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
+                                      if not self.manager.particles else new_decor)
+            else:
+                block.collide(self.player, 'v')
+        self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
+        self.player.rect.y = max(self.player.rect.y, 0)
+
+    def check_ui(self, ui: UI):
+        mouse = list(pygame.mouse.get_pos())
+        mouse[0] = round(mouse[0] / self.manager.res[0] * DISP_WIDTH)
+        mouse[1] = round(mouse[1] / self.manager.res[1] * DISP_HEIGHT)
+        if ui.requires_offset:
+            mouse[0] += self.camera.offset.x
+            mouse[1] += self.camera.offset.y
+        if not ui.rect.collidepoint(mouse):
+            return
+        if isinstance(ui, Button):
+            if isinstance(ui, ChangeStateButton):
+                if isinstance(ui, LevelChangeStateButton):
+                    self.change_state(ui.state)
+                elif isinstance(ui, GameChangeStateButton):
+                    return ui
+            elif isinstance(ui, GUI_trigger):
+                ui.gui(self.manager)
+
+            elif isinstance(ui, LevelQuitButton):
+                return ui
+
+            elif isinstance(ui, TextButton):
+                return self.check_ui(ui.func_button)
+        print(type(ui))
+        elif isinstance(ui, LevelEnter):
+            return ui
+
+    def game_cycle(self, dt) -> bool:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return ToMenu(0, 0, (10, 10))
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for ui in list(self.ui_elements.values()) + self.enters:
+                        to_level = self.check_ui(ui)
+                        if to_level:
+                            return to_level
+        self.physics(dt)
+        self.player.update(dt)
+
+    def draw(self, surface: pygame.Surface):
+        self.surf.fill('yellow')
+
+        for obj in self.enters:
+            obj.draw(self.surf)
+
+        self.player.draw(self.surf)
+
+        camera_surf = pygame.Surface(self.camera.display_size)
+        camera_surf.set_colorkey('yellow')
+        camera_surf.fill('yellow')
+
+        camera_surf.blit(self.background_surf, (0, 0), self.camera.scroll(self.player))
+        camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
+        surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
