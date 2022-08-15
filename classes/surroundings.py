@@ -64,6 +64,18 @@ class Block:
         surface.blit(self.surface, self.rect)
 
 
+class BackgroundBlock(Block):
+
+    def __init__(self, x, y, surface: pygame.Surface):
+        self.surface = pygame.transform.scale(surface, (BLOCK_SIZE, BLOCK_SIZE))
+        self.mask = pygame.mask.from_surface(self.surface)
+
+        self.rect = self.surface.get_rect(topleft=(x * BLOCK_SIZE, y * BLOCK_SIZE))
+
+    def collide(self, entity: Player, mode: str) -> str:
+        pass
+
+
 class MovableBlock(Block):
     movable = True
 

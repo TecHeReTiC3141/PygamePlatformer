@@ -35,7 +35,7 @@
   <image width="140" height="140" source="../../resources/images/surrounding/key.png"/>
  </tile>
  <tile id="12">
-  <image width="90" height="113" source="../../resources/images/entities/player/menu_player.png"/>
+  <image width="90" height="113" source="../../resources/images/entities/player/player_eyes_right.png"/>
  </tile>
  <tile id="13">
   <image width="64" height="64" source="../../resources/images/surrounding/animated_water/frame_33_delay-0.05s.png"/>

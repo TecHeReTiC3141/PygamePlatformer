@@ -161,14 +161,36 @@ class Player(Entity):
                          (self.rect.x - 2, self.rect.y - 27,
                           round((self.rect.width + 6) *
                                 (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
-        # if self.collided_sides['down']:
-        #     pygame.draw.line(self.image, 'green', (0, self.rect.height - 5),
-        #                      (self.rect.right, self.rect.height - 5), 5)
-        # if self.collided_sides['left']:
-        #     pygame.draw.line(self.image, 'green', (0, 0),
-        #                      (0, self.rect.height), 5)
-        # if self.collided_sides['right']:
-        #     pygame.draw.line(self.image, 'green', (self.rect.width, 0),
-        #                      (self.rect.width, self.rect.height), 5)
         if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)
+
+
+class PlayerOnMap(Player):
+
+    speed = 3
+    sprites: dict[str, pygame.Surface] \
+        = {i: pygame.image.load(f'resources/images/entities/player/player_eyes_{i}.png').convert_alpha()
+           for i in directions}
+
+    def hor_move(self, dt):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.velocity.x -= self.speed
+            self.direction = 'left'
+        elif keys[pygame.K_d]:
+            self.direction = 'right'
+            self.velocity.x += self.speed
+
+    def vert_move(self, dt):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            self.direction = 'up'
+            self.velocity.y -= self.speed
+        elif keys[pygame.K_s]:
+            self.direction = 'down'
+            self.velocity.y += self.speed
+
+    def draw(self, surface: pygame.Surface):
+        self.image.fill('yellow')
+        self.image.blit(self.sprites[self.direction])
+        surface.blit(self.image, self.rect)

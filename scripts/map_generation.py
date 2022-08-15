@@ -93,13 +93,13 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
 
 
 def gen_main_menu(game_manager: GameManager) -> MainMenu:
-    level_map = load_pygame(f'levels/main_menu.tmx')
+    menu_level = load_pygame(f'levels/main_menu.tmx')
 
-    obj_layer = level_map.get_layer_by_name('GameObjects')
-    blocks = level_map.get_layer_by_name('BlocksLayer')
+    obj_layer = menu_level.get_layer_by_name('GameObjects')
+    blocks = menu_level.get_layer_by_name('BlocksLayer')
 
-    surface = pygame.Surface((level_map.width * BLOCK_SIZE,
-                              level_map.height * BLOCK_SIZE))
+    surface = pygame.Surface((menu_level.width * BLOCK_SIZE,
+                              menu_level.height * BLOCK_SIZE))
     surface.fill('#3eb5e4')
     for x, y, surf in blocks.tiles():
         surface.blit(pygame.transform.scale(surf, (BLOCK_SIZE, BLOCK_SIZE)), (x * BLOCK_SIZE, y * BLOCK_SIZE))
@@ -113,4 +113,11 @@ def gen_main_menu(game_manager: GameManager) -> MainMenu:
 
 
 def gen_levels_map(game_manager: GameManager) -> LevelMap:
-    pass
+
+    level_map = load_pygame(f'levels/level_map.tmx')
+
+    blocks_layer = level_map.get_layer_by_name('BlockLayer')
+    ul_layer = level_map.get_layer_by_name('UI')
+
+    for  x, y, surf in blocks_layer.tiles():
+        pass
