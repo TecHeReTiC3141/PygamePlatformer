@@ -97,7 +97,9 @@ class Level:
                 continue
             elif isinstance(obj, WaterDrop):
                 print(obj.rect)
-            obj.draw(self.surf)
+            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x \
+                    and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
+                obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
         self.player.draw(self.surf)
@@ -394,36 +396,25 @@ class LevelMap(Level):
         self.player = PlayerOnMap(*start_pos)
         self.state = 'scrolling'
 
+    # fix problem connected with collisions of water
     def physics(self, dt):
         self.player.prev_rect = self.player.rect.copy()
         self.player.vert_move(dt)
         for block in self.obstacles:
-            if hasattr(block, 'returns_decor') and block.returns_decor:
-                new_decor: list[Decor] = block.collide(self.player, 'h')
-                if new_decor:
-                    self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
-                                      if not self.manager.particles else new_decor)
-            else:
-                block.collide(self.player, 'h')
+            block.collide(self.player, 'h')
+
         self.player.hor_move(dt)
         for block in self.obstacles:
-            if hasattr(block, 'returns_decor') and block.returns_decor:
-                new_decor: list[Decor] = block.collide(self.player, 'v')
-                if new_decor:
-                    self.decor.extend([i for i in new_decor if not isinstance(i, Particle)]
-                                      if not self.manager.particles else new_decor)
-            else:
-                block.collide(self.player, 'v')
+            block.collide(self.player, 'v')
         self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
         self.player.rect.y = max(self.player.rect.y, 0)
+        # print(self.player.collided_sides, self.player.velocity)
 
     def check_ui(self, ui: UI):
         mouse = list(pygame.mouse.get_pos())
         mouse[0] *= self.camera.display_size.x / self.manager.res[0]
         mouse[1] *= self.camera.display_size.y / self.manager.res[1]
-        print(mouse, ui.rect)
         if ui.requires_offset:
-
             mouse[0] += self.camera.offset.x
             mouse[1] += self.camera.offset.y
         print(mouse, ui.rect)

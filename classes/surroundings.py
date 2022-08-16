@@ -253,7 +253,34 @@ class Water(Obstacle, Animated):
 class SolidWater(Water):
 
     def collide(self, entity: Player, mode: str) -> list[Decor]:
-        super(Water, self).collide(entity, mode)
+        if entity.rect.colliderect(self.rect):
+            print(entity.prev_rect, entity.rect, mode)
+            if mode == 'v':
+                # left sided
+                if entity.prev_rect.right <= self.rect.left <= entity.rect.right:
+                    entity.rect.right = self.rect.left
+                    entity.collided_sides['right'] = True
+                    return 'right'
+
+                # right side
+                elif entity.prev_rect.left >= self.rect.right >= entity.rect.left:
+                    entity.rect.left = self.rect.right
+                    entity.collided_sides['left'] = True
+                    return 'left'
+
+            elif mode == 'h':
+                # top side
+
+                if entity.prev_rect.bottom <= self.rect.top <= entity.rect.bottom:
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    return 'down'
+
+                # bottom side
+                elif entity.prev_rect.top >= self.rect.bottom >= entity.rect.top:
+                    entity.rect.top = self.rect.bottom
+                    entity.collided_sides['top'] = True
+                    return 'top'
 
 
 class Spike(Obstacle):

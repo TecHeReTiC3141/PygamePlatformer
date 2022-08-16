@@ -116,7 +116,7 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
     level_map = load_pygame(f'levels/level_map.tmx')
 
     game_objs = level_map.get_layer_by_name('GameObjects')
-    blocks_layer = level_map.get_layer_by_name('BlocksLayer')
+    # blocks_layer = level_map.get_layer_by_name('BlocksLayer')
     background = level_map.get_layer_by_name('BackGround')
 
     background_surface = pygame.Surface((level_map.width * BLOCK_SIZE,
@@ -136,7 +136,8 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
     obstacles: list[Obstacle] = []
 
     for x, y in water_coords:
-        obstacles.append(SolidWater(x * level_map.tilewidth, y * level_map.tileheight, BLOCK_SIZE, BLOCK_SIZE,
+        obstacles.append(SolidWater(x * level_map.tilewidth, y * level_map.tileheight,
+                                    level_map.tilewidth, level_map.tileheight,
                                     pygame.Surface((level_map.tilewidth, level_map.tileheight))))
 
     for obj in game_objs:

@@ -192,6 +192,7 @@ class PlayerOnMap(Player):
 
     def update(self, dt=1):
         self.velocity *= 0
+        self.collided_sides = {i: False for i in directions}
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')
