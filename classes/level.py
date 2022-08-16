@@ -419,12 +419,11 @@ class LevelMap(Level):
 
     def check_ui(self, ui: UI):
         mouse = list(pygame.mouse.get_pos())
-        mouse[0] = round(mouse[0] / self.manager.res[0] * DISP_WIDTH)
-        mouse[1] = round(mouse[1] / self.manager.res[1] * DISP_HEIGHT)
+        mouse[0] *= self.camera.display_size.x / self.manager.res[0]
+        mouse[1] *= self.camera.display_size.y / self.manager.res[1]
         print(mouse, ui.rect)
         if ui.requires_offset:
-            mouse[0] *= self.camera.display_size.x / self.manager.res[0]
-            mouse[1] *= self.camera.display_size.y / self.manager.res[1]
+
             mouse[0] += self.camera.offset.x
             mouse[1] += self.camera.offset.y
         print(mouse, ui.rect)
@@ -448,6 +447,10 @@ class LevelMap(Level):
         elif isinstance(ui, LevelEnter):
             return ui
 
+    def update(self):
+        for obj in self.obstacles:
+            obj.update()
+
     def game_cycle(self, dt) -> bool:
         for event in pygame.event.get():
 
@@ -465,13 +468,16 @@ class LevelMap(Level):
                         if to_level:
                             return to_level
         self.physics(dt)
+        self.update()
         self.player.update(dt)
 
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
 
-        for obj in self.enters:
-            obj.draw(self.surf)
+        for obj in self.enters + self.obstacles:
+            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x\
+                    and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
+                obj.draw(self.surf)
 
         self.player.draw(self.surf)
 

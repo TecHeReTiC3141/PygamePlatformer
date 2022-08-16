@@ -165,7 +165,7 @@ class Player(Entity):
 
 
 class PlayerOnMap(Player):
-    speed = 5
+    speed = 8
     sprites: dict[str, pygame.Surface] \
         = {i: pygame.image.load(f'resources/images/entities/player/player_eyes_{i}.png').convert_alpha()
            for i in directions}

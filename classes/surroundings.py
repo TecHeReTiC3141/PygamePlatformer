@@ -231,7 +231,7 @@ class MovingPlatform(Obstacle):
             return 'left'
 
 
-class Water(Animated, Obstacle):
+class Water(Obstacle, Animated):
     source = Path('resources/images/surrounding/animated_water')
     sprites = {i: pygame.image.load(image).convert_alpha() for i, image in enumerate(source.glob('*.png'))}
     returns_decor = True
@@ -250,10 +250,16 @@ class Water(Animated, Obstacle):
             return particles
 
 
+class SolidWater(Water):
+
+    def collide(self, entity: Player, mode: str) -> list[Decor]:
+        super(Water, self).collide(entity, mode)
+
+
 class Spike(Obstacle):
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
-        GameObject.__init__(self, x, y, width, height, surface)
+        super(Obstacle, self).__init__(x, y, width, height, surface)
 
     def collide(self, entity: Player, mode: str) -> str:
         if entity.rect.colliderect(self.rect) and entity.hit_cooldown <= 0:

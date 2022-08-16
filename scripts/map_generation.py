@@ -113,7 +113,6 @@ def gen_main_menu(game_manager: GameManager) -> MainMenu:
 
 
 def gen_levels_map(game_manager: GameManager) -> LevelMap:
-
     level_map = load_pygame(f'levels/level_map.tmx')
 
     game_objs = level_map.get_layer_by_name('GameObjects')
@@ -121,17 +120,24 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
     background = level_map.get_layer_by_name('BackGround')
 
     background_surface = pygame.Surface((level_map.width * BLOCK_SIZE,
-                                      level_map.height * BLOCK_SIZE))
+                                         level_map.height * BLOCK_SIZE))
     surface = pygame.Surface((level_map.width * BLOCK_SIZE,
-                                      level_map.height * BLOCK_SIZE))
+                              level_map.height * BLOCK_SIZE))
+    water_coords = [(x, y) for x in range(level_map.width)
+                    for y in range(level_map.height)]
 
     for x, y, surf in background.tiles():
         background_surface.blit(pygame.transform.scale(surf, (BLOCK_SIZE, BLOCK_SIZE)),
                                 (x * BLOCK_SIZE, y * BLOCK_SIZE))
+        water_coords.remove((x, y))
 
     start_pos: tuple = None
     enters: list[LevelEnter] = []
     obstacles: list[Obstacle] = []
+
+    for x, y in water_coords:
+        obstacles.append(SolidWater(x * level_map.tilewidth, y * level_map.tileheight, BLOCK_SIZE, BLOCK_SIZE,
+                                    pygame.Surface((level_map.tilewidth, level_map.tileheight))))
 
     for obj in game_objs:
 
