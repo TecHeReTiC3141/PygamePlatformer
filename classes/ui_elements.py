@@ -1,5 +1,5 @@
-from pathlib import Path
 from classes.gui_elements import *
+from classes.player import *
 
 ui_images = Path('resources/images/ui')
 
@@ -108,6 +108,7 @@ class UnpauseButton(LevelChangeStateButton):
 class ToLevelMap(GameChangeStateButton):
     image = pygame.Surface((50, 50))
     state = 'game'
+
 
 class ToLevel(GameChangeStateButton):
     image = pygame.Surface((50, 50))
@@ -242,6 +243,10 @@ class LevelEnter(UI):
         super().__init__(x, y, size)
         self.num = num
         self.manager = manager
+        self.level_data = manager.get_level_info(num)
+
+        self.active_zone = pygame.Rect(self.rect.x - self.rect.width, self.rect.y - self.rect.height,
+                                       self.rect.width * 2, self.rect.height * 2)
 
         level_num = menu_font.render(str(num), True, 'black')
         self.image.blit(level_num,
@@ -250,3 +255,7 @@ class LevelEnter(UI):
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
+
+    def interact(self, player: Player):
+        if self.active_zone.colliderect(player.rect):
+            pass

@@ -1,5 +1,4 @@
 from scripts.const import *
-from pathlib import Path
 from scripts.generate_level_stats import *
 
 
@@ -17,12 +16,16 @@ class GameManager:
         self.cursor_color = tuple(randint(0, 255) for _ in '...')
 
         self.__level_stats = get_level_stats()
-        print(self.__level_stats)
+
         self.__config = {
             'res': res,
             'show_debug': True,
             'particles': True
         }
+
+    # TODO implement updating of level_stats.json when game is quited
+    def __del__(self):
+        pass
 
     def change_state(self, new_state):
         pass
@@ -41,6 +44,9 @@ class GameManager:
 
     def get_level_info(self, idx):
         return self.__level_stats.get(f'level{idx}', {})
+
+    def update_level(self, idx, level_data):
+        self.__level_stats[f'level{idx}'].update(level_data)
 
     def update(self, fullscreen: bool, **new_config: dict):
         if fullscreen:
