@@ -1,4 +1,6 @@
 from scripts.const import *
+from pathlib import Path
+from scripts.generate_level_stats import *
 
 
 class GameManager:
@@ -13,6 +15,9 @@ class GameManager:
 
         # settings
         self.cursor_color = tuple(randint(0, 255) for _ in '...')
+
+        self.__level_stats = get_level_stats()
+        print(self.__level_stats)
         self.__config = {
             'res': res,
             'show_debug': True,
@@ -33,6 +38,9 @@ class GameManager:
     @property
     def particles(self):
         return self.__config['particles']
+
+    def get_level_info(self, idx):
+        return self.__level_stats.get(f'level{idx}', {})
 
     def update(self, fullscreen: bool, **new_config: dict):
         if fullscreen:

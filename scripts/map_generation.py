@@ -145,7 +145,7 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
         if obj.type == 'Player':
             start_pos = (obj.x, obj.y)
         elif obj.type == 'Level':
-            enters.append(LevelEnter(obj.x * SCALE, obj.y * SCALE, (obj.width, obj.height),
+            enters.append(LevelEnter(obj.x * SCALE, obj.y * SCALE, (obj.width * 2, obj.height * 2),
                                      int(obj.name), game_manager))
 
     return LevelMap(obstacles, enters, surface,

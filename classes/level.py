@@ -465,7 +465,7 @@ class LevelMap(Level):
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
 
-        for obj in self.enters + self.obstacles:
+        for obj in self.obstacles + self.enters:
             if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x\
                     and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
                 obj.draw(self.surf)
