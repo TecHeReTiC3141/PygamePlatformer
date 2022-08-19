@@ -208,11 +208,14 @@ class Level:
                 self.ui_elements['pause_menu'].time = time() - self.init_time
 
             elif new_state == 'end_level':
+                level_data = {'passed': True, 'best_time': round(time() - self.init_time, 1),
+                              'best_score': self.player.score}
                 self.ui_elements['endlevel_menu'].time = time() - self.init_time
                 self.ui_elements['endlevel_menu'].player_score = self.player.score
 
                 self.ui_elements['endlevel_menu'].active = True
                 self.ui_elements.pop('pause_button')
+                self.manager.update_level(self.num, level_data)
 
         elif self.state == 'pause':
             if new_state in ['game', 'scrolling']:

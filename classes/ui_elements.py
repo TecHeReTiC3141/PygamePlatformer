@@ -281,7 +281,7 @@ class LevelStats(UI_container):
                                      True, 'black')
         pygame.draw.rect(self.image, '#eecc67',  (30, 20, 200, 22))
         self.image.blit(level_name, (30, 20))
-        pygame.draw.rect(self.image, '#eecc67', (30, 65, 200, 22))
+        pygame.draw.rect(self.image, '#eecc67', (30, 65, 500, 22))
         self.image.blit(best_time, (30, 65))
         pygame.draw.rect(self.image, '#eecc67', (30, 110, 200, 25))
         self.image.blit(best_score, (30, 110))

@@ -25,7 +25,8 @@ class GameManager:
 
     # TODO implement updating of level_stats.json when game is quited
     def __del__(self):
-        pass
+        with open('level_stats.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__level_stats, f)
 
     def change_state(self, new_state):
         pass
@@ -46,7 +47,12 @@ class GameManager:
         return self.__level_stats.get(f'level{idx}', {})
 
     def update_level(self, idx, level_data):
-        self.__level_stats[f'level{idx}'].update(level_data)
+        self.__level_stats[f'level{idx}']['passed'] = True
+        self.__level_stats[f'level{idx}']['best_time'] = min(level_data['best_time'],
+                                                             round(self.__level_stats[f'level{idx}']['best_time'], 1))
+        self.__level_stats[f'level{idx}']['best_score'] = max(level_data['best_score'],
+                                                             self.__level_stats[f'level{idx}']['best_score'])
+        pprint(self.__level_stats)
 
     def update(self, fullscreen: bool, **new_config: dict):
         if fullscreen:
