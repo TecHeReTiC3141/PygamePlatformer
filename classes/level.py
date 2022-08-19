@@ -416,19 +416,27 @@ class LevelMap(Level):
 
     def check_ui(self, ui: UI):
         mouse = list(pygame.mouse.get_pos())
-        mouse[0] *= self.camera.display_size.x / self.manager.res[0]
-        mouse[1] *= self.camera.display_size.y / self.manager.res[1]
+
+        print(mouse)
         if ui.requires_offset:
+            mouse[0] *= self.camera.display_size.x / self.manager.res[0]
+            mouse[1] *= self.camera.display_size.y / self.manager.res[1]
             mouse[0] += self.camera.offset.x
             mouse[1] += self.camera.offset.y
-        print(mouse, ui.rect)
+        else:
+            mouse[0] *= DISP_WIDTH / self.manager.res[0]
+            mouse[1] *= DISP_HEIGHT / self.manager.res[1]
+        if not isinstance(ui, LevelEnter):
+            print(mouse, ui.rect, type(ui))
         if not ui.rect.collidepoint(mouse):
             return
+        print(type(ui))
         if isinstance(ui, Button):
             if isinstance(ui, ChangeStateButton):
                 if isinstance(ui, LevelChangeStateButton):
                     self.change_state(ui.state)
                 elif isinstance(ui, GameChangeStateButton):
+                    print(type(ui))
                     return ui
             elif isinstance(ui, GUI_trigger):
                 ui.gui(self.manager)
@@ -458,10 +466,15 @@ class LevelMap(Level):
                     return ToMenu(0, 0, (10, 10))
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    for ui in list(self.ui_elements.values()) + self.enters:
+                for ui in list(self.ui_elements.values()) + self.enters:
+                    if isinstance(ui, UI_container) and ui.active:
+                        for ui_el in ui.content:
+                            to_level = self.check_ui(ui_el)
+                            if to_level is not None:
+                                return to_level
+                    else:
                         to_level = self.check_ui(ui)
-                        if to_level:
+                        if to_level is not None:
                             return to_level
         self.physics(dt)
         self.update()
