@@ -1,5 +1,3 @@
-import pygame
-
 from classes.surroundings import *
 from classes.ui_elements import *
 
@@ -385,7 +383,13 @@ class LevelMap(Level):
         self.aspect_ratio = max(self.surf.get_width(), self.surf.get_height()) / \
                             min(self.surf.get_width(), self.surf.get_height())
 
-        self.ui_elements: dict[str, UI] = {}
+        self.ui_elements: dict[str, UI] = {
+            'level_stats': LevelStats(DISP_WIDTH // 4, DISP_HEIGHT, (640, 180),
+                                      [
+                                          PlayButton(320, 100, (200, 60))
+                                      ], (DISP_WIDTH // 2, DISP_HEIGHT * 7 // 8)
+                                      )
+        }
         self.manager = game_manager
         self.background_surf = background_surf
         self.background_surf.set_colorkey('black')
@@ -436,7 +440,8 @@ class LevelMap(Level):
                 return self.check_ui(ui.func_button)
 
         elif isinstance(ui, LevelEnter):
-            return ui
+            self.ui_elements['level_stats'].active = True
+            self.ui_elements['level_stats'].update(ui.num, ui.level_data)
 
     def update(self):
         for obj in self.obstacles:

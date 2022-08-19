@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
         elif game_manager.game_state == 'level_map':
             to_level = level.game_cycle(delta)
-            if isinstance(to_level, LevelEnter):
+            if isinstance(to_level, PlayButton):
                 level = gen_level(game_manager, to_level.num)
                 game_manager.game_state = 'game'
                 drawing.level = level

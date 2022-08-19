@@ -8,6 +8,7 @@ class UI:
     image = pygame.Surface((50, 50))
     active = True
     requires_offset = False
+    requires_player = False
 
     def __init__(self, x, y, size: tuple):
         self.image = pygame.transform.scale(self.image, size)
@@ -110,11 +111,12 @@ class ToLevelMap(GameChangeStateButton):
     state = 'game'
 
 
-class ToLevel(GameChangeStateButton):
-    image = pygame.Surface((50, 50))
+class PlayButton(GameChangeStateButton):
+    image = pygame.image.load(ui_images / 'Play_button.png')
     state = 'game'
 
-    def __init__(self, num):
+    def __init__(self, x, y, size: tuple, num=-1):
+        super().__init__(x, y, size)
         self.num = num
 
 
@@ -183,7 +185,8 @@ class UI_container(Movable_UI):  # menus, etc
             for ui in self.content:
                 ui.rect.move_ip(move)
 
-    def update(self, mouse: tuple):
+    # TODO implement updating of containers like menus
+    def update(self, **kwargs):
         pass
 
 
@@ -237,6 +240,7 @@ class EndLevelMenu(UI_container):
 
 class LevelEnter(UI):
     requires_offset = True
+    requires_player = True
     image = pygame.image.load(ui_images / 'Level_enter.png')
 
     def __init__(self, x, y, size, num, manager: GameManager):
@@ -259,3 +263,29 @@ class LevelEnter(UI):
     def interact(self, player: Player):
         if self.active_zone.colliderect(player.rect):
             pass
+
+
+class LevelStats(UI_container):
+    image = pygame.image.load(ui_images / 'Level_stats.png')
+
+    def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple):
+        super().__init__(x, y, size, content, end_point)
+        self.level_stats = {'locked': True, 'passed': False, 'best_time': float('inf'), 'best_score': -1, 'stars': 0}
+        self.level_num = -1
+
+    def update(self, level_num, level_stats: dict):
+        level_name = info_font.render(f'Level {level_num}', True, 'black')
+        best_time = info_font.render(f'Best time: {level_stats["best_time"] // 60}:{level_stats["best_time"] % 60}',
+                                     True, 'black')
+        best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
+                                     True, 'black')
+        pygame.draw.rect(self.image, '#eecc67',  (30, 20, 200, 22))
+        self.image.blit(level_name, (30, 20))
+        pygame.draw.rect(self.image, '#eecc67', (30, 65, 200, 22))
+        self.image.blit(best_time, (30, 65))
+        pygame.draw.rect(self.image, '#eecc67', (30, 110, 200, 25))
+        self.image.blit(best_score, (30, 110))
+
+        self.level_stats.update(level_stats)
+        self.level_num = level_num
+        self.content[0].num = level_num
