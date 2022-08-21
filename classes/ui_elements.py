@@ -277,6 +277,7 @@ class LevelStats(UI_container):
         self.level_num = -1
 
     def update(self, level_num, level_stats: dict):
+        self.level_stats.update(level_stats)
         if level_stats['locked']:
             self.image.blit(self.locked_level, (0, 0))
 
@@ -300,7 +301,8 @@ class LevelStats(UI_container):
                 self.image.blit(ui.image, (ui.rect.x - self.rect.x, ui.rect.y - self.rect.y))
 
             level_name = info_font.render(f'Level {level_num}', True, 'black')
-            best_time = info_font.render(f'Best time: {level_stats["best_time"] // 60}:{level_stats["best_time"] % 60}',
+            print(self.level_stats["best_time"] * 1000)
+            best_time = info_font.render(f'Best time: {strftime("%M:%S", gmtime(round(self.level_stats["best_time"] * 1000)))}',
                                          True, 'black')
             best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
                                          True, 'black')
@@ -311,6 +313,6 @@ class LevelStats(UI_container):
             pygame.draw.rect(self.image, '#eecc67', (30, 110, 250, 25))
             self.image.blit(best_score, (30, 110))
 
-        self.level_stats.update(level_stats)
+
         self.level_num = level_num
         self.content[0].num = level_num
