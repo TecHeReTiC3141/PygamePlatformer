@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="3">
+ <tileset firstgid="1" source="tilesets/test_tileset.tsx"/>
+ <tileset firstgid="300" source="tilesets/gameObjs.tsx"/>
+ <layer id="1" name="BlocksLayer" width="20" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,232,120,163,163,25,163,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,232,4,48,48,48,48,48,48,48,48,
+0,0,0,0,0,0,0,0,0,0,163,26,168,11,12,12,13,51,11,13,
+0,0,255,255,255,255,255,255,0,0,48,49,11,38,104,14,59,11,38,36,
+0,0,15,104,104,258,258,14,0,0,0,0,38,14,58,59,11,38,35,0,
+0,0,0,0,0,0,0,0,0,0,0,0,104,36,168,11,38,258,258,0
+</data>
+ </layer>
+ <objectgroup id="2" name="GameObjects">
+  <object id="1" gid="312" x="1553.33" y="896" width="150.67" height="195.67"/>
+ </objectgroup>
+</map>

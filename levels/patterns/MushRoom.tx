@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="../tilesets/gameObjs.tsx"/>
+ <object name="MushRoom" type="Decor" gid="3" width="126" height="160"/>
+</template>
