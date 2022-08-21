@@ -470,6 +470,8 @@ class LevelMap(Level):
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 for ui in list(self.ui_elements.values()) + self.enters:
+                    if isinstance(ui, LevelStats) and ui.level_stats['locked']:
+                        continue
                     if isinstance(ui, UI_container) and ui.active:
                         for ui_el in ui.content:
                             to_level = self.check_ui(ui_el)

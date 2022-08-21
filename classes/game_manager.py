@@ -52,6 +52,8 @@ class GameManager:
                                                              round(self.__level_stats[f'level{idx}']['best_time'], 1))
         self.__level_stats[f'level{idx}']['best_score'] = max(level_data['best_score'],
                                                              self.__level_stats[f'level{idx}']['best_score'])
+        self.__level_stats[f'level{idx + 1}']['locked'] = False
+
         pprint(self.__level_stats)
 
     def update(self, fullscreen: bool, **new_config: dict):

@@ -268,23 +268,48 @@ class LevelEnter(UI):
 class LevelStats(UI_container):
     image = pygame.image.load(ui_images / 'Level_stats.png')
 
+    locked_level = pygame.image.load(ui_images / 'Locked_level.png')
+    unlocked_level = pygame.image.load(ui_images / 'Level_stats.png')
+
     def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple):
         super().__init__(x, y, size, content, end_point)
         self.level_stats = {'locked': True, 'passed': False, 'best_time': float('inf'), 'best_score': -1, 'stars': 0}
         self.level_num = -1
 
     def update(self, level_num, level_stats: dict):
-        level_name = info_font.render(f'Level {level_num}', True, 'black')
-        best_time = info_font.render(f'Best time: {level_stats["best_time"] // 60}:{level_stats["best_time"] % 60}',
-                                     True, 'black')
-        best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
-                                     True, 'black')
-        pygame.draw.rect(self.image, '#eecc67',  (30, 20, 200, 22))
-        self.image.blit(level_name, (30, 20))
-        pygame.draw.rect(self.image, '#eecc67', (30, 65, 500, 22))
-        self.image.blit(best_time, (30, 65))
-        pygame.draw.rect(self.image, '#eecc67', (30, 110, 200, 25))
-        self.image.blit(best_score, (30, 110))
+        if level_stats['locked']:
+            self.image.blit(self.locked_level, (0, 0))
+
+        elif not level_stats['passed']:
+            self.image.blit(self.unlocked_level, (0, 0))
+            for ui in self.content:
+                self.image.blit(ui.image, (ui.rect.x - self.rect.x, ui.rect.y - self.rect.y))
+            level_name = info_font.render(f'Level {level_num}', True, 'black')
+            best_time = info_font.render(f'Best time:-:-', True, 'black')
+            best_score = info_font.render(f'Best score:-', True, 'black')
+            pygame.draw.rect(self.image, '#eecc67', (30, 20, 200, 22))
+            self.image.blit(level_name, (30, 20))
+            pygame.draw.rect(self.image, '#eecc67', (30, 65, 500, 22))
+            self.image.blit(best_time, (30, 65))
+            pygame.draw.rect(self.image, '#eecc67', (30, 110, 200, 25))
+            self.image.blit(best_score, (30, 110))
+
+        else:
+            self.image.blit(self.unlocked_level, (0, 0))
+            for ui in self.content:
+                self.image.blit(ui.image, (ui.rect.x - self.rect.x, ui.rect.y - self.rect.y))
+
+            level_name = info_font.render(f'Level {level_num}', True, 'black')
+            best_time = info_font.render(f'Best time: {level_stats["best_time"] // 60}:{level_stats["best_time"] % 60}',
+                                         True, 'black')
+            best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
+                                         True, 'black')
+            pygame.draw.rect(self.image, '#eecc67',  (30, 20, 200, 22))
+            self.image.blit(level_name, (30, 20))
+            pygame.draw.rect(self.image, '#eecc67', (30, 65, 500, 22))
+            self.image.blit(best_time, (30, 65))
+            pygame.draw.rect(self.image, '#eecc67', (30, 110, 250, 25))
+            self.image.blit(best_score, (30, 110))
 
         self.level_stats.update(level_stats)
         self.level_num = level_num
