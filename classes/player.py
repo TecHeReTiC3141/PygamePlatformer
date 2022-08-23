@@ -1,3 +1,5 @@
+import pygame.math
+
 from classes.entity import *
 
 
@@ -170,29 +172,29 @@ class PlayerOnMap(Player):
         = {i: pygame.image.load(f'resources/images/entities/player/player_eyes_{i}.png').convert_alpha()
            for i in directions}
 
-    def hor_move(self, dt):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.velocity.x -= self.speed
-            self.direction = 'left'
-        if keys[pygame.K_d]:
-            self.direction = 'right'
-            self.velocity.x += self.speed
-        self.rect.move_ip(self.velocity)
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.target: tuple = self.rect.center
 
-    def vert_move(self, dt):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.direction = 'up'
-            self.velocity.y -= self.speed
-        if keys[pygame.K_s]:
-            self.direction = 'down'
-            self.velocity.y += self.speed
-        self.rect.move_ip(self.velocity)
+    def set_position(self, pos: tuple):
+        self.target = pos
+        hyp = sqrt((pos[0] - self.rect.centerx) ** 2 + (pos[1] - self.rect.centery) ** 2)
+        self.velocity = pygame.math.Vector2(((pos[0] - self.rect.centerx) / hyp),
+                                            ((pos[1] - self.rect.centery) / hyp))
+        if abs(self.velocity.x) > abs(self.velocity.y):
+            self.direction = 'left' if self.velocity.x < 0 else 'right'
+        else:
+            self.direction = 'up' if self.velocity.y < 0 else 'down'
+
+    def move(self, dt):
+        self.rect.move_ip(self.velocity * self.speed)
+        if self.target[0] - self.speed * 4 <= self.rect.centerx <= self.target[0] + self.speed * 4 \
+            and self.target[1] - self.speed * 4 <= self.rect.centery <= self.target[1] + self.speed * 4:
+            self.target = self.rect.center
+            self.velocity *= 0
 
     def update(self, dt=1):
-        self.velocity *= 0
-        self.collided_sides = {i: False for i in directions}
+        self.move(dt)
 
     def draw(self, surface: pygame.Surface):
         self.image.fill('yellow')

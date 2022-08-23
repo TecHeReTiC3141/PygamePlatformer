@@ -481,7 +481,20 @@ class LevelMap(Level):
                         to_level = self.check_ui(ui)
                         if to_level is not None:
                             return to_level
-        self.physics(dt)
+
+                mouse = list(pygame.mouse.get_pos())
+                mouse[0] *= self.camera.display_size.x / self.manager.res[0]
+                mouse[1] *= self.camera.display_size.y / self.manager.res[1]
+                mouse[0] += self.camera.offset.x
+                mouse[1] += self.camera.offset.y
+                for water in self.obstacles:
+                    if water.rect.collidepoint(mouse):
+                        break
+
+                else:
+                    self.player.set_position(mouse)
+
+        # self.physics(dt)
         self.update()
         self.player.update(dt)
 
@@ -494,7 +507,8 @@ class LevelMap(Level):
                 obj.draw(self.surf)
 
         self.player.draw(self.surf)
-
+        if self.player.velocity.length():
+            pygame.draw.circle(self.surf, 'blue', self.player.target, 15)
         camera_surf = pygame.Surface(self.camera.display_size)
         camera_surf.set_colorkey('yellow')
         camera_surf.fill('yellow')
