@@ -319,3 +319,5 @@ class LevelStats(UI_container):
 
 
 # TODO implement arrows to scroll level map
+class LevelMapArrows(Button):
+    image = pygame.image.load(ui_images / 'LevelMap_arrow.png')

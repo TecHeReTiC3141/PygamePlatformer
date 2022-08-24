@@ -9,6 +9,7 @@ pygame.mouse.set_visible(False)
 
 game_manager = GameManager(display)
 level = gen_main_menu(game_manager)
+level_map = gen_levels_map(game_manager)
 drawing = Drawing(game_manager, level)
 
 # TODO implement console for debugging
@@ -21,7 +22,7 @@ if __name__ == '__main__':
         if game_manager.game_state == 'main_menu':
             to_levelmap = level.game_cycle(delta)
             if isinstance(to_levelmap, ToLevelMap):
-                level = gen_levels_map(game_manager)
+                level = level_map
                 game_manager.game_state = 'level_map'
                 drawing.level = level
 

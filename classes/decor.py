@@ -87,7 +87,6 @@ class CursorFlashes(Particle):
         self.color = color
         super().__init__(x, y, velocity, acceleration, life_time)
 
-
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
         pygame.draw.circle(self.surface, self.color,
@@ -96,13 +95,11 @@ class CursorFlashes(Particle):
         super().draw(surface)
 
 
-# TODO implement fancy circles when mouse clicks on Level Map
 class ClickRound(Particle):
 
     def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
                  acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((radius * 8, radius * 8))
-        self.surface.set_colorkey('black')
         super().__init__(x, y, velocity, acceleration, life_time)
 
     def draw(self, surface: pygame.Surface):
