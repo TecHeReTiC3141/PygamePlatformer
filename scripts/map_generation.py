@@ -148,5 +148,5 @@ def gen_levels_map(game_manager: GameManager) -> LevelMap:
             enters.append(LevelEnter(obj.x * SCALE, obj.y * SCALE, (obj.width, obj.height),
                                      int(obj.name), game_manager))
 
-    return LevelMap(obstacles, enters, surface,
+    return LevelMap(obstacles, [], enters, surface,
                     background_surface, start_pos, game_manager)

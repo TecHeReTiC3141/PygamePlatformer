@@ -20,6 +20,7 @@ class Particle(Decor):
 
     def __init__(self, x, y, velocity: pygame.math.Vector2,
                  acceleration: pygame.math.Vector2, life_time):
+        self.surface.set_colorkey('black')
         self.rect = self.surface.get_rect(center=(x, y))
         self.velocity = velocity
         self.acceleration = acceleration
@@ -49,8 +50,7 @@ class RocketSmoke(Particle):
     def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
                  acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((radius * 2, radius * 2))
-        self.surface.set_colorkey('black')
-        super().__init__(x, y, velocity, acceleration,  life_time)
+        super().__init__(x, y, velocity, acceleration, life_time)
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
@@ -67,7 +67,6 @@ class MagicFlashes(Particle):
     def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
                  acceleration: pygame.math.Vector2, life_time):
         self.surface = pygame.Surface((radius * 2, radius * 2))
-        self.surface.set_colorkey('black')
         super().__init__(x, y, velocity, acceleration, life_time)
 
     def draw(self, surface: pygame.Surface):
@@ -85,13 +84,34 @@ class CursorFlashes(Particle):
     def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
                  acceleration: pygame.math.Vector2, life_time, color: tuple):
         self.surface = pygame.Surface((radius * 2, radius * 2))
-        self.surface.set_colorkey('black')
         self.color = color
         super().__init__(x, y, velocity, acceleration, life_time)
+
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
         pygame.draw.circle(self.surface, self.color,
                            (self.rect.width // 2, self.rect.height // 2),
                            round(self.rect.width // 2 * self.life_time / self.max_life_time))
+        super().draw(surface)
+
+
+# TODO implement fancy circles when mouse clicks on Level Map
+class ClickRound(Particle):
+
+    def __init__(self, x, y, radius, velocity: pygame.math.Vector2,
+                 acceleration: pygame.math.Vector2, life_time):
+        self.surface = pygame.Surface((radius * 8, radius * 8))
+        self.surface.set_colorkey('black')
+        super().__init__(x, y, velocity, acceleration, life_time)
+
+    def draw(self, surface: pygame.Surface):
+        self.surface.fill('black')
+        pygame.draw.circle(self.surface, 'blue',
+                           (self.rect.width // 2, self.rect.height // 2),
+                           self.rect.width // 8)
+        pygame.draw.circle(self.surface, 'lightblue',
+                           (self.rect.width // 2, self.rect.height // 2),
+                           round(self.rect.width // 2 * (self.max_life_time - self.life_time) / self.max_life_time),
+                           self.rect.width // 8)
         super().draw(surface)

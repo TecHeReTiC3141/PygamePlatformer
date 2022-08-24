@@ -316,3 +316,6 @@ class LevelStats(UI_container):
 
         self.level_num = level_num
         self.content[0].num = level_num
+
+
+# TODO implement arrows to scroll level map

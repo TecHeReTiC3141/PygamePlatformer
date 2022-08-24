@@ -375,11 +375,12 @@ class MainMenu(Level):
 
 class LevelMap(Level):
 
-    def __init__(self, obstacles: list[Obstacle],
+    def __init__(self, obstacles: list[Obstacle], decor: list[Decor],
                  level_enters: list[LevelEnter], surface: pygame.Surface, background_surf: pygame.Surface,
                  start_pos: tuple[int, int], game_manager: GameManager):
         self.obstacles = obstacles
         self.enters = level_enters
+        self.decor = decor
         self.surf = surface
         self.surf.set_colorkey('yellow')
         self.surf.fill('yellow')
@@ -455,8 +456,9 @@ class LevelMap(Level):
             self.ui_elements['level_stats'].update(ui.num, ui.level_data)
 
     def update(self):
-        for obj in self.obstacles:
+        for obj in self.obstacles + self.decor:
             obj.update()
+        self.clear()
 
     def game_cycle(self, dt) -> bool:
         for event in pygame.event.get():
@@ -469,46 +471,50 @@ class LevelMap(Level):
                     return ToMenu(0, 0, (10, 10))
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for ui in list(self.ui_elements.values()) + self.enters:
-                    if isinstance(ui, LevelStats) and ui.level_stats['locked']:
-                        continue
-                    if isinstance(ui, UI_container) and ui.active:
-                        for ui_el in ui.content:
-                            to_level = self.check_ui(ui_el)
+                if event.button == 1:
+                    for ui in list(self.ui_elements.values()) + self.enters:
+                        if isinstance(ui, LevelStats) and ui.level_stats['locked']:
+                            continue
+                        if isinstance(ui, UI_container) and ui.active:
+                            for ui_el in ui.content:
+                                to_level = self.check_ui(ui_el)
+                                if to_level is not None:
+                                    return to_level
+                        else:
+                            to_level = self.check_ui(ui)
                             if to_level is not None:
                                 return to_level
+
+                    mouse = list(pygame.mouse.get_pos())
+                    mouse[0] *= self.camera.display_size.x / self.manager.res[0]
+                    mouse[1] *= self.camera.display_size.y / self.manager.res[1]
+                    mouse[0] += self.camera.offset.x
+                    mouse[1] += self.camera.offset.y
+                    for water in self.obstacles:
+                        if water.rect.collidepoint(mouse):
+                            break
                     else:
-                        to_level = self.check_ui(ui)
-                        if to_level is not None:
-                            return to_level
-
-                mouse = list(pygame.mouse.get_pos())
-                mouse[0] *= self.camera.display_size.x / self.manager.res[0]
-                mouse[1] *= self.camera.display_size.y / self.manager.res[1]
-                mouse[0] += self.camera.offset.x
-                mouse[1] += self.camera.offset.y
-                for water in self.obstacles:
-                    if water.rect.collidepoint(mouse):
-                        break
-
-                else:
-                    self.player.set_position(mouse)
+                        self.player.set_position(mouse)
+                        self.decor.append(ClickRound(mouse[0], mouse[1], 20,
+                                                     pygame.math.Vector2(0, 0),
+                                                     pygame.math.Vector2(0, 0), 30, ))
 
         # self.physics(dt)
         self.update()
+        self.clear()
         self.player.update(dt)
 
     def draw(self, surface: pygame.Surface):
         self.surf.fill('yellow')
 
-        for obj in self.obstacles + self.enters:
+        for obj in self.obstacles + self.decor + self.enters:
             if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x\
                     and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
                 obj.draw(self.surf)
 
         self.player.draw(self.surf)
         if self.player.velocity.length():
-            pygame.draw.circle(self.surf, 'blue', self.player.target, 15)
+            pygame.draw.circle(self.surf, 'blue', self.player.target, 20)
         camera_surf = pygame.Surface(self.camera.display_size)
         camera_surf.set_colorkey('yellow')
         camera_surf.fill('yellow')
@@ -516,3 +522,6 @@ class LevelMap(Level):
         camera_surf.blit(self.background_surf, (0, 0), self.camera.scroll(self.player))
         camera_surf.blit(self.surf, (0, 0), self.camera.scroll(self.player))
         surface.blit(pygame.transform.scale(camera_surf, (DISP_WIDTH, DISP_HEIGHT)), (0, 0))
+
+    def clear(self):
+        self.decor = list(filter(lambda i: i.life_time, self.decor))
