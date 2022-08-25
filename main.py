@@ -12,6 +12,8 @@ level = gen_main_menu(game_manager)
 level_map = gen_levels_map(game_manager)
 drawing = Drawing(game_manager, level)
 
+atexit.register(game_manager.save_level_stats)
+
 # TODO implement console for debugging
 if __name__ == '__main__':
     while True:

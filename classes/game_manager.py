@@ -23,8 +23,23 @@ class GameManager:
             'particles': True
         }
 
+    # TODO Problem with saving must ne fixed
     # TODO implement updating of level_stats.json when game is quited
     def __del__(self):
+        print(self.__level_stats)
+        with open('level_stats.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__level_stats, f)
+
+    def save_level_stats(self):
+        print(self.__level_stats)
+        with open('level_stats.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__level_stats, f)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(self.__level_stats)
         with open('level_stats.json', 'w', encoding='utf-8') as f:
             json.dump(self.__level_stats, f)
 
@@ -51,7 +66,7 @@ class GameManager:
         self.__level_stats[f'level{idx}']['best_time'] = min(level_data['best_time'],
                                                              round(self.__level_stats[f'level{idx}']['best_time'], 1))
         self.__level_stats[f'level{idx}']['best_score'] = max(level_data['best_score'],
-                                                             self.__level_stats[f'level{idx}']['best_score'])
+                                                              self.__level_stats[f'level{idx}']['best_score'])
         self.__level_stats[f'level{idx + 1}']['locked'] = False
 
         pprint(self.__level_stats)
