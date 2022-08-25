@@ -138,8 +138,6 @@ class SettingsButton(GUI_trigger):
 class RetryButton(LevelQuitButton):
     next_level = False
     image = pygame.image.load(ui_images / 'Retry_button.png')
-
-
 class NextLevelButton(LevelQuitButton):
     image = pygame.image.load(ui_images / 'Pause_button.png')
 
@@ -164,6 +162,17 @@ class TextButton(Button, Movable_UI):
     def move(self, speed=20) -> pygame.math.Vector2:
         super().move(speed)
         self.func_button.rect = self.rect
+
+
+# TODO implement arrows to scroll level map
+class LevelMapArrow(Button):
+    image = pygame.image.load(ui_images / 'LevelMap_arrow.png')
+
+    def __init__(self, x, y, offset, size: tuple=image.get_size(),):
+        super().__init__(x, y, size)
+        if offset > 0:
+            self.image = pygame.transform.flip(self.image, flip_x=True, flip_y=False)
+        self.offset = offset
 
 
 class UI_container(Movable_UI):  # menus, etc
@@ -305,7 +314,7 @@ class LevelStats(UI_container):
             best_time = info_font.render(f'Best time: {strftime("%M:%S", gmtime(round(self.level_stats["best_time"] * 1000)))}',
                                          True, 'black')
             best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
-                                         True, 'black')
+                                          True, 'black')
             pygame.draw.rect(self.image, '#eecc67',  (30, 20, 200, 22))
             self.image.blit(level_name, (30, 20))
             pygame.draw.rect(self.image, '#eecc67', (30, 65, 500, 22))
@@ -313,11 +322,5 @@ class LevelStats(UI_container):
             pygame.draw.rect(self.image, '#eecc67', (30, 110, 250, 25))
             self.image.blit(best_score, (30, 110))
 
-
         self.level_num = level_num
         self.content[0].num = level_num
-
-
-# TODO implement arrows to scroll level map
-class LevelMapArrows(Button):
-    image = pygame.image.load(ui_images / 'LevelMap_arrow.png')

@@ -104,9 +104,9 @@ class ClickRound(Particle):
 
     def draw(self, surface: pygame.Surface):
         self.surface.fill('black')
-        pygame.draw.circle(self.surface, 'blue',
-                           (self.rect.width // 2, self.rect.height // 2),
-                           self.rect.width // 8)
+        # pygame.draw.circle(self.surface, 'blue',
+        #                    (self.rect.width // 2, self.rect.height // 2),
+        #                    self.rect.width // 8)
         pygame.draw.circle(self.surface, 'lightblue',
                            (self.rect.width // 2, self.rect.height // 2),
                            round(self.rect.width // 2 * (self.max_life_time - self.life_time) / self.max_life_time),
