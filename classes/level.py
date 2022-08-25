@@ -500,7 +500,6 @@ class LevelMap(Level):
                                 return cur_ui
                             if cur_ui is not None:
                                 any_ui = cur_ui
-                    print(any_ui)
                     if not isinstance(any_ui, LevelMapArrow):
 
                         mouse = list(pygame.mouse.get_pos())

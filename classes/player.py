@@ -51,9 +51,9 @@ class Player(Entity):
         if keys[pygame.K_d]:
             self.acceleration.x += .3
             self.direction = 'right'
-
-        if keys[pygame.K_w]:
-            self.rect.y -= 25
+        #
+        # if keys[pygame.K_w]:
+        #     self.rect.y -= 25
             # if pi / 2 <= self.angle <= 3 * pi / 2:
             #     self.angle = (3 * pi - self.angle) % 360
 
@@ -188,8 +188,7 @@ class PlayerOnMap(Player):
 
     def move(self, dt):
         self.rect.move_ip(self.velocity * self.speed)
-        if self.target[0] - self.speed * 4 <= self.rect.centerx <= self.target[0] + self.speed * 4 \
-            and self.target[1] - self.speed * 4 <= self.rect.centery <= self.target[1] + self.speed * 4:
+        if self.rect.collidepoint(self.target):
             self.target = self.rect.center
             self.velocity *= 0
 

@@ -105,7 +105,6 @@ class Quit(Window):
             if event == 'Yes':
                 self.close()
                 quit()
-                pygame.quit()
             else:
                 break
 

@@ -2,7 +2,7 @@ from scripts.map_generation import *
 from classes.drawing import Drawing
 
 display = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT), 0, 42)
-pygame.display.set_caption('Pygame Platformer')
+pygame.display.set_caption('Platformetic')
 pygame.display.set_icon(pygame.transform.scale(pygame.image.load('ico_player.ico'),
                                                (32, 32)))
 pygame.mouse.set_visible(False)

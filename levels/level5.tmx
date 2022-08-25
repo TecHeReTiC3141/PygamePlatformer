@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="70" tilewidth="128" tileheight="128" infinite="0" nextlayerid="4" nextobjectid="192">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="70" tilewidth="128" tileheight="128" infinite="0" nextlayerid="4" nextobjectid="194">
  <tileset firstgid="1" source="tilesets/color_tileset.tsx"/>
  <tileset firstgid="257" source="tilesets/test_tileset.tsx"/>
  <tileset firstgid="556" source="tilesets/gameObjs.tsx"/>
- <tileset firstgid="570" name="mine_misc" tilewidth="128" tileheight="128" tilecount="52" columns="13">
+ <tileset firstgid="573" name="mine_misc" tilewidth="128" tileheight="128" tilecount="52" columns="13">
   <image source="tilesets/Misc_tileset.png" trans="000000" width="1664" height="512"/>
  </tileset>
  <layer id="1" name="BackGround" width="40" height="70">
@@ -305,6 +305,20 @@
    <properties>
     <property name="color" value="white"/>
     <property name="text" value="Water can be very dangerous"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="192" name="Text" type="Marker" x="620" y="7376">
+   <properties>
+    <property name="color" value="white"/>
+    <property name="text" value="Press LMB to shoot a magic ball."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="193" name="Text" type="Marker" x="617.333" y="7501.33">
+   <properties>
+    <property name="color" value="white"/>
+    <property name="text" value="They can destroy enemy's projectiles."/>
    </properties>
    <point/>
   </object>
