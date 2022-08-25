@@ -2,7 +2,6 @@ from classes.level import *
 from pytmx.util_pygame import load_pygame
 
 
-# TODO add more levels (at least 6-7)
 def gen_level(game_manager: GameManager, num: int) -> Level:
     path = 'level' + str(num)
     level_map = load_pygame(f'levels/{path}.tmx')

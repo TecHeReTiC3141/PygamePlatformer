@@ -14,7 +14,7 @@ drawing = Drawing(game_manager, level)
 
 atexit.register(game_manager.save_level_stats)
 
-# TODO implement console for debugging
+# TODO add various sounds
 if __name__ == '__main__':
     while True:
         delta = game_manager.clock.tick(FPS) * .001 * FPS
