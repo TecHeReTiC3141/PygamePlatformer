@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="47">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="48">
  <properties>
   <property name="num" type="int" value="1"/>
  </properties>
@@ -160,7 +160,7 @@
   <object id="40" name="Money" type="Money" gid="303" x="1434" y="459" width="140" height="138"/>
   <object id="41" name="Money" type="Money" gid="303" x="2562" y="599" width="140" height="138"/>
   <object id="42" name="Money" type="Money" gid="303" x="3470" y="515" width="140" height="138"/>
-  <object id="43" name="Money" type="Money" gid="303" x="4150" y="971" width="140" height="138"/>
+  <object id="43" name="Money" type="Money" gid="303" x="4106" y="1419" width="140" height="138"/>
   <object id="44" name="Text" type="Marker" x="1064.42" y="1049.82">
    <properties>
     <property name="color" value="white"/>
@@ -175,7 +175,7 @@
    </properties>
    <point/>
   </object>
-  <object id="46" name="Text" type="Marker" x="4055.17" y="683.507">
+  <object id="46" name="Text" type="Marker" x="4143.17" y="883.507">
    <properties>
     <property name="color" value="white"/>
     <property name="text" value="Press O to open the door"/>

@@ -311,9 +311,9 @@ class LevelStats(UI_container):
                 self.image.blit(ui.image, (ui.rect.x - self.rect.x, ui.rect.y - self.rect.y))
 
             level_name = info_font.render(f'Level {level_num}', True, 'black')
-            print(self.level_stats["best_time"] * 1000)
+            print(self.level_stats["best_time"])
             best_time = info_font.render(
-                f'Best time: {strftime("%M:%S", gmtime(round(self.level_stats["best_time"] * 1000)))}',
+                f'Best time: {strftime("%M:%S", gmtime(round(self.level_stats["best_time"])))}',
                 True, 'black')
             best_score = info_font.render(f'Best score: {level_stats["best_score"]}',
                                           True, 'black')
