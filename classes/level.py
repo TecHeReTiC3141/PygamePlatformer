@@ -95,8 +95,10 @@ class Level:
                 continue
             elif isinstance(obj, WaterDrop):
                 print(obj.rect)
-            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x \
-                    and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
+            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x + BLOCK_SIZE \
+                    and obj.rect.right >= self.camera.offset.x - BLOCK_SIZE\
+                    and obj.rect.bottom >= self.camera.offset.y - BLOCK_SIZE \
+                    and obj.rect.top <= self.camera.offset.y + self.camera.display_size.y + BLOCK_SIZE:
                 obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
@@ -249,10 +251,6 @@ class Level:
                     if event.key == pygame.K_SPACE:
                         self.player.jump()
 
-                    elif event.key == pygame.K_e:
-                        if self.player.shoot_cooldown <= 0:
-                            self.projectiles.append(self.player.shoot())
-
                     elif event.key == pygame.K_o and self.level_end.active:
                         self.change_state('end_level')
 
@@ -269,6 +267,9 @@ class Level:
                             end_level = self.check_ui(ui)
                             if end_level is not None:
                                 return end_level
+
+                    if self.player.shoot_cooldown <= 0:
+                        self.projectiles.append(self.player.shoot())
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():

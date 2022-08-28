@@ -156,12 +156,13 @@ class Player(Entity):
                          (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
         pygame.draw.rect(self.image, 'blue',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
-        pygame.draw.rect(surface, 'black',
-                         (self.rect.x - 5, self.rect.y - 30, self.rect.width + 10, 25))
-        pygame.draw.rect(surface, 'blue',
-                         (self.rect.x - 2, self.rect.y - 27,
-                          round((self.rect.width + 6) *
-                                (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
+        if self.shoot_cooldown:
+            pygame.draw.rect(surface, 'black',
+                             (self.rect.x - 5, self.rect.y - 30, self.rect.width + 10, 25))
+            pygame.draw.rect(surface, 'blue',
+                             (self.rect.x - 2, self.rect.y - 27,
+                              round((self.rect.width + 6) *
+                                    (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
         if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)
 

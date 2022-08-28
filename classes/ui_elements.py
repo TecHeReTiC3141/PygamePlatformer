@@ -225,8 +225,8 @@ class EndLevelMenu(UI_container):
     def __init__(self, x, y, size: tuple, content: list[UI], end_point: tuple,
                  level_name: str, cur_time, max_score, player_score):
         super().__init__(x, y, size, content, end_point)
-        self.image.blit(menu_font.render(level_name + " passed!", True, '#9C6409'), (160, 8))
-        self.image.blit(menu_font.render('Time', True, '#9C6409'), (330, 120))
+        self.image.blit(menu_font.render(level_name + " passed!", True, '#9C6409'), (160, 5))
+        self.image.blit(menu_font.render('Time', True, '#9C6409'), (330, 115))
         self.init_pos = self.rect.center
         self.end_pos = end_point
 
@@ -242,7 +242,7 @@ class EndLevelMenu(UI_container):
         pygame.draw.rect(self.image, '#eecc67', (85, 115, 170, 50))
         self.image.blit(menu_font.render(f'{self.cur_score} / {self.max_score}', True, '#9C6409'), (85, 115))
 
-        pygame.draw.rect(self.image, '#B8B1A6', (480, 115, 110, 45))
+        pygame.draw.rect(self.image, '#B8B1A6', (480, 115, 110, 50))
         self.image.blit(menu_font.render(strftime('%M:%S', gmtime(self.time)), True, '#9C6409'),
                         (480, 115))
         super().draw(surface)
