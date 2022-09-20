@@ -9,3 +9,6 @@ To play game:
 git clone https://github.com/TecHeReTiC3141/PygamePlatformer 
 `````
 2. Launch `Platformetic.exe`
+
+or 
+get installer on [Google disk](https://drive.google.com/file/d/1Ni98Y_kIOaHrJEDdExraqyPlL3MW2LID/view?usp=sharing)

@@ -33,9 +33,9 @@ class SettingsWindow(Window):
         graphics_tab = sg.Tab('Graphics', [
             [sg.Frame('Game', [
                 [sg.Spin(['Low', 'Medium', 'Hard'], initial_value=game_manager.difficulty,
-                         text_color='red', key='-DIFFICULTY-',
+                        key='-DIFFICULTY-',
                          tooltip='Defines damage from enemies and speed of hostile rockets'),
-                 sg.Checkbox('Show debug info', key='-DEBUG-', default=True)]
+                 sg.Checkbox('Show debug info', key='-DEBUG-', default=False)]
             ])],
             [sg.HorizontalSeparator()],
             [sg.Frame('Graphics', [

@@ -129,7 +129,12 @@ class Level:
         for obj in self.obstacles + self.collectable:
             if isinstance(obj, Collectable) and not obj.alive:
                 continue
-            obj.interact(self.player)
+            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x + BLOCK_SIZE \
+                    and obj.rect.right >= self.camera.offset.x - BLOCK_SIZE \
+                    and obj.rect.bottom >= self.camera.offset.y - BLOCK_SIZE \
+                    and obj.rect.top <= self.camera.offset.y + self.camera.display_size.y + BLOCK_SIZE:
+
+                obj.interact(self.player)
 
         for proj in self.projectiles:
             for obst in self.blocks + self.obstacles + \
@@ -254,6 +259,9 @@ class Level:
                     elif event.key == pygame.K_o and self.level_end.active:
                         self.change_state('end_level')
 
+                if event.key == pygame.K_p:
+                    self.manager.is_paused ^= 1
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
@@ -292,7 +300,8 @@ class Level:
                                                          DISP_HEIGHT * 2)
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                          self.surf.get_width(), DISP_WIDTH * 2)
-
+        if self.manager.is_paused:
+            return
         self.player.get_angle(self.camera.offset, self.camera.display_size, self.manager.res)
 
         if self.player.rect.y >= self.surf.get_height():
@@ -358,6 +367,7 @@ class MainMenu(Level):
         self.particles: list[Particle] = []
 
     def draw(self, surface: pygame.Surface):
+        self.surf.blit(stats_font.render('Platformetic', True, 'blue'), (190, 70))
         surface.blit(self.surf, (0, 0))
 
     def game_cycle(self, dt) -> bool:

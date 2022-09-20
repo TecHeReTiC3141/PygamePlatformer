@@ -19,9 +19,10 @@ class GameManager:
 
         self.__config = {
             'res': res,
-            'show_debug': True,
+            'show_debug': False,
             'particles': True
         }
+
 
     def __del__(self):
         with open('level_stats.json', 'w', encoding='utf-8') as f:

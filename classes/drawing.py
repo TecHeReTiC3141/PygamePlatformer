@@ -98,6 +98,7 @@ class Drawing:
     def draw(self):
         self.background()
         self.draw_level()
-        self.draw_ui()
+        if not self.manager.is_paused:
+            self.draw_ui()
         self.update()
         self.manager.display.blit(pygame.transform.scale(self.surf, self.manager.res), (0, 0))
