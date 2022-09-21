@@ -172,10 +172,23 @@ class Player(Entity):
             m_x, m_y = pygame.mouse.get_pos()
             m_x = round(m_x * camera_size.x / res[0] + offset.x)
             m_y = round(m_y * camera_size.y / res[1] + offset.y)
-            pygame.draw.line(surface, 'purple', self.ready_to_shoot, (m_x, m_y), width=10)
+            or_x, or_y = self.ready_to_shoot[0]
+            d_x, d_y = or_x - m_x, or_y - m_y
+            dist = sqrt(d_x ** 2 + d_y ** 2)
+            angle = acos(d_x / max(dist, .01))
+            pygame.draw.line(surface, 'purple', self.ready_to_shoot[0], (m_x, m_y), width=10)
 
             # sketching of projectile trajectory
-            point = self.rect.center
+            point = pygame.math.Vector2(self.rect.center)
+            proj = self.ready_to_shoot[1](0, 0, pygame.math.Vector2(0.1, .1), self)
+            movement_vector = pygame.math.Vector2(cos(angle), -abs(sin(angle)))
+            vel = pygame.math.Vector2(proj.speed * sqrt(dist) // 10 * movement_vector)
+            acc = pygame.math.Vector2(0, proj.falling_momentum)
+            for pos in range(6):
+                point += vel * 5
+                vel += acc * 5
+                pygame.draw.circle(surface, 'black', (point[0], point[1]), 5)
+
 
 
 

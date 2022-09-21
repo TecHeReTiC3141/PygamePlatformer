@@ -290,7 +290,7 @@ class Level:
                                         + self.camera.offset.x)
                             m_y = round(m_y * self.camera.display_size.y / self.manager.res[1]
                                         + self.camera.offset.y)
-                            self.player.ready_to_shoot = m_x, m_y
+                            self.player.ready_to_shoot = ((m_x, m_y), PhysicsBall)
                             print(self.player.ready_to_shoot)
 
                 elif event.button == 4 and self.state == 'game':
