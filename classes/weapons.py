@@ -4,12 +4,16 @@ from classes.decor import *
 class Projectile:
     size = (40, 40)
     speed = 12
+    falling_momentum = 0
     damage = 1
     sprite = pygame.Surface(size)
     origin_point = 'topleft'
 
+
     def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
         self.angle = acos(movement_vector.x)
+        self.velocity = pygame.math.Vector2(self.speed)
+        self.acceleration = pygame.math.Vector2(0, self.falling_momentum)
         if movement_vector.y > 0:
             self.angle = 2 * pi - self.angle
 
@@ -21,11 +25,13 @@ class Projectile:
             self.rect = self.surf.get_rect(topleft=(x, y))
         else:
             self.rect = self.surf.get_rect(center=(x, y))
-        self.vector = movement_vector
+        self.vector = movement_vector.copy()
+        self.velocity = pygame.math.Vector2(self.speed * movement_vector)
         self.alive = True
 
     def move(self):
-        self.rect.move_ip(self.vector * self.speed)
+        self.rect.move_ip(self.velocity)
+        self.velocity += self.acceleration
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surf, self.rect)
@@ -64,6 +70,7 @@ class Projectile:
 
 class MagicBall(Projectile):
     speed = 12
+    falling_momentum = 0
     damage = 1
     origin_point = 'center'
 
@@ -78,6 +85,18 @@ class MagicBall(Projectile):
     def add_trace(self) -> Particle:
         return MagicFlashes(self.rect.centerx, self.rect.centery, 6,
                             self.vector * self.speed // 2, pygame.math.Vector2(), 15)
+
+
+class PhysicsBall(MagicBall):
+    falling_momentum = .3
+
+    def __init__(self, x, y, movement_vector: pygame.math.Vector2, owner):
+        super().__init__(x, y, movement_vector, owner)
+        pygame.draw.circle(self.surf, 'purple',
+                           (self.rect.width // 2, self.rect.height // 2), self.rect.width // 4)
+
+        pygame.draw.circle(self.surf, 'lightblue',
+                           (self.rect.width // 2, self.rect.height // 2), self.rect.width // 2, 5)
 
 
 class Rocket(Projectile):

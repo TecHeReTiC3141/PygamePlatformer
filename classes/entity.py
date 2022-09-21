@@ -31,7 +31,7 @@ class Entity:
         if self.has_hit_cooldown:
             self.hit_cooldown -= 1
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, *args):
         if not self.has_hit_cooldown or self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)
 

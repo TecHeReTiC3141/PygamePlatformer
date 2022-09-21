@@ -19,6 +19,7 @@ class Player(Entity):
     max_health = 12
     speed = 2
     in_water = False
+    ready_to_shoot = ()
 
     def __init__(self, x, y, direction='left'):
         super().__init__(x, y, direction)
@@ -142,19 +143,20 @@ class Player(Entity):
             self.velocity.y = -self.jump_strength
             self.is_jump = True
 
-    def shoot(self) -> Projectile:
+    def shoot(self, proj_type: type) -> Projectile:
         self.shoot_cooldown = self.max_shoot_cooldown
-        return MagicBall(self.rect.centerx, self.rect.centery,
+        self.ready_to_shoot = ()
+        return proj_type(self.rect.centerx, self.rect.centery,
                          pygame.math.Vector2(cos(self.angle), -sin(self.angle)), self)
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, offset: pygame.math.Vector2, camera_size: pygame.math.Vector2, res: tuple):
         self.image.fill('yellow')
         self.image.blit(self.sprites[self.direction], (0, 0))
 
         eye_x = 23 if self.direction == 'left' else 30
-        pygame.draw.rect(self.image, 'blue',
+        pygame.draw.rect(self.image, 'blue' if not self.ready_to_shoot else 'purple',
                          (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
-        pygame.draw.rect(self.image, 'blue',
+        pygame.draw.rect(self.image, 'blue' if not self.ready_to_shoot else 'purple',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
         if self.shoot_cooldown:
             pygame.draw.rect(surface, 'black',
@@ -165,6 +167,16 @@ class Player(Entity):
                                     (self.max_shoot_cooldown - self.shoot_cooldown) / self.max_shoot_cooldown), 19))
         if self.hit_cooldown <= 0 or self.hit_cooldown % 4 > 1:
             surface.blit(self.image, self.rect)
+
+        if self.ready_to_shoot:
+            m_x, m_y = pygame.mouse.get_pos()
+            m_x = round(m_x * camera_size.x / res[0] + offset.x)
+            m_y = round(m_y * camera_size.y / res[1] + offset.y)
+            pygame.draw.line(surface, 'purple', self.ready_to_shoot, (m_x, m_y), width=10)
+
+            # sketching of projectile trajectory
+            point = self.rect.center
+
 
 
 class PlayerOnMap(Player):
@@ -196,7 +208,7 @@ class PlayerOnMap(Player):
     def update(self, dt=1):
         self.move(dt)
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, res: tuple=()):
         self.image.fill('yellow')
         self.image.blit(self.sprites[self.direction], (0, 0))
         surface.blit(self.image, self.rect)

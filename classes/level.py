@@ -102,7 +102,8 @@ class Level:
                 obj.draw(self.surf)
 
         self.level_end.draw(self.surf)
-        self.player.draw(self.surf)
+        self.player.draw(self.surf, self.camera.offset, self.camera.display_size,
+                         self.manager.res)
 
         camera_surf = pygame.Surface(self.camera.display_size)
         camera_surf.set_colorkey('yellow')
@@ -277,7 +278,20 @@ class Level:
                                 return end_level
 
                     if self.player.shoot_cooldown <= 0:
-                        self.projectiles.append(self.player.shoot())
+                        self.projectiles.append(self.player.shoot(MagicBall))
+
+                elif event.button == 3:
+                    if self.player.shoot_cooldown <= 0:
+                        if self.player.ready_to_shoot:
+                            self.projectiles.append(self.player.shoot(PhysicsBall))
+                        else:
+                            m_x, m_y = pygame.mouse.get_pos()
+                            m_x = round(m_x * self.camera.display_size.x / self.manager.res[0]
+                                        + self.camera.offset.x)
+                            m_y = round(m_y * self.camera.display_size.y / self.manager.res[1]
+                                        + self.camera.offset.y)
+                            self.player.ready_to_shoot = m_x, m_y
+                            print(self.player.ready_to_shoot)
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
