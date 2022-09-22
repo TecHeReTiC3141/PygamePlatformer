@@ -151,6 +151,20 @@ class Level:
                     if isinstance(obst, Player):
                         obst.rect.x += proj.vector.x * proj.speed * 2
 
+                elif coll and isinstance(proj, PhysicsBall) and isinstance(obst, Block):
+                    side = obst.collide_proj(proj)
+                    print(side)
+                    if side == 'up':
+                        proj.owner.rect.midbottom = obst.rect.midtop
+
+                    elif side == 'left':
+                        proj.owner.rect.midright = obst.rect.midleft
+                    elif side == 'right':
+                        proj.owner.rect.midleft = obst.rect.midright
+
+
+
+
         if dt <= 3:
             self.player.prev_rect = self.player.rect.copy()
             if self.state == 'game':
@@ -278,12 +292,14 @@ class Level:
                                 return end_level
 
                     if self.player.shoot_cooldown <= 0:
-                        self.projectiles.append(self.player.shoot(MagicBall))
+                        self.projectiles.append(self.player.shoot(self.camera.offset, self.camera.display_size,
+                                                                  self.manager.res, MagicBall))
 
                 elif event.button == 3:
                     if self.player.shoot_cooldown <= 0:
                         if self.player.ready_to_shoot:
-                            self.projectiles.append(self.player.shoot(PhysicsBall))
+                            self.projectiles.append(self.player.shoot(self.camera.offset, self.camera.display_size,
+                                                                  self.manager.res, PhysicsBall))
                         else:
                             m_x, m_y = pygame.mouse.get_pos()
                             m_x = round(m_x * self.camera.display_size.x / self.manager.res[0]

@@ -60,6 +60,16 @@ class Block:
             entity.collided_sides['left'] = True
             return 'left'
 
+    def collide_proj(self, proj: Projectile):
+        if proj.rect.colliderect(self.up_outer_rect):
+            return 'up'
+
+        elif proj.rect.colliderect(self.left_outer_rect):
+            return 'left'
+
+        elif proj.rect.colliderect(self.right_outer_rect):
+            return 'right'
+
     def draw(self, surface: pygame.Surface):
         surface.blit(self.surface, self.rect)
 

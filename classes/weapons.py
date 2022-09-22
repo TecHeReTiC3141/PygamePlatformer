@@ -98,7 +98,6 @@ class PhysicsBall(MagicBall):
         pygame.draw.circle(self.surf, 'lightblue',
                            (self.rect.width // 2, self.rect.height // 2), self.rect.width // 2, 5)
 
-
 class Rocket(Projectile):
     damage = 1
     speed = 10
