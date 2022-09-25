@@ -361,6 +361,20 @@ class LevelEnd(GameObject):
                                                                  self.surface.get_height() * SCALE))
 
 
+class MagicOrb(GameObject):
+    power_rad = 100
+
+    def __init__(self, x, y, width, height, surface: pygame.Surface):
+        super().__init__(x, y, width, height, surface)
+        self.power_rect = pygame.Rect(self.rect.centerx - self.power_rad,
+                                      self.rect.centery - self.power_rad,
+                                      self.power_rad * 2, self.power_rad * 2)
+
+    def interact(self, player: Player):
+        if self.power_rect.colliderect(player.rect):
+            player.charged = True
+
+
 class Coin(Animated, Collectable):
     sprite_size = (70, 69)
     sprites: dict[int, pygame.Surface] = {

@@ -112,3 +112,6 @@ class ClickRound(Particle):
                            round(self.rect.width // 2 * (self.max_life_time - self.life_time) / self.max_life_time),
                            self.rect.width // 8)
         super().draw(surface)
+
+
+# TODO implement text which flies up and then falls as a tip

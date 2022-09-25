@@ -1,6 +1,7 @@
 from classes.decor import *
 
 
+# TODO finally implement pixel-perfect collisions
 class Projectile:
     size = (40, 40)
     speed = 12

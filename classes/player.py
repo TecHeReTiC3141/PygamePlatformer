@@ -19,6 +19,7 @@ class Player(Entity):
     max_health = 12
     speed = 2
     in_water = False
+    charged = False
     ready_to_shoot = ()
 
     def __init__(self, x, y, direction='left'):
@@ -136,6 +137,7 @@ class Player(Entity):
             self.shoot_cooldown -= 1
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
+        self.charged = False
 
     def jump(self):
         if self.jump_cooldown <= 0 and not self.is_jump and self.air_time <= 6:
@@ -173,9 +175,9 @@ class Player(Entity):
         self.image.blit(self.sprites[self.direction], (0, 0))
 
         eye_x = 23 if self.direction == 'left' else 30
-        pygame.draw.rect(self.image, 'blue' if not self.ready_to_shoot else 'purple',
+        pygame.draw.rect(self.image, 'blue' if not self.charged else 'purple',
                          (eye_x + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
-        pygame.draw.rect(self.image, 'blue' if not self.ready_to_shoot else 'purple',
+        pygame.draw.rect(self.image, 'blue' if not self.charged else 'purple',
                          (eye_x + 30 + cos(self.angle) * 5, 27 - sin(self.angle) * 5, 5, 5))
         if self.shoot_cooldown:
             pygame.draw.rect(surface, 'black',

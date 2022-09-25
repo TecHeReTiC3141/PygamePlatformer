@@ -47,7 +47,10 @@ if __name__ == '__main__':
                 game_manager.game_state = 'main_menu'
 
             elif isinstance(cyc, LevelQuitButton):
-                level = gen_level(game_manager, level.num + cyc.next_level)
+                try:
+                    level = gen_level(game_manager, level.num + cyc.next_level)
+                except Exception as e:
+                    level = gen_main_menu(game_manager)
                 drawing.level = level
 
         pygame.display.update()

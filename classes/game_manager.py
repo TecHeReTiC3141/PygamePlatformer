@@ -50,13 +50,16 @@ class GameManager:
     def get_level_info(self, idx):
         return self.__level_stats.get(f'level{idx}', {})
 
-    def update_level(self, idx, level_data):
+    def update_level(self, idx, level_data: dict):
         self.__level_stats[f'level{idx}']['passed'] = True
         self.__level_stats[f'level{idx}']['best_time'] = min(level_data['best_time'],
                                                              round(self.__level_stats[f'level{idx}']['best_time'], 1))
         self.__level_stats[f'level{idx}']['best_score'] = max(level_data['best_score'],
                                                               self.__level_stats[f'level{idx}']['best_score'])
-        self.__level_stats[f'level{idx + 1}']['locked'] = False
+        try:
+            self.__level_stats[f'level{idx + 1}']['locked'] = False
+        except Exception:
+            pass
 
         pprint(self.__level_stats)
 

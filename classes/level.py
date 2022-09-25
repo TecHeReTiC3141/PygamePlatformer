@@ -296,18 +296,14 @@ class Level:
                                                                   self.manager.res, MagicBall))
 
                 elif event.button == 3:
-                    if self.player.shoot_cooldown <= 0:
-                        if self.player.ready_to_shoot:
-                            self.projectiles.append(self.player.shoot(self.camera.offset, self.camera.display_size,
-                                                                  self.manager.res, PhysicsBall))
-                        else:
+                    if self.player.charged and self.player.shoot_cooldown <= 0:
+                        if not self.player.ready_to_shoot:
                             m_x, m_y = pygame.mouse.get_pos()
                             m_x = round(m_x * self.camera.display_size.x / self.manager.res[0]
                                         + self.camera.offset.x)
                             m_y = round(m_y * self.camera.display_size.y / self.manager.res[1]
                                         + self.camera.offset.y)
                             self.player.ready_to_shoot = ((m_x, m_y), PhysicsBall)
-                            print(self.player.ready_to_shoot)
 
                 elif event.button == 4 and self.state == 'game':
                     if self.surf.get_width() <= self.surf.get_height():
@@ -330,6 +326,14 @@ class Level:
                                                          DISP_HEIGHT * 2)
                         self.camera.display_size.x = min(self.camera.display_size.y * ASPECT_RATIO,
                                                          self.surf.get_width(), DISP_WIDTH * 2)
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+
+                if event.button == 3:
+                    if self.player.ready_to_shoot:
+                        self.projectiles.append(self.player.shoot(self.camera.offset, self.camera.display_size,
+                                                                  self.manager.res, PhysicsBall))
+
         if self.manager.is_paused:
             return
         self.player.get_angle(self.camera.offset, self.camera.display_size, self.manager.res)
