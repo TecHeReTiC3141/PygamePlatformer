@@ -96,7 +96,7 @@ class Level:
             elif isinstance(obj, WaterDrop):
                 print(obj.rect)
             if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x + BLOCK_SIZE \
-                    and obj.rect.right >= self.camera.offset.x - BLOCK_SIZE\
+                    and obj.rect.right >= self.camera.offset.x - BLOCK_SIZE \
                     and obj.rect.bottom >= self.camera.offset.y - BLOCK_SIZE \
                     and obj.rect.top <= self.camera.offset.y + self.camera.display_size.y + BLOCK_SIZE:
                 obj.draw(self.surf)
@@ -134,7 +134,6 @@ class Level:
                     and obj.rect.right >= self.camera.offset.x - BLOCK_SIZE \
                     and obj.rect.bottom >= self.camera.offset.y - BLOCK_SIZE \
                     and obj.rect.top <= self.camera.offset.y + self.camera.display_size.y + BLOCK_SIZE:
-
                 obj.interact(self.player)
 
         for proj in self.projectiles:
@@ -161,9 +160,6 @@ class Level:
                         proj.owner.rect.midright = obst.rect.midleft
                     elif side == 'right':
                         proj.owner.rect.midleft = obst.rect.midright
-
-
-
 
         if dt <= 3:
             self.player.prev_rect = self.player.rect.copy()
@@ -198,7 +194,12 @@ class Level:
 
         if not ui.rect.collidepoint(mouse):
             return
-        if isinstance(ui, Button):
+
+        if isinstance(ui, TextWithButton):
+            if ui.button.rect.move(ui.rect.topleft).collidepoint((mouse[0], mouse[1])):
+                ui.active = False
+
+        elif isinstance(ui, Button):
             if isinstance(ui, ChangeStateButton):
                 if isinstance(ui, LevelChangeStateButton):
                     self.change_state(ui.state)
@@ -395,6 +396,15 @@ class MainMenu(Level):
             'quit': TextButton(-200, DISP_HEIGHT // 2 - 50 + 120, (200, 100),
                                (320, DISP_HEIGHT // 2 + 120),
                                QuitButton(0, 0, (10, 10)), '#eecc67', 'Quit', color='#9c6409', delay=40),
+            'greeting': TextWithButton(-DISP_WIDTH // 2, DISP_HEIGHT // 2, (DISP_WIDTH // 2, DISP_HEIGHT // 2),
+                                       CloseButton, '#eecc67', ['Hello, dear friend',
+                                                                'Glad to see you in my game',
+                                                                'Have fun!'], active=True),
+            'end': TextWithButton(-DISP_WIDTH // 2, DISP_HEIGHT // 2, (DISP_WIDTH // 2, DISP_HEIGHT // 2),
+                                  CloseButton, '#eecc67', ['Congratulations, my friend',
+                                                           'You have passed all levels',
+                                                           'Thank you',
+                                                           'More levels will come soon...'])
         }
 
         self.manager = game_manager
@@ -414,8 +424,16 @@ class MainMenu(Level):
                         to_level = self.check_ui(ui)
                         if to_level is not None:
                             return to_level
+
                 elif event.button == 3:
                     self.manager.cursor_color = tuple(randint(0, 255) for _ in '...')
+
+    def reload(self, victory=False):
+        for ui in self.ui_elements:
+            if isinstance(self.ui_elements[ui], TextButton):
+                self.ui_elements[ui].active = True
+            elif ui == 'end' and victory:
+                self.ui_elements[ui].active = True
 
 
 class LevelMap(Level):
@@ -535,13 +553,13 @@ class LevelMap(Level):
                         if isinstance(ui, UI_container) and ui.active:
                             for ui_el in ui.content:
                                 cur_ui = self.check_ui(ui_el)
-                                if isinstance(cur_ui,PlayButton) or isinstance(cur_ui, ToMenu):
+                                if isinstance(cur_ui, PlayButton) or isinstance(cur_ui, ToMenu):
                                     return cur_ui
                                 if cur_ui is not None:
                                     any_ui = cur_ui
                         else:
                             cur_ui = self.check_ui(ui)
-                            if isinstance(cur_ui,PlayButton) or isinstance(cur_ui, ToMenu):
+                            if isinstance(cur_ui, PlayButton) or isinstance(cur_ui, ToMenu):
                                 return cur_ui
                             if cur_ui is not None:
                                 any_ui = cur_ui
@@ -571,7 +589,7 @@ class LevelMap(Level):
         if self.player.velocity.length():
             pygame.draw.circle(self.surf, 'blue', self.player.target, 20)
         for obj in self.obstacles + self.decor + self.enters:
-            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x\
+            if obj.rect.left <= self.camera.offset.x + self.camera.display_size.x \
                     and obj.rect.right >= self.camera.offset.x // BLOCK_SIZE * BLOCK_SIZE:
                 obj.draw(self.surf)
 

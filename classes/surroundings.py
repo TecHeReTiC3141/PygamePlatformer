@@ -362,13 +362,24 @@ class LevelEnd(GameObject):
 
 
 class MagicOrb(GameObject):
-    power_rad = 100
+    power_rad = 200
 
     def __init__(self, x, y, width, height, surface: pygame.Surface):
         super().__init__(x, y, width, height, surface)
         self.power_rect = pygame.Rect(self.rect.centerx - self.power_rad,
                                       self.rect.centery - self.power_rad,
                                       self.power_rad * 2, self.power_rad * 2)
+
+        self.background_surface = pygame.Surface(self.power_rect.size)
+        self.background_surface.set_colorkey('black')
+        pygame.draw.circle(self.background_surface, 'purple', (self.background_surface.get_width() // 2,
+                                                               self.background_surface.get_height() // 2),
+                           self.power_rad)
+        self.background_surface.set_alpha(128)
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.background_surface, self.power_rect)
+        surface.blit(self.surface, self.rect)
 
     def interact(self, player: Player):
         if self.power_rect.colliderect(player.rect):

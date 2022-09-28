@@ -120,6 +120,10 @@ class PlayButton(GameChangeStateButton):
         self.num = num
 
 
+class CloseButton(Button):
+    image = pygame.image.load(ui_images / 'Close_button.png')
+
+
 class ToMenu(GameChangeStateButton):
     image = pygame.image.load(ui_images / 'Exit_button.png')
     state = 'main_menu'
@@ -198,6 +202,35 @@ class UI_container(Movable_UI):  # menus, etc
     # TODO implement updating of containers like menus
     def update(self, **kwargs):
         pass
+
+
+class TextWithButton(Movable_UI):
+
+    def __init__(self, x, y, end_pos: tuple, button: type,
+                 background_color, text: list[str], title: str=None, font=menu_font, inner_padding=10, outer_padding=50,
+                 color='black', delay=0, active=False):
+        size = (len(max(text, key=len)) * font.size('A')[0] + 2 * outer_padding, 2 * outer_padding + len(text)
+                * font.size(text[0])[1] + inner_padding * (len(text) - 1))
+        y -= size[1] // 2
+        x -= size[0] // 2
+        super().__init__(x, y, size, end_pos, delay)
+        self.button: CloseButton = button(self.rect.width * 5 // 6, self.rect.height // 6,
+                             (self.rect.width // 8, self.rect.width // 8))
+        self.image.set_colorkey('yellow')
+        self.image.fill('yellow')
+        pygame.draw.rect(self.image, 'black',
+                         (0, 0, self.rect.width, self.rect.height), border_radius=3)
+
+        pygame.draw.rect(self.image, background_color,
+                         (5, 5, self.rect.width - 10, self.rect.height - 10), border_radius=8)
+        self.button.draw(self.image)
+        cur_y = outer_padding
+        for line in text:
+            line = font.render(line, True, color)
+            self.image.blit(line, ((self.rect.width - line.get_width()) // 2,
+                                    cur_y))
+            cur_y += line.get_height() + inner_padding
+        self.active = active
 
 
 class PauseMenu(UI_container):

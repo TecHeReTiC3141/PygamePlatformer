@@ -10,6 +10,7 @@ pygame.mouse.set_visible(False)
 game_manager = GameManager(display)
 level = gen_main_menu(game_manager)
 level_map = gen_levels_map(game_manager)
+main_menu = gen_main_menu(game_manager)
 drawing = Drawing(game_manager, level)
 
 atexit.register(game_manager.save_level_stats)
@@ -35,22 +36,26 @@ if __name__ == '__main__':
                 game_manager.game_state = 'game'
                 drawing.level = level
             elif isinstance(to_level, ToMenu):
-                level = gen_main_menu(game_manager)
+                level = main_menu
                 drawing.level = level
                 game_manager.game_state = 'main_menu'
+                level.reload()
 
         elif game_manager.game_state == 'game':
             cyc = level.game_cycle(delta)
             if isinstance(cyc, ToMenu):
-                level = gen_main_menu(game_manager)
+                level = main_menu
                 drawing.level = level
                 game_manager.game_state = 'main_menu'
+                level.reload()
 
             elif isinstance(cyc, LevelQuitButton):
                 try:
                     level = gen_level(game_manager, level.num + cyc.next_level)
                 except Exception as e:
-                    level = gen_main_menu(game_manager)
+                    level = main_menu
+                    game_manager.game_state = 'main_menu'
+                    level.reload(victory=True)
                 drawing.level = level
 
         pygame.display.update()
