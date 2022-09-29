@@ -20,7 +20,8 @@ class GameManager:
         self.__config = {
             'res': res,
             'show_debug': False,
-            'particles': True
+            'particles': True,
+            'flying': False
         }
 
 
@@ -46,6 +47,10 @@ class GameManager:
     @property
     def particles(self):
         return self.__config['particles']
+
+    @property
+    def flying(self):
+        return self.__config['flying']
 
     def get_level_info(self, idx):
         return self.__level_stats.get(f'level{idx}', {})

@@ -4,6 +4,7 @@ from classes.decor import *
 
 
 # TODO think about block's friction
+# TODO think about some bouncy blocks (like slime)
 class Block:
     movable = False
 
@@ -384,6 +385,27 @@ class MagicOrb(GameObject):
     def interact(self, player: Player):
         if self.power_rect.colliderect(player.rect):
             player.charged = True
+
+
+class Slime(Obstacle):
+
+    def __init__(self, x, y, width, height):
+        surf = pygame.Surface((width, height))
+        surf.fill('darkgreen')
+        super().__init__(x, y, width, height, surf)
+
+    def collide(self, entity: Player, mode: str) -> str:
+        if entity.rect.colliderect(self.rect):
+            if mode == 'h':
+                # top side
+                if entity.velocity.y > 0:
+                    print(entity.is_jump)
+                    entity.rect.bottom = self.rect.top
+                    entity.collided_sides['down'] = True
+                    entity.velocity.y *= -entity.velocity.y
+                    if not entity.is_jump:
+                        entity.velocity.y //= 2
+                    return 'down'
 
 
 class Coin(Animated, Collectable):

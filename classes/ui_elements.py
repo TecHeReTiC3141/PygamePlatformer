@@ -204,12 +204,14 @@ class UI_container(Movable_UI):  # menus, etc
         pass
 
 
+# TODO extend TextWithButton (adding title(
 class TextWithButton(Movable_UI):
 
     def __init__(self, x, y, end_pos: tuple, button: type,
                  background_color, text: list[str], title: str=None, font=menu_font, inner_padding=10, outer_padding=50,
                  color='black', delay=0, active=False):
-        size = (len(max(text, key=len)) * font.size('A')[0] + 2 * outer_padding, 2 * outer_padding + len(text)
+        size = (len(max(text, key=len)) * font.size('A')[0] + 2 * outer_padding,
+                2 * outer_padding + len(text)
                 * font.size(text[0])[1] + inner_padding * (len(text) - 1))
         y -= size[1] // 2
         x -= size[0] // 2

@@ -67,6 +67,8 @@ def gen_level(game_manager: GameManager, num: int) -> Level:
         elif obj.name == 'Magic Orb':
             collectable.append(MagicOrb(obj.x, obj.y, obj.width, obj.height, obj.image))
 
+        elif obj.name == 'Slime':
+            obstacles.append(Slime(obj.x, obj.y, obj.width, obj.height))
 
         elif obj.type == 'Entity':
             if obj.name == 'GreenCannon':

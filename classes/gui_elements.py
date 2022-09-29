@@ -35,7 +35,8 @@ class SettingsWindow(Window):
                 [sg.Spin(['Low', 'Medium', 'Hard'], initial_value=game_manager.difficulty,
                         key='-DIFFICULTY-',
                          tooltip='Defines damage from enemies and speed of hostile rockets'),
-                 sg.Checkbox('Show debug info', key='-DEBUG-', default=False)]
+                 sg.Checkbox('Show debug info', key='-DEBUG-', default=False),
+                 sg.Checkbox('Allow fly', key='-FLY-', default=False)]
             ])],
             [sg.HorizontalSeparator()],
             [sg.Frame('Graphics', [
@@ -76,7 +77,8 @@ class SettingsWindow(Window):
                 self.manager.update(values['-FULLSCREEN-'],
                                     res=tuple(map(int, values['-RES-'].split('x'))),
                                     show_debug=values['-DEBUG-'],
-                                    particles=values['-PARTICLES-']
+                                    particles=values['-PARTICLES-'],
+                                    flying=values['-FLY-']
                                     )
                 break
 

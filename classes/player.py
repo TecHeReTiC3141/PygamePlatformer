@@ -40,7 +40,7 @@ class Player(Entity):
         self.score = 0
         self.keys = 0
 
-    def hor_move(self, dt):
+    def hor_move(self, dt, fly: bool):
         if self.in_water:
             return
         keys = pygame.key.get_pressed()
@@ -54,10 +54,10 @@ class Player(Entity):
             self.acceleration.x += .3
             self.direction = 'right'
         #
-        # if keys[pygame.K_w]:
-        #     self.rect.y -= 25
-            # if pi / 2 <= self.angle <= 3 * pi / 2:
-            #     self.angle = (3 * pi - self.angle) % 360
+        if fly and keys[pygame.K_w]:
+            self.rect.y -= 25
+            if pi / 2 <= self.angle <= 3 * pi / 2:
+                self.angle = (3 * pi - self.angle) % 360
 
         self.acceleration.x += self.velocity.x * self.friction
         self.velocity.x += self.acceleration.x * dt

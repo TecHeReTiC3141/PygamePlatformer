@@ -1,7 +1,6 @@
 from classes.decor import *
 
 
-# TODO finally implement pixel-perfect collisions
 class Projectile:
     size = (40, 40)
     speed = 12
@@ -53,6 +52,7 @@ class Projectile:
 
     def interact(self, entity) -> bool:
         if self.rect.colliderect(entity.rect) and entity != self.owner:
+
             # if self.mask.overlap(entity.mask,
             #                      (entity.rect.left - self.rect.left, entity.rect.top - self.rect.top)):
             self.alive = False

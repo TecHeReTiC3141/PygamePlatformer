@@ -175,7 +175,7 @@ class Level:
                 else:
                     block.collide(self.player, 'h')
             if self.state == 'game':
-                self.player.hor_move(dt)
+                self.player.hor_move(dt, self.manager.flying)
             for block in self.blocks + self.obstacles:
                 if hasattr(block, 'returns_decor') and block.returns_decor:
                     new_decor: list[Decor] = block.collide(self.player, 'v')
@@ -477,7 +477,7 @@ class LevelMap(Level):
         for block in self.obstacles:
             block.collide(self.player, 'h')
 
-        self.player.hor_move(dt)
+        self.player.hor_move(dt, self.manager.flying)
         for block in self.obstacles:
             block.collide(self.player, 'v')
         self.player.rect.x = min(max(self.player.rect.x, 0), self.surf.get_width() - self.player.rect.width)
